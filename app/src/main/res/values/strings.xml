@@ -2,5 +2,18 @@
     <string name="app_name">Hearthstone Collector App</string>
     <string name="facebook_app_id">2176932982528313</string>
     <string name="fb_login_protocol_scheme">fb2176932982528313</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Paramètres</string>
+
+    <string name="nav_drawer_cards">Mes cartes</string>
+    <string name="nav_drawer_decks">Mes decks</string>
+    <string name="nav_drawer_trade">Mes échanges</string>
+    <string name="nav_drawer_quizz">Quizz</string>
+    <string name="nav_drawer_shop">Magasin</string>
 
 </resources>

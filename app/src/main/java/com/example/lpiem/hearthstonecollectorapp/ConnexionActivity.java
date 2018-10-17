@@ -2,9 +2,11 @@ package com.example.lpiem.hearthstonecollectorapp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 
@@ -48,7 +50,6 @@ public class ConnexionActivity extends AppCompatActivity {
         /*
          * FACEBOOK
          */
-
         callbackManager = CallbackManager.Factory.create();
         facebookSignInButton = findViewById(R.id.loginBtnFb);
         facebookSignInButton.setReadPermissions("email");
@@ -57,7 +58,7 @@ public class ConnexionActivity extends AppCompatActivity {
         facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                getUserFacebookDetails(loginResult);
+                getUserFacebookDetails(loginResult.getAccessToken());
             }
 
             @Override
@@ -112,9 +113,14 @@ public class ConnexionActivity extends AppCompatActivity {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        account = GoogleSignIn.getLastSignedInAccount(this);
+        if (isLoggedIn) {
+            getUserFacebookDetails(accessToken);
+        }
+
+         // Check for existing Google Sign In account, if the user is already signed in
+         // the GoogleSignInAccount will be non-null.
+         account = GoogleSignIn.getLastSignedInAccount(this);
+
         googleConnexion(account);
     }
 
@@ -137,14 +143,15 @@ public class ConnexionActivity extends AppCompatActivity {
     }
 
     //
-    protected void getUserFacebookDetails(LoginResult loginResult) {
+    protected void getUserFacebookDetails(AccessToken loginResult) {
         GraphRequest data_request = GraphRequest.newMeRequest(
-                loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                loginResult, new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(
                             JSONObject json_object,
                             GraphResponse response) {
-                        Intent intent = new Intent(ConnexionActivity.this, UserProfileFB.class);
+                        Log.e("connexion", json_object.toString());
+                        Intent intent = new Intent(ConnexionActivity.this, NavigationActivity.class);
                         intent.putExtra("userProfile", json_object.toString());
                         startActivity(intent);
                     }

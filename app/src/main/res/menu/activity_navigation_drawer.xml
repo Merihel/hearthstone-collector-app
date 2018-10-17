@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_cards"
+            android:icon="@drawable/ic_cards"
+            android:title="@string/nav_drawer_cards" />
+        <item
+            android:id="@+id/nav_decks"
+            android:icon="@drawable/ic_decks"
+            android:title="@string/nav_drawer_decks" />
+        <item
+            android:id="@+id/nav_trade"
+            android:icon="@drawable/ic_trade"
+            android:title="@string/nav_drawer_trade" />
+        <item
+            android:id="@+id/nav_quizz"
+            android:icon="@drawable/ic_quizz"
+            android:title="@string/nav_drawer_quizz" />
+        <item
+            android:id="@+id/nav_shop"
+            android:icon="@drawable/ic_shop"
+            android:title="@string/nav_drawer_shop" />
+    </group>
+
+</menu>
