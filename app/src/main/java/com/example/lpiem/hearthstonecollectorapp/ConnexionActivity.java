@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
 
@@ -24,7 +23,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,9 +31,13 @@ import com.google.android.gms.tasks.Task;
 public class ConnexionActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
+    private LoginButton facebookSignInButton;
+    private boolean isLoggedIn;
+
     private SignInButton googleSignInButton;
     private Button googleSignOutButton;
     private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInAccount account;
     private static int RC_SIGN_IN = 100;
 
     @Override
@@ -43,20 +45,19 @@ public class ConnexionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
 
-        // on vérifie si une personne est déjà connectée
-        // AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        // boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-
+        /*
+         * FACEBOOK
+         */
 
         callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) findViewById(R.id.loginBtnFb);
-        loginButton.setReadPermissions("email");
+        facebookSignInButton = findViewById(R.id.loginBtnFb);
+        facebookSignInButton.setReadPermissions("email");
 
         // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                getUserDetails(loginResult);
+                getUserFacebookDetails(loginResult);
             }
 
             @Override
@@ -70,8 +71,15 @@ public class ConnexionActivity extends AppCompatActivity {
             }
         });
 
+        /*
+         * GOOGLE
+         */
+
+        account = GoogleSignIn.getLastSignedInAccount(this);
         googleSignInButton = findViewById(R.id.google_sign_in);
         googleSignOutButton = findViewById(R.id.google_sign_out);
+
+        googleConnexion(account);
 
         //Click listener : Google SignIn Button
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
@@ -89,20 +97,47 @@ public class ConnexionActivity extends AppCompatActivity {
         });
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+            .requestEmail()
+            .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onStart() {
+        super.onStart();
+
+        // on vérifie si une personne est déjà connectée sur Facebook
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        googleConnexion(account);
     }
 
-    protected void getUserDetails(LoginResult loginResult) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //FACEBOOK PART
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //GOOGLE PART
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleGoogleSignInResult(task);
+        }
+    }
+
+    //
+    protected void getUserFacebookDetails(LoginResult loginResult) {
         GraphRequest data_request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
@@ -122,29 +157,7 @@ public class ConnexionActivity extends AppCompatActivity {
 
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUIGoogleAuth(account);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleGoogleSignInResult(task);
-        }
-    }
+    //Google Sign-In Functions
 
     public void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -153,12 +166,13 @@ public class ConnexionActivity extends AppCompatActivity {
 
     public void googleSignOut() {
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.i("INFO", "Successfully disconnected user");
-                    }
-                });
+            .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.i("INFO", "Successfully disconnected user");
+                    googleConnexion(null);
+                }
+            });
     }
 
     public void handleGoogleSignInResult(Task<GoogleSignInAccount> task) {
@@ -166,20 +180,24 @@ public class ConnexionActivity extends AppCompatActivity {
             GoogleSignInAccount account = task.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
-            updateUIGoogleAuth(account);
+            googleConnexion(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.e("ERROR", "signInResult:failed code=" + e.getStatusCode());
-            updateUIGoogleAuth(null);
+            googleConnexion(null);
         }
     }
 
-    public void updateUIGoogleAuth(GoogleSignInAccount signInAccount) {
+    public void googleConnexion(GoogleSignInAccount signInAccount) {
         if (signInAccount == null) {
             Log.i("INFO", "Not connected user...");
+            googleSignInButton.setVisibility(View.VISIBLE);
+            googleSignOutButton.setVisibility(View.GONE);
         } else {
             Log.i("INFO", "USER CONNECTED: " + signInAccount.getDisplayName() + ", " + signInAccount.getEmail());
+            googleSignInButton.setVisibility(View.GONE);
+            googleSignOutButton.setVisibility(View.VISIBLE);
         }
     }
 }
