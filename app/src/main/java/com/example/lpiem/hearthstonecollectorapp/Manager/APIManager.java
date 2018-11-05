@@ -39,30 +39,49 @@ public class APIManager {
 
     // CARDS //
     public void getCardByID(int id) {
-        Call<Card> card = client.getCard(id);
+        Call<Card> call = client.getCard(id);
 
-        card.enqueue(new Callback<Card>() {
+
+        call.enqueue(new Callback<Card>() {
             @Override
             public void onResponse(Call<Card> call, Response<Card> response) {
-                // The network call was a success and we got a response
-                // TODO: display the card
-                System.out.println("[APIManager]getCardByID response : "+ response.body().getText());
+                Card card = response.body();
+                System.out.println("[APIManager]getCardByID card : "+ card);
             }
 
             @Override
             public void onFailure(Call<Card>call, Throwable t) {
                 System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
-
             }});
     }
 
-    public void newCard(Card card) {
-        Call<Card> newCard = client.createCard(card);
+    public void getCardBySet(String set){
+        Call<Card> call = client.getCardBySet(set);
+    }
+
+    public void getCardByClass(String classCard){
+        Call<Card> call = client.getCardByClass(classCard);
+    }
+
+    public void getCardByRace(String race){
+        Call<Card> call = client.getCardByRace(race);
+    }
+
+    public void getCardByFaction(String faction){
+        Call<Card> call = client.getCardByFaction(faction);
+    }
+
+    public void createCard(Card card) {
+        Call<Card> call = client.createCard(card);
     }
 
     // USERS //
     public void getUserByID(int id) {
-        Call<User> user = client.getUser(id);
+        Call<User> call = client.getUser(id);
+    }
+
+    public void createUser(User user) {
+        Call<User> call = client.createUser(user);
     }
 
 

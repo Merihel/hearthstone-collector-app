@@ -17,6 +17,18 @@ public interface HearthstoneService {
     @GET("card/{id}")
     Call<Card> getCard( @Path("id") int id);
 
+    @GET("card/{set}")
+    Call<Card> getCardBySet( @Path("set") String set);
+
+    @GET("card/{class}")
+    Call<Card> getCardByClass( @Path("class") String classCard);
+
+    @GET("card/{race}")
+    Call<Card> getCardByRace( @Path("race") String race);
+
+    @GET("card/{faction}")
+    Call<Card> getCardByFaction( @Path("faction") String faction);
+
     @POST("/new-card")
     Call<Card> createCard(@Body Card card);
 

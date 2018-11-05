@@ -1,28 +1,66 @@
 package com.example.lpiem.hearthstonecollectorapp.Models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Card {
     private int id;
+    @SerializedName("cardId")
+    @Expose
     private String hsId;
 
     // DETAILS DE LA CARTE
+    @SerializedName("cost")
+    @Expose
     private int cost;
+    @SerializedName("attack")
+    @Expose
     private int attack;
+    @SerializedName("collectible")
+    @Expose
     private boolean collectible;
+    @SerializedName("durability")
+    @Expose
     private int durability;
+    @SerializedName("health")
+    @Expose
     private int health;
+    @SerializedName("cardSet")
+    @Expose
     private String set;
+    @SerializedName("playerClass")
+    @Expose
     private String classCard;
+    @SerializedName("quality")
+    @Expose
     private String quality;
+    @SerializedName("race")
+    @Expose
     private String race;
+    @SerializedName("faction")
+    @Expose
     private String faction;
+    @SerializedName("rarity")
+    @Expose
+    private String rarity;
+    @SerializedName("type")
+    @Expose
     private String type;
+    @SerializedName("text")
+    @Expose
     private String text;
+    @SerializedName("flavor")
+    @Expose
     private String flavor;
+    @SerializedName("img")
+    @Expose
     private String img;
+    @SerializedName("imgGold")
+    @Expose
     private String imgGold;
 
 
-    public Card(int id, String hsId, int cost, int attack, boolean collectible, int durability, int health, String set, String classCard, String quality, String race, String faction, String type, String text, String flavor, String img, String imgGold) {
+    public Card(int id, String hsId, int cost, int attack, boolean collectible, int durability, int health, String set, String classCard, String quality, String race, String faction, String rarity, String type, String text, String flavor, String img, String imgGold) {
         this.id = id;
         this.hsId = hsId;
         this.cost = cost;
@@ -35,6 +73,7 @@ public class Card {
         this.quality = quality;
         this.race = race;
         this.faction = faction;
+        this.rarity = rarity;
         this.type = type;
         this.text = text;
         this.flavor = flavor;
@@ -115,6 +154,10 @@ public class Card {
         return imgGold;
     }
 
+    public String getRarity() {
+        return rarity;
+    }
+
     // SETTERS //
     public void setId(int id) {
         this.id = id;
@@ -182,5 +225,9 @@ public class Card {
 
     public void setImgGold(String imgGold) {
         this.imgGold = imgGold;
+    }
+
+    public void setRarity(String rarity) {
+        this.rarity = rarity;
     }
 }

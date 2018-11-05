@@ -4,6 +4,7 @@ public class Deck {
     private int id;
     private String name;
     private String description;
+    private Card[] cardsList;
 
     public Deck() {
     }
@@ -28,6 +29,9 @@ public class Deck {
         return description;
     }
 
+    public Card[] getCardsList() {
+        return cardsList;
+    }
 
     // SETTERS //
 
@@ -41,5 +45,9 @@ public class Deck {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setCardsList(Card[] cardsList) {
+        this.cardsList = cardsList;
     }
 }
