@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager;
 import com.example.lpiem.hearthstonecollectorapp.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -41,10 +42,16 @@ public class ConnexionActivity extends AppCompatActivity {
     private GoogleSignInAccount account;
     private static int RC_SIGN_IN = 100;
 
+    private APIManager apiManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+
+        // TEST
+        apiManager = new APIManager();
+        apiManager.getCardByID(1);
 
         /*
          * FACEBOOK
