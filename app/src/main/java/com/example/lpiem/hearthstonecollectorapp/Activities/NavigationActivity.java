@@ -1,4 +1,4 @@
-package com.example.lpiem.hearthstonecollectorapp;
+package com.example.lpiem.hearthstonecollectorapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lpiem.hearthstonecollectorapp.R;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
