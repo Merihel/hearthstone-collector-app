@@ -46,19 +46,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/button_login_fb_background"
-        android:text="Log in with Facebook"
+        android:text="Se connecter avec Facebook"
         android:textAllCaps="false"
         android:textColor="#ffffff"
         android:textStyle="bold" />
 
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_sign_in"
-        android:layout_width="fill_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
+        android:text="Se connecter avec Google"
         android:visibility="gone"
-        />
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+    />
 
     <Button
         android:id="@+id/google_sign_out"
@@ -67,6 +72,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
         android:textColor="#ffffff"
+        android:textStyle="bold"
         android:text="Se déconnecter de Google"
         android:textAllCaps="false"
         android:background="@drawable/button_login_google_background" />
