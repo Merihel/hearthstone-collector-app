@@ -1,18 +1,37 @@
 package com.example.lpiem.hearthstonecollectorapp.Models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class User {
+    @SerializedName("id")
+    @Expose
     private int id;
+    @SerializedName("pseudo")
+    @Expose
     private String pseudo;
+    @SerializedName("firstName")
+    @Expose
     private String firstName;
+    @SerializedName("lastName")
+    @Expose
     private String lastName;
+    @SerializedName("mail")
+    @Expose
     private String mail;
+    @SerializedName("coins")
+    @Expose
     private int coins;
     private List<Card> cards = null;
     private List<Deck> decks = null;
     private List<Card> wishlist = null;
+    @SerializedName("facebookId")
+    @Expose
     private String facebookId;
+    @SerializedName("googleId")
+    @Expose
     private String googleId;
 
     public User(int id, String pseudo, String firstName, String lastName, String mail, int coins, List<Card> cards, List<Card> wishlist, String facebookId, String googleId) {

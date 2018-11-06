@@ -70,6 +70,22 @@ public class APIManager {
     public void createUser(User user) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
         Call<User> call = hearthstoneInstance.createUser(user);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    Log.d("[APIManager]createUser", "user first name : " + user.getFirstName());
+
+                } else {
+                    Log.d("[APIManager]createUser", "error on response : " + response.errorBody());
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                System.out.println("[APIManager]createUser Erreur callback ! "+ t);
+            }});
     }
 
 

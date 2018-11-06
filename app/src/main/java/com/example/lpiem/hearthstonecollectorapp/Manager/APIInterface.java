@@ -37,7 +37,7 @@ public interface APIInterface {
     @GET("/user/select/{id}")
     Call<User> getUser(@Path("id") int id);
 
-    @GET("user/new")
+    @POST("user/new")
     Call<User> createUser(@Body User user);
 
     @GET("/user/update")
