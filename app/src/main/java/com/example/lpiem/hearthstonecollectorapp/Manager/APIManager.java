@@ -5,6 +5,8 @@ import android.util.Log;
 import com.example.lpiem.hearthstonecollectorapp.Models.Card;
 import com.example.lpiem.hearthstonecollectorapp.Models.User;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -14,49 +16,49 @@ public class APIManager {
     // CARDS //
     public void getCardByID(int id) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCard(id);
+        Call<List<Card>> call = hearthstoneInstance.getCard(id);
 
 
-        call.enqueue(new Callback<Card>() {
+        call.enqueue(new Callback<List<Card>>() {
             @Override
-            public void onResponse(Call<Card> call, Response<Card> response) {
+            public void onResponse(Call<List<Card>> call, Response<List<Card>> response) {
                 if (response.isSuccessful()) {
-                    Card card = response.body();
-                    Log.d("[APIManager]getCardByID", "card text : " + card.getText());
+                    List<Card> card = response.body();
+                    Log.d("[APIManager]getCardByID", "card text : " + card.get(0).getText());
 
                 } else {
                     Log.d("[APIManager]getCardByID", "error on response : " + response.errorBody());
                 }
             }
             @Override
-            public void onFailure(Call<Card>call, Throwable t) {
+            public void onFailure(Call<List<Card>> call, Throwable t) {
                 System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
             }});
     }
 
     public void getCardBySet(String set){
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCardBySet(set);
+        Call<List<Card>> call = hearthstoneInstance.getCardBySet(set);
     }
 
     public void getCardByClass(String classCard){
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCardByClass(classCard);
+        Call<List<Card>> call = hearthstoneInstance.getCardByClass(classCard);
     }
 
     public void getCardByRace(String race){
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCardByRace(race);
+        Call<List<Card>> call = hearthstoneInstance.getCardByRace(race);
     }
 
     public void getCardByFaction(String faction){
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCardByFaction(faction);
+        Call<List<Card>> call = hearthstoneInstance.getCardByFaction(faction);
     }
 
     public void createCard(Card card) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.createCard(card);
+        Call<List<Card>> call = hearthstoneInstance.createCard(card);
     }
 
     // USERS //

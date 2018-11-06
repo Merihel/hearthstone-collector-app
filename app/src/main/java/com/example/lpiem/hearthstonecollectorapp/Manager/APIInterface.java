@@ -13,35 +13,34 @@ import retrofit2.http.Path;
 
 public interface APIInterface {
     // CARDS //
+    @GET("card/select/{id}")
+    Call<List<Card>> getCard( @Path("id") int id);
 
-    @GET("card/{id}")
-    Call<Card> getCard( @Path("id") int id);
+    @GET("card/select/{set}")
+    Call<List<Card>> getCardBySet( @Path("set") String set);
 
-    @GET("card/{set}")
-    Call<Card> getCardBySet( @Path("set") String set);
+    @GET("card/select/{class}")
+    Call<List<Card>> getCardByClass( @Path("class") String classCard);
 
-    @GET("card/{class}")
-    Call<Card> getCardByClass( @Path("class") String classCard);
+    @GET("card/select/{race}")
+    Call<List<Card>> getCardByRace( @Path("race") String race);
 
-    @GET("card/{race}")
-    Call<Card> getCardByRace( @Path("race") String race);
+    @GET("card/select/{faction}")
+    Call<List<Card>> getCardByFaction( @Path("faction") String faction);
 
-    @GET("card/{faction}")
-    Call<Card> getCardByFaction( @Path("faction") String faction);
-
-    @POST("/new-card")
-    Call<Card> createCard(@Body Card card);
+    @POST("card/new")
+    Call<List<Card>> createCard(@Body Card card);
 
 
 
     // USERS //
-    @GET("/user/{id}")
+    @GET("/user/select/{id}")
     Call<User> getUser(@Path("id") int id);
 
-    @GET("/new-user")
+    @GET("user/new")
     Call<User> createUser(@Body User user);
 
-    @GET("/user/select-with-cards/{id}")
+    @GET("/user/update")
     Call<User> getUserWithCards(@Body User user);
 
 }
