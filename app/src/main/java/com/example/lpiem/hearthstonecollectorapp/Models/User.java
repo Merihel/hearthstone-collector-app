@@ -9,9 +9,9 @@ public class User {
     private String lastName;
     private String mail;
     private int coins;
-    private List<Card> cards;
-    //private List<Decks> decks;
-    private List<Card> wishlist;
+    private List<Card> cards = null;
+    private List<Deck> decks = null;
+    private List<Card> wishlist = null;
     private String facebookId;
     private String googleId;
 

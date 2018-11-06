@@ -1,4 +1,4 @@
-package com.example.lpiem.hearthstonecollectorapp;
+package com.example.lpiem.hearthstonecollectorapp.Manager;
 
 import com.example.lpiem.hearthstonecollectorapp.Models.Card;
 import com.example.lpiem.hearthstonecollectorapp.Models.User;
@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-public interface HearthstoneService {
+public interface APIInterface {
     // CARDS //
 
     @GET("card/{id}")
@@ -40,5 +40,8 @@ public interface HearthstoneService {
 
     @GET("/new-user")
     Call<User> createUser(@Body User user);
+
+    @GET("/user/select-with-cards/{id}")
+    Call<User> getUserWithCards(@Body User user);
 
 }

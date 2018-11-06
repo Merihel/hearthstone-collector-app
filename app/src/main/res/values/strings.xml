@@ -16,4 +16,6 @@
     <string name="nav_drawer_quizz">Quizz</string>
     <string name="nav_drawer_shop">Magasin</string>
 
+    <string name="connexion">Se connecter à Hearthstone Collector</string>
+
 </resources>

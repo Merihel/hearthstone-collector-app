@@ -4,7 +4,7 @@ public class Deck {
     private int id;
     private String name;
     private String description;
-    private Card[] cardsList;
+    private Card[] cardsList = null;
 
     public Deck() {
     }

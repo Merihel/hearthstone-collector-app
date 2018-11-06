@@ -5,37 +5,80 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activities.ConnexionActivity"
-    android:background="@drawable/wallpaper"
     android:theme="@android:style/Theme.Light.NoTitleBar"
-    >
+    tools:context=".Activities.ConnexionActivity">
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.5" />
 
-    <com.facebook.login.widget.LoginButton
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="161dp"
+        android:layout_weight="0.0"
+        app:srcCompat="@drawable/hearthstone_logo" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.5" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_family"
+        android:text="@string/connexion"
+        android:textAlignment="center"
+        android:textColor="#626262"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.5" />
+
+    <Button
         android:id="@+id/loginBtnFb"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="125dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:background="@drawable/button_login_fb_background"
+        android:text="Log in with Facebook"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_sign_in"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal" />
+        android:visibility="gone"
+        />
 
     <Button
         android:id="@+id/google_sign_out"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
-        android:text="Se déconnecter de Google" />
+        android:textColor="#ffffff"
+        android:text="Se déconnecter de Google"
+        android:textAllCaps="false"
+        android:background="@drawable/button_login_google_background" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="2" />
+
+    <TextView
+        android:id="@+id/txtTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black" />
 
 </LinearLayout>

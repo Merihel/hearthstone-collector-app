@@ -7,8 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.example.lpiem.hearthstonecollectorapp.Manager.APIInterface;
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager;
+import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton;
+import com.example.lpiem.hearthstonecollectorapp.Models.Card;
 import com.example.lpiem.hearthstonecollectorapp.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -30,11 +34,18 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ConnexionActivity extends AppCompatActivity {
     CallbackManager callbackManager;
+    com.facebook.login.LoginManager fbLoginManager;
 
-    private LoginButton facebookSignInButton;
     private boolean isLoggedIn;
+    private Button loginBtnFb;
 
     private SignInButton googleSignInButton;
     private Button googleSignOutButton;
@@ -42,26 +53,45 @@ public class ConnexionActivity extends AppCompatActivity {
     private GoogleSignInAccount account;
     private static int RC_SIGN_IN = 100;
 
-    private APIManager apiManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
 
         // TEST
-        apiManager = new APIManager();
-        apiManager.getCardByID(1);
+        final TextView txtTest = findViewById(R.id.txtTest);
+
+        APIInterface hearthstoneInstance = APISingleton.getInstance();
+        Call<Card> call = hearthstoneInstance.getCard(1);
+                call.enqueue(new Callback<Card>() {
+            @Override
+            public void onResponse(Call<Card> call, Response<Card> response) {
+                if (response.isSuccessful()) {
+                    Card card = response.body();
+                    Log.d("[ConnexionActivity]", "card text : " + card.getText());
+                    txtTest.setText("Texte carte : "+card.getText());
+                } else {
+                    Log.d("[ConnexionActivity]", "error on response : " + response.errorBody());
+                }
+            }
+            @Override
+            public void onFailure(Call<Card>call, Throwable t) {
+                System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
+            }});
+
 
         /*
          * FACEBOOK
          */
+        fbLoginManager = com.facebook.login.LoginManager.getInstance();
         callbackManager = CallbackManager.Factory.create();
-        facebookSignInButton = findViewById(R.id.loginBtnFb);
-        facebookSignInButton.setReadPermissions("email");
+        loginBtnFb = findViewById((R.id.loginBtnFb));
+
+//        facebookSignInButton = findViewById(R.id.loginBtnFb);
+//        facebookSignInButton.setReadPermissions("email");
 
         // Callback registration
-        facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        fbLoginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() { // facebookSignInButton
             @Override
             public void onSuccess(LoginResult loginResult) {
                 getUserFacebookDetails(loginResult.getAccessToken());
@@ -75,6 +105,13 @@ public class ConnexionActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
                 Log.e("facebookexception",exception.getMessage());
+            }
+        });
+
+        loginBtnFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fbLoginManager.logInWithReadPermissions(ConnexionActivity.this, Arrays.asList("email", "public_profile", "user_birthday"));
             }
         });
 
