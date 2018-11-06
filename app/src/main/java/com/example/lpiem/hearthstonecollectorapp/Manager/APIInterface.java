@@ -13,24 +13,23 @@ import retrofit2.http.Path;
 
 public interface APIInterface {
     // CARDS //
-
     @GET("card/select/{id}")
-    Call<Card> getCard( @Path("id") int id);
+    Call<List<Card>> getCard( @Path("id") int id);
 
     @GET("card/select/{set}")
-    Call<Card> getCardBySet( @Path("set") String set);
+    Call<List<Card>> getCardBySet( @Path("set") String set);
 
     @GET("card/select/{class}")
-    Call<Card> getCardByClass( @Path("class") String classCard);
+    Call<List<Card>> getCardByClass( @Path("class") String classCard);
 
     @GET("card/select/{race}")
-    Call<Card> getCardByRace( @Path("race") String race);
+    Call<List<Card>> getCardByRace( @Path("race") String race);
 
     @GET("card/select/{faction}")
-    Call<Card> getCardByFaction( @Path("faction") String faction);
+    Call<List<Card>> getCardByFaction( @Path("faction") String faction);
 
     @POST("card/new")
-    Call<Card> createCard(@Body Card card);
+    Call<List<Card>> createCard(@Body Card card);
 
 
 
@@ -38,13 +37,10 @@ public interface APIInterface {
     @GET("/user/select/{id}")
     Call<User> getUser(@Path("id") int id);
 
-    @GET("/user/new")
+    @GET("user/new")
     Call<User> createUser(@Body User user);
 
     @GET("/user/update")
-    Call<User> updateUser(@Body User user);
-
-    @GET("/user/select-with-cards/{id}")
     Call<User> getUserWithCards(@Body User user);
 
 }

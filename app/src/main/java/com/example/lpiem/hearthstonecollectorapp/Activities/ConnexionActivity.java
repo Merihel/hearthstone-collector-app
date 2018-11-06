@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,20 +63,20 @@ public class ConnexionActivity extends AppCompatActivity {
         final TextView txtTest = findViewById(R.id.txtTest);
 
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<Card> call = hearthstoneInstance.getCard(1);
-                call.enqueue(new Callback<Card>() {
+        Call<List<Card>> call = hearthstoneInstance.getCard(1);
+                call.enqueue(new Callback<List<Card>>() {
             @Override
-            public void onResponse(Call<Card> call, Response<Card> response) {
+            public void onResponse(Call<List<Card>> call, Response<List<Card>> response) {
                 if (response.isSuccessful()) {
-                    Card card = response.body();
-                    Log.d("[ConnexionActivity]", "card text : " + card.getText());
-                    txtTest.setText("Texte carte : "+card.getText());
+                    List<Card> card = response.body();
+                    Log.d("[ConnexionActivity]", "card text : " + card.get(0).getText());
+                    txtTest.setText("Texte carte : "+card.get(0).getText());
                 } else {
                     Log.d("[ConnexionActivity]", "error on response : " + response.errorBody());
                 }
             }
             @Override
-            public void onFailure(Call<Card>call, Throwable t) {
+            public void onFailure(Call<List<Card>>call, Throwable t) {
                 System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
             }});
 
