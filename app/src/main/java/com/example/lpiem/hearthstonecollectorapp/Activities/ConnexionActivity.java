@@ -13,6 +13,7 @@ import com.example.lpiem.hearthstonecollectorapp.Manager.APIInterface;
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager;
 import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton;
 import com.example.lpiem.hearthstonecollectorapp.Models.Card;
+import com.example.lpiem.hearthstonecollectorapp.Models.User;
 import com.example.lpiem.hearthstonecollectorapp.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -63,23 +64,44 @@ public class ConnexionActivity extends AppCompatActivity {
         final TextView txtTest = findViewById(R.id.txtTest);
 
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<List<Card>> call = hearthstoneInstance.getCard(1);
-                call.enqueue(new Callback<List<Card>>() {
+        Call<Card> call = hearthstoneInstance.getCard(1);
+        call.enqueue(new Callback<Card>() {
             @Override
-            public void onResponse(Call<List<Card>> call, Response<List<Card>> response) {
+            public void onResponse(Call<Card> call, Response<Card> response) {
                 if (response.isSuccessful()) {
-                    List<Card> card = response.body();
-                    Log.d("[ConnexionActivity]", "card text : " + card.get(0).getText());
-                    txtTest.setText("Texte carte : "+card.get(0).getText());
+                    Card card = response.body(); //On get l'objet à l'index 0
+                    Log.d("[ConnexionActivity]", "card text : " + card.getFlavor());
+                    txtTest.setText("Texte carte : "+card.getFlavor());
                 } else {
                     Log.d("[ConnexionActivity]", "error on response : " + response.errorBody());
                 }
             }
             @Override
-            public void onFailure(Call<List<Card>>call, Throwable t) {
+            public void onFailure(Call<Card>call, Throwable t) {
                 System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
-            }});
+            }
+        });
 
+        //TEST
+        final TextView txtTestUser = findViewById(R.id.txtTestUser);
+
+        Call<User> callUser = hearthstoneInstance.getUser(1);
+        callUser.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body(); //On get l'objet à l'index 0
+                    Log.d("[ConnexionActivity]", "User pseudo : " + user.getPseudo());
+                    txtTestUser.setText("Pseudo user : "+user.getPseudo());
+                } else {
+                    Log.d("[ConnexionActivity]", "error on response : " + response.errorBody());
+                }
+            }
+            @Override
+            public void onFailure(Call<User>call, Throwable t) {
+                System.out.println("[APIManager]getUserByID Erreur callback ! "+ t);
+            }
+        });
 
         /*
          * FACEBOOK

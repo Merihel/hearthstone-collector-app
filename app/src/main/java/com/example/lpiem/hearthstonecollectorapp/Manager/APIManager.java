@@ -16,24 +16,26 @@ public class APIManager {
     // CARDS //
     public void getCardByID(int id) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<List<Card>> call = hearthstoneInstance.getCard(id);
+        Call<Card> call = hearthstoneInstance.getCard(id);
 
 
-        call.enqueue(new Callback<List<Card>>() {
+        call.enqueue(new Callback<Card>() {
             @Override
-            public void onResponse(Call<List<Card>> call, Response<List<Card>> response) {
+            public void onResponse(Call<Card> call, Response<Card> response) {
                 if (response.isSuccessful()) {
-                    List<Card> card = response.body();
-                    Log.d("[APIManager]getCardByID", "card text : " + card.get(0).getText());
+                    Card card = response.body();
+                    Log.d("[APIManager]getCardByID", "card text : " + card.getText());
 
                 } else {
                     Log.d("[APIManager]getCardByID", "error on response : " + response.errorBody());
                 }
             }
+
             @Override
-            public void onFailure(Call<List<Card>> call, Throwable t) {
+            public void onFailure(Call<Card> call, Throwable t) {
                 System.out.println("[APIManager]getCardByID Erreur callback ! "+ t);
-            }});
+            }
+        });
     }
 
     public void getCardBySet(String set){
@@ -58,13 +60,31 @@ public class APIManager {
 
     public void createCard(Card card) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
-        Call<List<Card>> call = hearthstoneInstance.createCard(card);
+        Call<Card> call = hearthstoneInstance.createCard(card);
     }
 
     // USERS //
     public void getUserByID(int id) {
         APIInterface hearthstoneInstance = APISingleton.getInstance();
         Call<User> call = hearthstoneInstance.getUser(id);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    Log.d("[APIManager]getUserByID", "user pseudo : " + user.getPseudo());
+
+                } else {
+                    Log.d("[APIManager]getUserByID", "error on response : " + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                System.out.println("[APIManager]getUserByID Erreur callback ! "+ t);
+            }
+        });
     }
 
     public void createUser(User user) {
