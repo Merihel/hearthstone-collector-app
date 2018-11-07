@@ -15,7 +15,11 @@
     <string name="nav_drawer_trade">Mes échanges</string>
     <string name="nav_drawer_quizz">Quizz</string>
     <string name="nav_drawer_shop">Magasin</string>
+    <string name="nav_deconnexion">Se déconnecter</string>
 
     <string name="connexion">Se connecter à Hearthstone Collector</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

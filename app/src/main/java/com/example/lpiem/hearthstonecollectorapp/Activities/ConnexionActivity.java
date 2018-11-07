@@ -21,9 +21,11 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -49,6 +51,8 @@ public class ConnexionActivity extends AppCompatActivity {
     private boolean isLoggedIn;
     private Button loginBtnFb;
 
+    private Button createAccount;
+
     private SignInButton googleSignInButton;
     private Button googleSignOutButton;
     private GoogleSignInClient mGoogleSignInClient;
@@ -60,7 +64,9 @@ public class ConnexionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
 
-        // TEST
+        /*
+         * TEST : récupérer le texte de la carte qui a l'id 1
+         */
         final TextView txtTest = findViewById(R.id.txtTest);
 
         APIInterface hearthstoneInstance = APISingleton.getInstance();
@@ -82,7 +88,9 @@ public class ConnexionActivity extends AppCompatActivity {
             }
         });
 
-        //TEST
+        /*
+         * TEST : récupérer le user avec l'id 1
+         */
         final TextView txtTestUser = findViewById(R.id.txtTestUser);
 
         Call<User> callUser = hearthstoneInstance.getUser(1);
@@ -103,6 +111,25 @@ public class ConnexionActivity extends AppCompatActivity {
             }
         });
 
+
+
+        account = GoogleSignIn.getLastSignedInAccount(this);
+
+        // Déconnexion
+        Bundle bundle = getIntent().getExtras();
+        if(bundle.getBoolean("deconnexion")==true){
+            System.out.println("[ConnexionActivity] Deconnexion !");
+            LoginManager.getInstance().logOut();
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestProfile()
+                    .build();
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+            googleSignOut();
+        }
+
+
         /*
          * FACEBOOK
          */
@@ -122,7 +149,6 @@ public class ConnexionActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                // App code
             }
 
             @Override
@@ -142,7 +168,6 @@ public class ConnexionActivity extends AppCompatActivity {
          * GOOGLE
          */
 
-        account = GoogleSignIn.getLastSignedInAccount(this);
         googleSignInButton = findViewById(R.id.google_sign_in);
         googleSignOutButton = findViewById(R.id.google_sign_out);
 
@@ -165,10 +190,25 @@ public class ConnexionActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
+            .requestProfile()
             .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
+
+        /*
+         * CREATION DE COMPTE HORS RESEAUX SOCIAUX
+         */
+        createAccount = findViewById(R.id.btnCreationCompte);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
     }
 
     @Override
@@ -219,6 +259,12 @@ public class ConnexionActivity extends AppCompatActivity {
                         Log.e("connexion", json_object.toString());
                         Intent intent = new Intent(ConnexionActivity.this, NavigationActivity.class);
                         intent.putExtra("userProfile", json_object.toString());
+                        try {
+                            System.out.println("email fb : "+json_object.getString("email"));
+                        }
+                        catch(JSONException e) {
+                            System.out.println("[ConnexionActivity]getUserFacebookDetails erreur json : "+e);
+                        }
                         startActivity(intent);
                     }
 
@@ -268,6 +314,22 @@ public class ConnexionActivity extends AppCompatActivity {
             googleSignInButton.setVisibility(View.VISIBLE);
             googleSignOutButton.setVisibility(View.GONE);
         } else {
+            Intent intent = new Intent(ConnexionActivity.this, NavigationActivity.class);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("name", signInAccount.getDisplayName());
+                jsonObject.put("email", signInAccount.getEmail());
+                jsonObject.put("pictureUrlGoogle", signInAccount.getPhotoUrl());
+
+                System.out.println("[ConnexionActivity]googleConnexion picture url : "+signInAccount.getPhotoUrl());
+                System.out.println("[ConnexionActivity]googleConnexion objet json : "+jsonObject);
+            }
+            catch(JSONException e) {
+                System.out.println("[ConnexionActivity]googleConnexion erreur JSON : "+e);
+            }
+            intent.putExtra("userProfile",jsonObject.toString());
+            startActivity(intent);
+
             Log.i("INFO", "USER CONNECTED: " + signInAccount.getDisplayName() + ", " + signInAccount.getEmail());
             googleSignInButton.setVisibility(View.GONE);
             googleSignOutButton.setVisibility(View.VISIBLE);

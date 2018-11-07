@@ -230,4 +230,12 @@ public class Card {
     public void setRarity(String rarity) {
         this.rarity = rarity;
     }
+
+    @Override
+    public String toString(){
+        return "Card { "+
+                "id = " + id +
+                "hsId = " + hsId +
+                "}";
+    }
 }

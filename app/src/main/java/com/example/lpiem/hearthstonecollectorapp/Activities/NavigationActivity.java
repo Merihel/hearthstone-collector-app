@@ -20,7 +20,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment;
 import com.example.lpiem.hearthstonecollectorapp.R;
+import com.facebook.login.LoginManager;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -29,6 +31,22 @@ public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     JSONObject response, profile_pic_data, profile_pic_url;
 
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
+    private Fragment cardsListFragment;
+    private Fragment decksFragment;
+    private Fragment tradeFragment;
+    private Fragment quizzFragment;
+    private Fragment shopFragment;
+
+    private static final int FRAGMENT_CARDSLIST = 0;
+    private static final int FRAGMENT_DECKS = 1;
+    private static final int FRAGMENT_TRADE = 2;
+    private static final int FRAGMENT_QUIZZ = 3;
+    private static final int FRAGMENT_SHOP = 4;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +54,10 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -48,16 +66,24 @@ public class NavigationActivity extends AppCompatActivity
         Intent intent = getIntent();
         String jsondata = intent.getStringExtra("userProfile");
         Log.w("Jsondata", jsondata);
-        TextView user_name = (TextView) findViewById(R.id.nameUser);
-        ImageView user_picture = (ImageView) findViewById(R.id.imgUser);
+        View headerView = navigationView.getHeaderView(0);
+        TextView user_name = (TextView) headerView.findViewById(R.id.nameUser);
+        ImageView user_picture = (ImageView) headerView.findViewById(R.id.imgUser);
 
         try {
             response = new JSONObject(jsondata);
-            Log.e("navigation activity : ", response.get("name").toString());
-
+            Log.e("[NavigationActivity]", response.get("name").toString());
             user_name.setText(response.get("name").toString());
-            profile_pic_data = new JSONObject(response.get("picture").toString());
-            profile_pic_url = new JSONObject(profile_pic_data.getString("data"));
+
+            if(!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")){
+                System.out.println("[NavigationActivity] url picture google ok");
+                profile_pic_url = new JSONObject();
+                profile_pic_url.put("url", response.getString("pictureUrlGoogle"));
+            } else {
+                profile_pic_data = new JSONObject(response.get("picture").toString());
+                profile_pic_url = new JSONObject(profile_pic_data.getString("data"));
+            }
+
             Picasso.with(this).load(profile_pic_url.getString("url"))
                     .into(user_picture);
 
@@ -76,42 +102,13 @@ public class NavigationActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.navigation, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-//        Bundle args = new Bundle();
-//        // traiter les données JSONObject;
-//        args.putString("profile_pic_data", );
-//        args.putString("profile_pic_url", );
-
-
-
         if (id == R.id.nav_cards) {
-            //showFragment(new CardsListFragment());
+            this.showFragment(FRAGMENT_CARDSLIST);
         } else if (id == R.id.nav_decks) {
             //showFragment(new DecksFragment());
         } else if (id == R.id.nav_trade) {
@@ -120,21 +117,37 @@ public class NavigationActivity extends AppCompatActivity
             //showFragment(new QuizzFragment());
         } else if (id == R.id.nav_shop) {
             //showFragment(new ShopFragment());
+        } else if (id == R.id.nav_deconnexion) {
+            Intent intent = new Intent(NavigationActivity.this, ConnexionActivity.class);
+            intent.putExtra("deconnexion", true);
+            startActivity(intent);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void showFragment(Fragment fragment, Bundle args) {
-        //On envoie tous les arguments dans le fragment
-        fragment.setArguments(args);
-        //On récupère le fragment manager et on démarre le passage vers l'autre fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_navigation, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+    public void showFragment(int fragmentIdentifier) {
+        switch (fragmentIdentifier){
+            case FRAGMENT_CARDSLIST :
+                this.showCardsListFragment();
+                break;
+            default:
+                break;
+        }
     }
+
+    private void showCardsListFragment(){
+        if (this.cardsListFragment == null) this.cardsListFragment = CardsListFragment.newInstance();
+        this.startTransactionFragment(this.cardsListFragment);
+    }
+
+    private void startTransactionFragment(Fragment fragment){
+        if (!fragment.isVisible()){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.drawer_layout, fragment).commit();
+        }
+    }
+
+
 }

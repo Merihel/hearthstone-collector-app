@@ -14,7 +14,7 @@
         android:layout_weight="0.5" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imgLogo"
         android:layout_width="match_parent"
         android:layout_height="161dp"
         android:layout_weight="0.0"
@@ -26,7 +26,7 @@
         android:layout_weight="0.5" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtConnexion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_family"
@@ -92,5 +92,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/btnCreationCompte"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_weight="0.5"
+        android:background="#DFA325"
+        android:text="Cliquer ici pour créer un compte"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
 </LinearLayout>
