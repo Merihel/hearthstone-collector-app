@@ -49,6 +49,9 @@ public class ConnexionActivity extends AppCompatActivity {
     private boolean isLoggedIn;
     private Button loginBtnFb;
 
+    //DEBUG
+    private Button btnFragTest;
+
     private SignInButton googleSignInButton;
     private Button googleSignOutButton;
     private GoogleSignInClient mGoogleSignInClient;
@@ -59,6 +62,17 @@ public class ConnexionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+
+        //DEBUG
+        btnFragTest = findViewById(R.id.bntFragTest);
+
+        btnFragTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent testIntent = new Intent(ConnexionActivity.this, FormCreateUserActivity.class);
+                startActivity(testIntent);
+            }
+       });
 
         // TEST
         final TextView txtTest = findViewById(R.id.txtTest);

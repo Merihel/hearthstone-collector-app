@@ -47,6 +47,16 @@ public class User {
         this.googleId = googleId;
     }
 
+    public User(String pseudo, String firstName, String lastName, String mail, int coins, String facebookId, String googleId) {
+        this.pseudo = pseudo;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mail = mail;
+        this.coins = coins;
+        this.facebookId = facebookId;
+        this.googleId = googleId;
+    }
+
     public User() {
     }
 
@@ -134,5 +144,21 @@ public class User {
 
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", pseudo='" + pseudo + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", mail='" + mail + '\'' +
+                ", coins='" + coins + '\'' +
+                ", cards='" + cards + '\'' +
+                ", wishlist='" + wishlist + '\'' +
+                ", facebookId='" + facebookId + '\'' +
+                ", googleId='" + googleId + '\'' +
+                '}';
     }
 }
