@@ -7,88 +7,225 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class APIManager {
+class APIManager (internal var interfaceCallBackController: InterfaceCallBackController, internal var listName: ArrayList<String>) {
+    internal var message: String? = null
+    internal var nextPage = 1
+    internal var nbPages = 100
 
-    // CARDS //
+    // CARDS
+
     fun getCardById(id: Int) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCard(id)
 
-        call.enqueue(object: Callback<Card> {
+
+        call.enqueue(object : Callback<Card> {
             override fun onResponse(call: Call<Card>, response: Response<Card>) {
                 if (response.isSuccessful) {
                     val card = response.body()
-                    Log.d("[APIManager]getCardByID", "Card text : " + card!!.text)
+                    //fetchData(response)
+                    Log.d("APIManager", "card text : " + card!!.text!!)
+
                 } else {
-                    Log.d("[APIManager]getCardByID", "Error: " + response.errorBody())
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
             }
+
             override fun onFailure(call: Call<Card>, t: Throwable) {
-                Log.e("APIManager", t.message)
+                t.printStackTrace()
             }
         })
+        interfaceCallBackController.onWorkDone(true)
+
     }
 
     fun getCardsBySet(set: String) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsBySet(set)
-    }
 
-    fun getCardsByClass(classCard: String) {
-        var hearthstoneInstance = APISingleton.hearthstoneInstance
-        var call = hearthstoneInstance!!.getCardsByClass(classCard)
+
+        call.enqueue(object : Callback<List<Card>> {
+            override fun onResponse(call: Call<List<Card>>, response: Response<List<Card>>) {
+                if (response.isSuccessful) {
+                    // TODO : gérer la liste
+                    val card = response.body()
+                    //fetchData(response)
+                    //Log.d("APIManager", "card text : " + card!!.text!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Card>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+        interfaceCallBackController.onWorkDone(true)
+
     }
 
     fun getCardsByRace(race: String) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsByRace(race)
+
+
+        call.enqueue(object : Callback<List<Card>> {
+            override fun onResponse(call: Call<List<Card>>, response: Response<List<Card>>) {
+                if (response.isSuccessful) {
+                    // TODO : gérer la liste !
+                    val card = response.body()
+                    //fetchData(response)
+                    //Log.d("APIManager", "card text : " + card!!.text!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Card>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+        interfaceCallBackController.onWorkDone(true)
+
     }
 
     fun getCardsByFaction(faction: String) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsByFaction(faction)
+
+
+        call.enqueue(object : Callback<List<Card>> {
+            override fun onFailure(call: Call<List<Card>>, t: Throwable) {
+                t.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<List<Card>>, response: Response<List<Card>>) {
+                if (response.isSuccessful) {
+                    // TODO : Gérer la liste !
+                    val card = response.body()
+                    //fetchData(response)
+                    //Log.d("APIManager", "card text : " + card!!.text!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+        })
+        interfaceCallBackController.onWorkDone(true)
+
     }
 
     fun createCard(card: Card) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.createCard(card)
+
+
+        call.enqueue(object : Callback<Card> {
+            override fun onResponse(call: Call<Card>, response: Response<Card>) {
+                if (response.isSuccessful) {
+                    val card = response.body()
+                    //fetchData(response)
+                    Log.d("APIManager", "card text : " + card!!.text!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<Card>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+        interfaceCallBackController.onWorkDone(true)
+
     }
 
-    // USERS //
+
+
+
+    // USERS
+
     fun getUserById(id: Int) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getUser(id)
 
-        call.enqueue(object: Callback<User> {
+
+        call.enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
-                    var user = response.body()
-                    Log.d("[APIManager]getUserById", user.toString())
+                    val user = response.body()
+                    //fetchData(response)
+                    Log.d("APIManager", "card text : " + user!!.firstName!!)
+
                 } else {
-                    Log.e("[APIManager]getUserById", "Error: " + response.errorBody())
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
             }
+
             override fun onFailure(call: Call<User>, t: Throwable) {
-                Log.e("[APIManager]getUserById", "Erreur callback: " + t.message)
+                t.printStackTrace()
             }
         })
+        interfaceCallBackController.onWorkDone(true)
     }
 
     fun createUser(user: User) {
+
+        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.createUser(user)
 
-        call.enqueue(object: Callback<User> {
+
+        call.enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
-                    var user = response.body()
-                    Log.d("[APIManager]createUser", user.toString())
+                    val user = response.body()
+                    //fetchData(response)
+                    Log.d("[APIManager]createUser", "card text : " + user!!.toString()!!)
+
+                } else {
+                    Log.d("[APIManager]createUser", "error : " + response.errorBody()!!)
                 }
             }
+
             override fun onFailure(call: Call<User>, t: Throwable) {
-                Log.e("[APIManager]creatUser", "Erreur callback "+t.message)
+                t.printStackTrace()
             }
         })
+        interfaceCallBackController.onWorkDone(true)
     }
+
+//    @Synchronized
+//    private fun fetchData(response: Response<Card>) {
+//
+//        for (i in 0 until response.body()!!.size) {
+//            listName.add(response.body()!![i].card!!.name!!)
+//        }
+//        interfaceCallBackController.onWorkDone(true)
+//    }
+
+
+
+
 }
