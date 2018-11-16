@@ -1,14 +1,12 @@
-package com.example.lpiem.hearthstonecollectorapp.Manager
+package com.example.lpiem.hearthstonecollectorapp.Interface
 
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface APIInterface {

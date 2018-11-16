@@ -3,7 +3,7 @@ package com.example.lpiem.hearthstonecollectorapp.Models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Card(
+data class Card(
         @SerializedName("id") @Expose var id: Int,
         @SerializedName("cardId") @Expose var hsId: String,
         @SerializedName("name") @Expose var name: String,
@@ -22,15 +22,4 @@ class Card(
         @SerializedName("text") @Expose var text: String,
         @SerializedName("flavor") @Expose var flavor: String,
         @SerializedName("img") @Expose var img: String,
-        @SerializedName("imgGold") @Expose var imgGold: String ) {
-
-    override fun toString(): String {
-        return "Card { " +
-                "id = " + id +
-                "hsId = " + hsId +
-                "}"
-    }
-
-
-
-}
+        @SerializedName("imgGold") @Expose var imgGold: String )

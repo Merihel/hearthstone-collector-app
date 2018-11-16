@@ -1,13 +1,16 @@
 package com.example.lpiem.hearthstonecollectorapp.Manager
 
 import android.util.Log
+import com.example.lpiem.hearthstonecollectorapp.Interface.APIInterface
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class APIManager (internal var interfaceCallBackController: InterfaceCallBackController, internal var listName: ArrayList<String>) {
+class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, internal var interfaceCallBackCard: InterfaceCallBackCard) {
     internal var message: String? = null
     internal var nextPage = 1
     internal var nbPages = 100
@@ -16,7 +19,7 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
 
     fun getCardById(id: Int) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCard(id)
@@ -26,9 +29,10 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
             override fun onResponse(call: Call<Card>, response: Response<Card>) {
                 if (response.isSuccessful) {
                     val card = response.body()
-                    //fetchData(response)
                     Log.d("APIManager", "card text : " + card!!.text!!)
-
+                    val listCard = ArrayList<Card>()
+                    listCard.add(card)
+                    interfaceCallBackCard.onWorkCardDone(listCard)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
@@ -38,13 +42,13 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
+
 
     }
 
     fun getCardsBySet(set: String) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsBySet(set)
@@ -67,13 +71,12 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
 
     }
 
     fun getCardsByRace(race: String) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsByRace(race)
@@ -82,11 +85,8 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
         call.enqueue(object : Callback<List<Card>> {
             override fun onResponse(call: Call<List<Card>>, response: Response<List<Card>>) {
                 if (response.isSuccessful) {
-                    // TODO : gérer la liste !
                     val card = response.body()
-                    //fetchData(response)
-                    //Log.d("APIManager", "card text : " + card!!.text!!)
-
+                    val listCard = ArrayList<Card>()
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
@@ -96,13 +96,12 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
 
     }
 
     fun getCardsByFaction(faction: String) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsByFaction(faction)
@@ -125,13 +124,11 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 }
             }
         })
-        interfaceCallBackController.onWorkDone(true)
-
     }
 
     fun createCard(card: Card) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.createCard(card)
@@ -153,8 +150,6 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
-
     }
 
 
@@ -164,7 +159,7 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
 
     fun getUserById(id: Int) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getUser(id)
@@ -174,9 +169,10 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
                     val user = response.body()
-                    //fetchData(response)
                     Log.d("APIManager", "card text : " + user!!.firstName!!)
-
+                    var listData = ArrayList<User>()
+                    listData.add(user)
+                    interfaceCallBackUser.onWorkUserDone(listData)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
@@ -186,12 +182,11 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
     }
 
     fun createUser(user: User) {
 
-        var magicCardAPI: APIInterface  = APISingleton.hearthstoneInstance!!
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.createUser(user)
@@ -213,7 +208,6 @@ class APIManager (internal var interfaceCallBackController: InterfaceCallBackCon
                 t.printStackTrace()
             }
         })
-        interfaceCallBackController.onWorkDone(true)
     }
 
 //    @Synchronized

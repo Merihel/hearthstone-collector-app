@@ -1,6 +1,6 @@
 package com.example.lpiem.hearthstonecollectorapp.Manager
 
-import com.google.gson.Gson
+import com.example.lpiem.hearthstonecollectorapp.Interface.APIInterface
 import com.google.gson.GsonBuilder
 
 import okhttp3.OkHttpClient

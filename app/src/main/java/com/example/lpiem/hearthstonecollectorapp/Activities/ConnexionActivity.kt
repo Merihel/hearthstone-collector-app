@@ -11,8 +11,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.activity_connexion.*
-import android.support.annotation.NonNull
 import android.view.View
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
@@ -23,7 +27,7 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -40,6 +44,11 @@ class ConnexionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connexion)
+
+        ////////        TEST         /////////
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        controller.getCardById(1)
+        controller.getUserById(15)
 
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
@@ -106,8 +115,6 @@ class ConnexionActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
-
-
     }
 
     override fun onStart() {
@@ -216,6 +223,28 @@ class ConnexionActivity : AppCompatActivity() {
 
             google_sign_in.visibility = View.GONE
             google_sign_out.visibility = View.VISIBLE
+        }
+    }
+
+
+    override fun onWorkUserDone(result: List<User>) {
+        if (result != null) {
+            Log.i("OnWorkDone", "OK")
+            System.out.println("MY USER > " + result.get(0).pseudo)
+        } else {
+            Log.e("OnWorkDone Error", "Not ok")
+        }
+    }
+
+    override fun onWorkCardDone(result: List<Card>) {
+        if (result != null) {
+            Log.d("OnWorkCardDone", result.get(0).flavor)
+        }
+    }
+
+    override fun onWorkCardsDone(result: List<Card>) {
+        if (result != null) {
+            Log.d("OnWorkCardDone", result.get(0).flavor)
         }
     }
 }
