@@ -101,6 +101,8 @@
         android:background="#DFA325"
         android:text="Cliquer ici pour créer un compte"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
 </LinearLayout>

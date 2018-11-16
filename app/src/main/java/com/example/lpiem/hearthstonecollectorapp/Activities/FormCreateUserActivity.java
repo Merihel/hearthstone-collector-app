@@ -1,9 +1,12 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +34,10 @@ public class FormCreateUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_create_user);
+        setTitle("Inscription");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
 
         //Récupération des fields
         inpPseudo = findViewById(R.id.inpPseudo);
@@ -76,5 +83,11 @@ public class FormCreateUserActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(FormCreateUserActivity.this, ConnexionActivity.class);
+        startActivityForResult(myIntent, 0);
+        return true;
     }
 }

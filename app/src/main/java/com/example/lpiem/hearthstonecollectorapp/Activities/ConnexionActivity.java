@@ -205,6 +205,9 @@ public class ConnexionActivity extends AppCompatActivity {
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ConnexionActivity.this, FormCreateUserActivity.class);
+                //intent.putExtra("userProfile", json_object.toString());
+                startActivity(intent);
 
             }
         });

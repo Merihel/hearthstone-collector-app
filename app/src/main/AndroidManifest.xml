@@ -47,7 +47,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.FormCreateUserActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            >
         </activity>
     </application>
 
