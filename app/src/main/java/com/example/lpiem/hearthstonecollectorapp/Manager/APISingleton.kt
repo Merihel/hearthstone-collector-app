@@ -7,16 +7,15 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class APISingleton {
+object APISingleton {
 
     private val URL_API = "http://10.0.2.2:8000"
-    private var hearthstoneInstance: APIInterface? = null
-
-    fun getInstance(): APIInterface? {
-        if (hearthstoneInstance == null)
+    var hearthstoneInstance: APIInterface? = null
+    get() {
+        if (field == null)
             createApiBuilder()
-        
-        return hearthstoneInstance
+
+        return field
     }
 
 

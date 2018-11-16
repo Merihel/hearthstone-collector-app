@@ -45,7 +45,7 @@ public class CardsListFragment extends Fragment {
          */
         final TextView txtTest = view.findViewById(R.id.txtTest);
 
-        APIInterface hearthstoneInstance = APISingleton.getInstance();
+        APIInterface hearthstoneInstance = APISingleton.INSTANCE.getHearthstoneInstance();
         Call<User> callUser = hearthstoneInstance.getUser(1);
         callUser.enqueue(new Callback<User>() {
             @Override

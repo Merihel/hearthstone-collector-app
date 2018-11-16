@@ -12,8 +12,8 @@ class APIManager {
     // CARDS //
     fun getCardById(id: Int) {
 
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getCard(id)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCard(id)
 
         call.enqueue(object: Callback<Card> {
             override fun onResponse(call: Call<Card>, response: Response<Card>) {
@@ -31,36 +31,36 @@ class APIManager {
     }
 
     fun getCardsBySet(set: String) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getCardsBySet(set)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCardsBySet(set)
     }
 
     fun getCardsByClass(classCard: String) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getCardsByClass(classCard)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCardsByClass(classCard)
     }
 
     fun getCardsByRace(race: String) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getCardsByRace(race)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCardsByRace(race)
     }
 
     fun getCardsByFaction(faction: String) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getCardsByFaction(faction)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCardsByFaction(faction)
     }
 
     fun createCard(card: Card) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.createCard(card)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.createCard(card)
     }
 
     // USERS //
     fun getUserById(id: Int) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.getUser(id)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getUser(id)
 
-        call.enqueue(object: Callback<User>() {
+        call.enqueue(object: Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
                     var user = response.body()
@@ -76,10 +76,10 @@ class APIManager {
     }
 
     fun createUser(user: User) {
-        var hearthstoneInstance = APISingleton.getInstance()
-        var call = hearthstoneInstance.createUser(user)
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.createUser(user)
 
-        call.enqueue(object: Callback<User>() {
+        call.enqueue(object: Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
                     var user = response.body()

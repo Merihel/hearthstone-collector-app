@@ -68,8 +68,7 @@ public class ConnexionActivity extends AppCompatActivity {
          * TEST : récupérer le texte de la carte qui a l'id 1
          */
         final TextView txtTest = findViewById(R.id.txtTest);
-
-        APIInterface hearthstoneInstance = APISingleton.getInstance();
+        APIInterface hearthstoneInstance = APISingleton.INSTANCE.getHearthstoneInstance();
         Call<Card> call = hearthstoneInstance.getCard(1);
         call.enqueue(new Callback<Card>() {
             @Override

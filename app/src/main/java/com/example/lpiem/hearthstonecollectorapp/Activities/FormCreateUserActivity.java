@@ -55,11 +55,11 @@ public class FormCreateUserActivity extends AppCompatActivity {
                 String valueEmail = inpEmail.getText().toString();
 
                 if (valuePseudo != null || valuePseudo != "" && valueEmail != null && valueEmail != "") {
-                    User user = new User(valuePseudo, valueFirstName, valueLastName, valueEmail, 0,  "", "");
+                    User user = new User(8, "test", "test1@fzef.fr", 44, null, null, null, null, null, null, null);
 
                     System.out.println(user.toString());
 
-                    APIInterface hearthstoneInstance = APISingleton.getInstance();
+                    APIInterface hearthstoneInstance = APISingleton.INSTANCE.getHearthstoneInstance();
                     Call<User> call = hearthstoneInstance.createUser(user);
                     call.enqueue(new Callback<User>() {
                         @Override

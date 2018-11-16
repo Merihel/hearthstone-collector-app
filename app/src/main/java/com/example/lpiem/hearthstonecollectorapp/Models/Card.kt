@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class Card(
-        @SerializedName("cardId") @Expose var id: Int,
+        @SerializedName("id") @Expose var id: Int,
         @SerializedName("cardId") @Expose var hsId: String,
         @SerializedName("name") @Expose var name: String,
         @SerializedName("login") @Expose var cost: Int,
