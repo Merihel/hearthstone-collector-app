@@ -47,8 +47,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.FormCreateUserActivity"
-            android:label="@string/title_activity_form_create_user"
-            ></activity>
+            android:label="@string/title_activity_form_create_user" />
     </application>
 
 </manifest>
