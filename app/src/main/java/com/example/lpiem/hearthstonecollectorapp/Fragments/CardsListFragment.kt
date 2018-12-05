@@ -23,11 +23,14 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class CardsListFragment : InterfaceCallBackCard, Fragment() {
+class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
 
-    fun newInstance(): CardsListFragment {
-        return CardsListFragment()
+    companion object {
+        fun newInstance(): CardsListFragment {
+            return CardsListFragment()
+        }
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,6 +51,11 @@ class CardsListFragment : InterfaceCallBackCard, Fragment() {
 
     override fun onWorkCardsDone(result: List<Card>) {
         Log.d("My user cards", result.toString())
+        //Need to push the cards to the RecyclerView
+    }
+
+    override fun onWorkUserDone(result: List<User>) {
+
     }
 
 }

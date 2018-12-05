@@ -3,6 +3,7 @@ package com.example.lpiem.hearthstonecollectorapp.Activities
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -12,6 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.activity_connexion.*
 import android.view.View
+import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
@@ -36,6 +38,9 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     //Variables Google
     private var gClient: GoogleSignInClient? = null
     private var gAccount: GoogleSignInAccount? = null
+
+    //TEST DEBUG
+    private var cardsListFragment: Fragment? = null
 
     //Variables autres
     private var isLoggedIn: Boolean? = null
@@ -120,8 +125,15 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         //COMPTE HORS RESEAUX SOCIAUX
         btnCreationCompte.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
-                var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
-                startActivity(intent)
+                //OUVRE EN EFFET LE FORMULAIRE DE CREATION
+                //var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
+                //startActivity(intent)
+
+                //OUVRE LE FRAGMENT DES CARTES POUR TESTER
+                supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.root_layout_test, CardsListFragment.newInstance(), "cardsListFragment")
+                        .commit()
             }
         })
     }
