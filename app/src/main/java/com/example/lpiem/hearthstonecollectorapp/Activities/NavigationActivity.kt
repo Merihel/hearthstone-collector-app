@@ -15,8 +15,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
@@ -59,7 +61,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         val intent = intent
         val jsondata = intent.getStringExtra("userProfile")
-        Log.w("Jsondata", jsondata)
+        //Log.w("Jsondata", jsondata)
         val headerView = navigationView?.getHeaderView(0)
 
         try {
@@ -93,11 +95,17 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
+        // Handle navigation view item
+        // clicks here.
         when (item.itemId) {
             R.id.nav_cards -> {
+                Log.d("Fragment chosen", "CardsListFragment")
+                Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
                 this.showFragment(FRAGMENT_CARDSLIST)
             }
             R.id.nav_decks -> {
@@ -124,16 +132,22 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     fun showFragment(fragmentIdentifier: Int) {
+        this.showCardsListFragment()
+        /*
         when (fragmentIdentifier) {
             FRAGMENT_CARDSLIST -> this.showCardsListFragment()
             else -> {
             }
         }
+        */
     }
 
     private fun showCardsListFragment() {
-//        if (this.cardsListFragment == null) this.cardsListFragment = CardsListFragment.newInstance()
-//        this.startTransactionFragment(this.cardsListFragment!!)
+        if (this.cardsListFragment == null) {
+            val cardsListFragmentInstance = CardsListFragment()
+            this.cardsListFragment = cardsListFragmentInstance.newInstance()
+        }
+        this.startTransactionFragment(this.cardsListFragment!!)
     }
 
     private fun startTransactionFragment(fragment: Fragment) {

@@ -126,6 +126,33 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
         })
     }
 
+    fun getCardsByUser(userId: Int) {
+
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getCardsByUser(userId)
+
+
+        call.enqueue(object : Callback<List<Card>> {
+            override fun onResponse(call: Call<List<Card>>, response: Response<List<Card>>) {
+                if (response.isSuccessful) {
+                    val cards = response.body()
+
+                    interfaceCallBackCard.onWorkCardsDone(cards!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Card>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
+    }
+
     fun createCard(card: Card) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!

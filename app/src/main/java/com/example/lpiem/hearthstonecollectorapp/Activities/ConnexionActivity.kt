@@ -66,6 +66,15 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             googleSignOut()
         }
 
+        //TESTS ---- BOUTON D'ACCES RAPIDE SUR L'IMAGE
+        imgLogo.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
+
         //FACEBOOK
         fbLoginManager = com.facebook.login.LoginManager.getInstance()
         callbackManager = CallbackManager.Factory.create()

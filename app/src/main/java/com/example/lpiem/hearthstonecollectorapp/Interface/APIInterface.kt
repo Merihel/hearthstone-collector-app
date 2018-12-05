@@ -29,6 +29,9 @@ interface APIInterface {
     @GET("card/select/{faction}")
     abstract fun getCardsByFaction(@Path("faction") faction: String): Call<List<Card>>
 
+    @GET("card/select-by-user/{userId}")
+    abstract fun getCardsByUser(@Path("userId") userId: Int) : Call<List<Card>>
+
     @POST("card/new")
     abstract fun createCard(@Body card: Card): Call<Card>
 

@@ -9,7 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton
+import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
@@ -19,7 +23,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class CardsListFragment : Fragment() {
+class CardsListFragment : InterfaceCallBackCard, Fragment() {
 
     fun newInstance(): CardsListFragment {
         return CardsListFragment()
@@ -32,30 +36,18 @@ class CardsListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        /*
-         * TEST : récupérer le user avec l'id 1
-         */
+        super.onViewCreated(view, savedInstanceState)
 
-        val hearthstoneInstance = APISingleton.hearthstoneInstance
-        val callUser = hearthstoneInstance!!.getUser(1)
-        callUser.enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                if (response.isSuccessful) {
-                    val user = response.body() //On get l'objet à l'index 0
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        controller.getCardsByUser(1)
+    }
 
-                    Log.d("[ConnexionActivity]", "User  : " + user!!.cards!![0].id)
-                    val cardId = user.cards!![0].id
-                    println(cardId)
-                    txtTest.text = "Cartes user : $cardId"
-                } else {
-                    Log.d("[ConnexionActivity]", "error on response : " + response.errorBody()!!)
-                }
-            }
+    override fun onWorkCardDone(result: List<Card>) {
 
-            override fun onFailure(call: Call<User>, t: Throwable) {
-                println("[APIManager]getUserByID Erreur callback ! $t")
-            }
-        })
+    }
+
+    override fun onWorkCardsDone(result: List<Card>) {
+        Log.d("My user cards", result.toString())
     }
 
 }
