@@ -1,5 +1,6 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
+import android.app.ActionBar
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
@@ -22,8 +25,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private var rootView: View? = null
+private var llayout: LinearLayout? = null
 
 class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
+
 
     companion object {
         fun newInstance(): CardsListFragment {
@@ -31,11 +37,11 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cards_list, container, false)
+        rootView = inflater.inflate(R.layout.fragment_cards_list, container, false)
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,7 +56,13 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
     }
 
     override fun onWorkCardsDone(result: List<Card>) {
-        Log.d("My user cards", result.toString())
+        System.out.println("My user cards" + result.toString())
+        llayout = rootView?.findViewById(R.id.cardsListLLayout)
+        result.forEach {
+            var dynamicTextView = TextView(context)
+            dynamicTextView.text = it.name
+            llayout?.addView(dynamicTextView)
+        }
         //Need to push the cards to the RecyclerView
     }
 
