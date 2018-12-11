@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
+import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
 import com.squareup.picasso.Picasso
@@ -95,12 +96,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         // clicks here.
         when (item.itemId) {
             R.id.nav_cards -> {
-                Log.d("[NavigationActivity]", "itemSelected !")
                 val fragment = CardsListFragment.newInstance()
                 replaceFragment(fragment)
             }
             R.id.nav_decks -> {
-                //showFragment(new DecksFragment());
+                val fragment = DecksListFragment.newInstance()
+                replaceFragment(fragment)
             }
             R.id.nav_trade -> {
                 // showFragment(new TradeFragment());
@@ -123,7 +124,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        Log.d("[NavigationActivity]", "passe dans replaceFragment !")
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.drawer_layout, fragment)
         fragmentTransaction.commit()

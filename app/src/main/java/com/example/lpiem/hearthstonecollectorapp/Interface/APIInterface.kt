@@ -1,6 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Interface
 
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import retrofit2.Call
 import retrofit2.http.Body
@@ -47,4 +48,18 @@ interface APIInterface {
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
 
+//    @POST("/user/set-deck")
+//    abstract fun setDeckToUser(@Body user: User): Call<User>
+
+
+    // DECKS //
+    @GET("deck/select/{id}")
+    abstract fun getDeck(@Path("id") id: Int): Call<Deck>
+
+    @GET("/deck/select-by-user/{userId}")
+    abstract fun getDecksByUser(@Path("id") id: Int): Call<List<Deck>>
+
+    @POST("/deck/new")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    abstract fun createDeck(@Body deck: Deck): Call<Deck>
 }
