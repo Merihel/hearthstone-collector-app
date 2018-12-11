@@ -10,19 +10,13 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
-import kotlinx.android.synthetic.main.nav_header_navigation.*
 import org.json.JSONObject
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -31,9 +25,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var profile_pic_url:JSONObject
 
     private var drawerLayout: DrawerLayout? = null
-    private val navigationView: NavigationView? = null
 
-    private var cardsListFragment: Fragment? = null
     private val decksFragment: Fragment? = null
     private val tradeFragment: Fragment? = null
     private val quizzFragment: Fragment? = null
@@ -44,7 +36,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private val FRAGMENT_TRADE = 2
     private val FRAGMENT_QUIZZ = 3
     private val FRAGMENT_SHOP = 4
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,32 +48,32 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        navigationView?.setNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
 
-        val intent = intent
-        val jsondata = intent.getStringExtra("userProfile")
-        //Log.w("Jsondata", jsondata)
-        val headerView = navigationView?.getHeaderView(0)
-
-        try {
-            response = JSONObject(jsondata)
-            Log.e("[NavigationActivity]", response.get("name").toString())
-            nameUser.text = response.get("name").toString()
-
-            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
-                println("[NavigationActivity] url picture google ok")
-                profile_pic_url = JSONObject()
-                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
-            } else {
-                profile_pic_data = JSONObject(response.get("picture").toString())
-                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
-            }
-
-            Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        val intent = intent
+//        val jsondata = intent.getStringExtra("userProfile")
+//        Log.w("Jsondata", jsondata)
+//        val headerView = navigationView?.getHeaderView(0)
+//
+//        try {
+//            response = JSONObject(jsondata)
+//            Log.e("[NavigationActivity]", response.get("name").toString())
+//            nameUser.text = response.get("name").toString()
+//
+//            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
+//                println("[NavigationActivity] url picture google ok")
+//                profile_pic_url = JSONObject()
+//                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
+//            } else {
+//                profile_pic_data = JSONObject(response.get("picture").toString())
+//                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
+//            }
+//
+//            Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
 
 
     }
@@ -104,9 +95,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         // clicks here.
         when (item.itemId) {
             R.id.nav_cards -> {
-                Log.d("Fragment chosen", "CardsListFragment")
-                Toast.makeText(this, "Clicked item one", Toast.LENGTH_SHORT).show()
-                this.showFragment(FRAGMENT_CARDSLIST)
+                Log.d("[NavigationActivity]", "itemSelected !")
+                val fragment = CardsListFragment.newInstance()
+                replaceFragment(fragment)
             }
             R.id.nav_decks -> {
                 //showFragment(new DecksFragment());
@@ -131,30 +122,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         return true
     }
 
-    fun showFragment(fragmentIdentifier: Int) {
-        this.showCardsListFragment()
-        /*
-        when (fragmentIdentifier) {
-            FRAGMENT_CARDSLIST -> this.showCardsListFragment()
-            else -> {
-            }
-        }
-        */
-    }
-
-    private fun showCardsListFragment() {
-        if (this.cardsListFragment == null) {
-            val cardsListFragmentInstance = CardsListFragment()
-            this.cardsListFragment = cardsListFragmentInstance.newInstance()
-        }
-        this.startTransactionFragment(this.cardsListFragment!!)
-    }
-
-    private fun startTransactionFragment(fragment: Fragment) {
-        if (!fragment.isVisible) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.drawer_layout, fragment).commit()
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        Log.d("[NavigationActivity]", "passe dans replaceFragment !")
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.drawer_layout, fragment)
+        fragmentTransaction.commit()
     }
 
 
