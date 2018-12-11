@@ -1,9 +1,9 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -11,25 +11,27 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import kotlinx.android.synthetic.main.activity_connexion.*
 import android.view.View
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import kotlinx.android.synthetic.main.activity_connexion.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -40,7 +42,7 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     private var gAccount: GoogleSignInAccount? = null
 
     //TEST DEBUG
-    private var cardsListFragment: Fragment? = null
+    private var cardsListFragment: androidx.fragment.app.Fragment? = null
 
     //Variables autres
     private var isLoggedIn: Boolean? = null
@@ -51,7 +53,7 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         setContentView(R.layout.activity_connexion)
 
         ////////        TEST         /////////
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         controller.getCardById(1)
         controller.getUserById(15)
 
@@ -126,14 +128,14 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         btnCreationCompte.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 //OUVRE EN EFFET LE FORMULAIRE DE CREATION
-                //var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
-                //startActivity(intent)
+                var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
+                startActivity(intent)
 
                 //OUVRE LE FRAGMENT DES CARTES POUR TESTER
-                supportFragmentManager
-                        .beginTransaction()
-                        .add(R.id.root_layout_test, CardsListFragment.newInstance(), "cardsListFragment")
-                        .commit()
+//                supportFragmentManager
+//                        .beginTransaction()
+//                        .add(R.id.root_layout_test, CardsListFragment.newInstance(), "cardsListFragment")
+//                        .commit()
             }
         })
     }
@@ -266,6 +268,12 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     override fun onWorkCardsDone(result: List<Card>) {
         if (result != null) {
             Log.d("OnWorkCardDone", result.get(0).flavor)
+        }
+    }
+
+    override fun onWorkDeckDone(result: List<Deck>) {
+        if (result != null) {
+            Log.d("onWorkDeckDone", result.get(0).name)
         }
     }
 }

@@ -2,20 +2,14 @@ package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import com.google.android.material.navigation.NavigationView
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import org.json.JSONObject
@@ -25,12 +19,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var profile_pic_data:JSONObject
     internal lateinit var profile_pic_url:JSONObject
 
-    private var drawerLayout: DrawerLayout? = null
+    private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
 
-    private val decksFragment: Fragment? = null
-    private val tradeFragment: Fragment? = null
-    private val quizzFragment: Fragment? = null
-    private val shopFragment: Fragment? = null
+    private val decksFragment: androidx.fragment.app.Fragment? = null
+    private val tradeFragment: androidx.fragment.app.Fragment? = null
+    private val quizzFragment: androidx.fragment.app.Fragment? = null
+    private val shopFragment: androidx.fragment.app.Fragment? = null
 
     private val FRAGMENT_CARDSLIST = 0
     private val FRAGMENT_DECKS = 1
@@ -123,7 +117,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         return true
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun replaceFragment(fragment: androidx.fragment.app.Fragment) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.drawer_layout, fragment)
         fragmentTransaction.commit()

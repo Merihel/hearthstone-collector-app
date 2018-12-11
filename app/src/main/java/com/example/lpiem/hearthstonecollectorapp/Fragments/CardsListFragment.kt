@@ -1,34 +1,27 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
-import android.app.ActionBar
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
-import kotlinx.android.synthetic.main.fragment_cards_list.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 private var rootView: View? = null
 private var llayout: LinearLayout? = null
 
-class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
+class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, androidx.fragment.app.Fragment() {
 
 
     companion object {
@@ -46,7 +39,7 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         controller.getCardsByUser(1)
     }
 
@@ -67,6 +60,12 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
 
     override fun onWorkUserDone(result: List<User>) {
 
+    }
+
+    override fun onWorkDeckDone(result: List<Deck>) {
+        if (result != null) {
+            Log.d("onWorkDeckDone", result.get(0).name)
+        }
     }
 
 }

@@ -1,27 +1,22 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
 
 private var rootView: View? = null
 private var llayout: LinearLayout? = null
 
-class DecksListFragment : Fragment() {
+class DecksListFragment : androidx.fragment.app.Fragment() {
 
     companion object {
         fun newInstance(): CardsListFragment {
