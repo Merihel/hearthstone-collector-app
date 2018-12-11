@@ -1,34 +1,29 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
-import android.app.ActionBar
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.util.Log
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
+import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
+import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.fragment_cards_list.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.appcompat.app.AppCompatActivity
+
+
 
 private var rootView: View? = null
-private var llayout: LinearLayout? = null
+private var lManager: androidx.recyclerview.widget.GridLayoutManager? = null
 
-class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
+class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, androidx.fragment.app.Fragment() {
 
 
     companion object {
@@ -39,8 +34,12 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_cards_list, container, false)
+
+        (activity as AppCompatActivity).supportActionBar!!.setTitle("Mes cartes")
+
         return rootView
     }
 
@@ -57,13 +56,11 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, Fragment
 
     override fun onWorkCardsDone(result: List<Card>) {
         System.out.println("My user cards" + result.toString())
-        llayout = rootView?.findViewById(R.id.cardsListLLayout)
-        result.forEach {
-            var dynamicTextView = TextView(context)
-            dynamicTextView.text = it.name
-            llayout?.addView(dynamicTextView)
-        }
+
+        rv_cards_list.adapter = CardsListAdapter(result, getActivity()!!.applicationContext)
+        rv_cards_list.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
         //Need to push the cards to the RecyclerView
+
     }
 
     override fun onWorkUserDone(result: List<User>) {
