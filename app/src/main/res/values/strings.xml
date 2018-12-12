@@ -17,6 +17,8 @@
     <string name="nav_drawer_shop">Magasin</string>
     <string name="nav_deconnexion">Se déconnecter</string>
 
+    <string name="menu_ic_add">Ajouter</string>
+
     <string name="connexion">Se connecter à Hearthstone Collector</string>
 
     <!-- TODO: Remove or change this placeholder text -->

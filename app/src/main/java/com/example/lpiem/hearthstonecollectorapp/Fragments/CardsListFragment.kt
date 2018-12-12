@@ -26,6 +26,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
 
     companion object {
         fun newInstance(): CardsListFragment {
+            System.out.println("new instance cards list")
             return CardsListFragment()
         }
     }

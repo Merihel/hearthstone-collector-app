@@ -35,7 +35,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
 
 
         val toggle = ActionBarDrawerToggle(
@@ -107,8 +107,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 //showFragment(new ShopFragment());
             }
             R.id.nav_deconnexion -> {
-                val intent = Intent(this@NavigationActivity, ConnexionActivity::class.java)
-                intent.putExtra("deconnexion", true)
+                val intent = ConnexionActivity.newIntent(this, true)
                 startActivity(intent)
             }
         }

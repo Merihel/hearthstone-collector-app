@@ -1,5 +1,6 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -47,6 +48,20 @@ class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, Interfac
     //Variables autres
     private var isLoggedIn: Boolean? = null
     private val RC_SIGN_IN = 100
+
+
+
+
+    companion object {
+
+        fun newIntent(context: Context, isDeconnect: Boolean): Intent {
+            val intent = Intent(context, ConnexionActivity::class.java)
+            intent.putExtra("deconnexion", isDeconnect)
+            return intent
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
