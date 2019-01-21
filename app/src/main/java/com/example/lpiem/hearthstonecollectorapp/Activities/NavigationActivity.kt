@@ -12,8 +12,11 @@ import android.util.Log
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
+import kotlinx.android.synthetic.main.nav_header_navigation.*
+import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.json.JSONObject
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -47,30 +50,30 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
-//        val intent = intent
-//        val jsondata = intent.getStringExtra("userProfile")
-//        Log.w("Jsondata", jsondata)
-//        val headerView = navigationView?.getHeaderView(0)
-//
-//        try {
-//            response = JSONObject(jsondata)
-//            Log.e("[NavigationActivity]", response.get("name").toString())
-//            nameUser.text = response.get("name").toString()
-//
-//            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
-//                println("[NavigationActivity] url picture google ok")
-//                profile_pic_url = JSONObject()
-//                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
-//            } else {
-//                profile_pic_data = JSONObject(response.get("picture").toString())
-//                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
-//            }
-//
-//            Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
+        val intent = intent
+        val jsondata = intent.getStringExtra("userProfile")
+        Log.w("Jsondata", jsondata)
+        val headerView = nav_view.getHeaderView(0)
+
+        try {
+            response = JSONObject(jsondata)
+            Log.e("[NavigationActivity]", response.get("name").toString())
+            headerView.nameUser.text = response.get("name").toString()
+
+            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
+                println("[NavigationActivity] url picture google ok")
+                profile_pic_url = JSONObject()
+                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
+            } else {
+                profile_pic_data = JSONObject(response.get("picture").toString())
+                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
+            }
+
+            //Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
 
     }

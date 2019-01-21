@@ -34,6 +34,7 @@
                 android:id="@+id/nameUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Test"
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 

@@ -1,9 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -12,6 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
@@ -39,9 +39,6 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     private var gClient: GoogleSignInClient? = null
     private var gAccount: GoogleSignInAccount? = null
 
-    //TEST DEBUG
-    private var cardsListFragment: androidx.fragment.app.Fragment? = null
-
     //Variables autres
     private var isLoggedIn: Boolean? = null
     private val RC_SIGN_IN = 100
@@ -49,11 +46,6 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connexion)
-
-        ////////        TEST         /////////
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
-        controller.getCardById(1)
-        controller.getUserById(15)
 
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
@@ -109,12 +101,6 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
                 googleSignIn()
             }
         })
-        //Click listener : Google SignOut Button
-        google_sign_out.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View) {
-                googleSignOut()
-            }
-        })
 
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -126,14 +112,8 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         btnCreationCompte.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 //OUVRE EN EFFET LE FORMULAIRE DE CREATION
-                //var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
-                //startActivity(intent)
-
-                //OUVRE LE FRAGMENT DES CARTES POUR TESTER
-                supportFragmentManager
-                        .beginTransaction()
-                        .add(R.id.root_layout_test, CardsListFragment.newInstance(), "cardsListFragment")
-                        .commit()
+                var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
+                startActivity(intent)
             }
         })
     }
@@ -173,6 +153,7 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
                 override fun onCompleted(jsonObject: JSONObject?, response: GraphResponse?) {
                     Log.d("Connexion", jsonObject.toString())
                     var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+                    intent.putExtra("userProfile", jsonObject.toString());
                     try {
                         Log.d("Facebook Mail", jsonObject!!.getString("email"))
                     } catch(e: JSONException) {
@@ -247,7 +228,9 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         }
     }
 
-
+    /*
+        Retrofit interface callbacks
+     */
     override fun onWorkUserDone(result: List<User>) {
         if (result != null) {
             Log.i("OnWorkDone", "OK")
