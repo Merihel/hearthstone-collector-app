@@ -1,57 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/root_layout_test"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout_test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@android:style/Theme.Light.NoTitleBar"
-    tools:context=".Activities.ConnexionActivity">
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="0.5" />
+    tools:context=".Activities.ConnexionActivity"
+    tools:layout_editor_absoluteY="25dp">
 
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="match_parent"
-        android:layout_height="161dp"
-        android:layout_weight="0.0"
-        app:srcCompat="@drawable/hearthstone_logo" />
-
-    <View
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="0.5" />
+        android:layout_height="161dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="0.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hearthstone_logo" />
 
     <TextView
         android:id="@+id/txtConnexion"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:fontFamily="@font/montserrat_family"
         android:text="@string/connexion"
         android:textAlignment="center"
         android:textColor="#626262"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogo" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="0.5" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/loginBtnFb"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:background="@drawable/button_login_fb_background"
         android:text="Se connecter avec Facebook"
         android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtConnexion" />
 
 
     <com.google.android.gms.common.SignInButton
@@ -59,52 +68,54 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Se connecter avec Google"
-        android:visibility="gone"
         android:textAllCaps="false"
         android:textColor="#ffffff"
         android:textStyle="bold"
-    />
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btnCreationCompte"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBtnFb"
+        app:layout_constraintVertical_bias="0.32" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/google_sign_out"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:textColor="#ffffff"
-        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/button_login_google_background"
         android:text="Se déconnecter de Google"
         android:textAllCaps="false"
-        android:background="@drawable/button_login_google_background" />
-    <View
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="2" />
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBtnFb" />
 
-    <TextView
-        android:id="@+id/txtTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black" />
-
-    <TextView
-        android:id="@+id/txtTestUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCreationCompte"
-        android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_width="0dp"
+        android:layout_height="115dp"
         android:layout_weight="0.5"
         android:background="#DFA325"
         android:text="Cliquer ici pour créer un compte"
+        android:textAllCaps="true"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:textAllCaps="true"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
