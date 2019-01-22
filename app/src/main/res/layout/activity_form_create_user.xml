@@ -36,7 +36,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Pseudo *"
+                android:hint="@string/inscription_pseudo"
                 android:inputType="textPersonName" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -65,7 +65,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Prénom"
+                android:hint="@string/inscription_prenom"
                 android:inputType="textPersonName"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="89dp" />
@@ -96,7 +96,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Nom"
+                android:hint="@string/inscription_nom"
                 android:inputType="textPersonName" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -135,7 +135,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="E-mail *"
+                android:hint="@string/inscription_email"
                 android:inputType="textPersonName" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -161,7 +161,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Mot de passe *"
+                android:hint="@string/inscription_mdp"
                 android:inputType="textPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -188,7 +188,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Confirmer le mot de passe *"
+                android:hint="@string/inscription_mdp_confirmation"
                 android:inputType="textPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -201,7 +201,7 @@
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:insetBottom="0dp"
-            android:text="S'inscrire"
+            android:text="@string/inscription_action"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textColorLink="@color/colorPrimaryDark"
@@ -221,7 +221,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:text="* Champs obligatoires"
+            android:text="@string/inscription_obligatoires"
             app:layout_constraintBottom_toTopOf="@+id/textInputLayoutLastName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.031"
@@ -237,7 +237,7 @@
             android:layout_marginTop="36dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:text="IDENTIFIANTS"
+            android:text="@string/inscription_label_identifiants"
             android:textColor="@color/colorPrimary"
             android:textSize="20sp"
             android:textStyle="bold"

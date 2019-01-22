@@ -21,6 +21,16 @@
     <string name="deconnexion_google">Se déconnecter avec Google</string>
     <string name="creation_compte">Cliquer ici pour créer un compte</string>
 
+    <string name="inscription_pseudo">Pseudo *</string>
+    <string name="inscription_prenom">Prénom</string>
+    <string name="inscription_nom">Nom</string>
+    <string name="inscription_email">E-mail *</string>
+    <string name="inscription_mdp">Mot de passe *</string>
+    <string name="inscription_mdp_confirmation">Confirmer le mot de passe *</string>
+    <string name="inscription_action">S\'inscrire</string>
+    <string name="inscription_obligatoires">* Champs obligatoires</string>
+    <string name="inscription_label_identifiants">IDENTIFIANTS</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
@@ -41,7 +42,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
-
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -74,6 +74,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        // Fragment par défaut : liste des cartes
+//        val cardsMenuItem = menu.findItem(nav_cards).getActionView();
+//        onNavigationItemSelected(cardsMenuItem)
 
 
     }
