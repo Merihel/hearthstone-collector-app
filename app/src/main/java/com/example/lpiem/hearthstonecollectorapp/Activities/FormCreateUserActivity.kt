@@ -38,9 +38,9 @@ class FormCreateUserActivity : AppCompatActivity() {
         this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
 
-        //Récupération des fields
-        inpPseudo = findViewById(R.id.inpPseudo)
+        //Récupération des champs
         inpFirstName = findViewById(R.id.inpFirstName)
+        inpPseudo = findViewById(R.id.inpPseudo)
         inpLastName = findViewById(R.id.inpLastName)
         inpEmail = findViewById(R.id.inpEmail)
         btnCreate = findViewById(R.id.btnCreate)

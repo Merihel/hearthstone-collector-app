@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
@@ -76,8 +77,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
 
         // Fragment par défaut : liste des cartes
-//        val cardsMenuItem = menu.findItem(nav_cards).getActionView();
-//        onNavigationItemSelected(cardsMenuItem)
+        val fragment = CardsListFragment.newInstance()
+        replaceFragment(fragment)
+        nav_view.getMenu().getItem(0).setChecked(true)
+
 
 
     }
