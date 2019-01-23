@@ -3,14 +3,18 @@ package com.example.lpiem.hearthstonecollectorapp.Manager
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.Interface.APIInterface
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, internal var interfaceCallBackCard: InterfaceCallBackCard) {
+class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = null,
+                  internal var interfaceCallBackCard: InterfaceCallBackCard? = null,
+                  internal var interfaceCallBackSync: InterfaceCallBackSync? = null) {
     internal var message: String? = null
     internal var nextPage = 1
     internal var nbPages = 100
@@ -32,7 +36,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
                     Log.d("APIManager", "card text : " + card!!.text!!)
                     val listCard = ArrayList<Card>()
                     listCard.add(card)
-                    interfaceCallBackCard.onWorkCardDone(listCard)
+                    interfaceCallBackCard?.onWorkCardDone(listCard)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
@@ -139,7 +143,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
                 if (response.isSuccessful) {
                     val cards = response.body()
 
-                    interfaceCallBackCard.onWorkCardsDone(cards!!)
+                    interfaceCallBackCard?.onWorkCardsDone(cards!!)
 
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
@@ -180,6 +184,48 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
     }
 
 
+    // USERS SYNC
+
+    fun syncUserStep1(mail: JsonObject) {
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.syncUserStep1(mail)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if(response.isSuccessful) {
+                    Log.d("APIManager", "sync1: ResponseBody ---> " + response.body())
+                    interfaceCallBackSync?.onWorkSyncDone(response.body()!!)
+                } else {
+                    Log.d("APIManager", "Unsuccessful response")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun syncUserStep2(arg: String, json: JsonObject) {
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.syncUserStep2(arg, json)
+        System.out.println(json.toString())
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if(response.isSuccessful) {
+                    Log.d("APIManager", "sync2: ResponseBody ---> " + response.body())
+                    interfaceCallBackSync?.onWorkSyncDone2(response.body()!!)
+                } else {
+                    Log.d("APIManager", "Unsuccessful response")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
 
 
     // USERS
@@ -199,7 +245,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
                     Log.d("APIManager", "card text : " + user!!.firstName!!)
                     var listData = ArrayList<User>()
                     listData.add(user)
-                    interfaceCallBackUser.onWorkUserDone(listData)
+                    interfaceCallBackUser?.onWorkUserDone(listData)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }

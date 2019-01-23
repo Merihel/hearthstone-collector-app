@@ -2,6 +2,7 @@ package com.example.lpiem.hearthstonecollectorapp.Interface
 
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -46,5 +47,13 @@ interface APIInterface {
 
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
+
+
+    // USERS SYNC //
+    @POST("/user/sync1")
+    abstract fun syncUserStep1(@Body json: JsonObject): Call<JsonObject>
+
+    @POST("/user/sync2/{arg}")
+    abstract fun syncUserStep2(@Path("arg") arg: String, @Body json: JsonObject): Call<JsonObject>
 
 }

@@ -10,10 +10,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
+import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
@@ -23,25 +26,30 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_connexion.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
     private var fbLoginManager: com.facebook.login.LoginManager? = null
+    private var fUserExtras = JSONObject()
 
     //Variables Google
     private var gClient: GoogleSignInClient? = null
     private var gAccount: GoogleSignInAccount? = null
+    private var gUserExtras = JSONObject()
 
     //Variables autres
     private var isLoggedIn: Boolean? = null
+    private var socialState = ""
     private val RC_SIGN_IN = 100
+    private var apiManager = APIManager(null, null, this as InterfaceCallBackSync)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +58,15 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
         var bundle = intent.extras
+
+        /*
+        *
+        *  GOOGLE/FACEBOOK : DECONNEXION
+        *
+        */
         if (bundle.getBoolean("deconnexion")) {
             Log.d("onCreate","Deconnexion...")
+            //DECONNEXION FACEBOOK
             LoginManager.getInstance().logOut()
 
             //DECONNEXION GOOGLE
@@ -71,8 +86,11 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             }
         })
 
-
-        //FACEBOOK
+        /*
+        *
+        *  FACEBOOK : CONNEXION
+        *
+        */
         fbLoginManager = com.facebook.login.LoginManager.getInstance()
         callbackManager = CallbackManager.Factory.create()
         //Callbacks registration
@@ -92,7 +110,11 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             }
         })
 
-        //GOOGLE
+        /*
+        *
+        *  GOOGLE : CONNEXION
+        *
+        */
         googleConnexion(gAccount)
 
         //Click listener : Google SignIn Button
@@ -108,7 +130,12 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
                 .build()
         gClient = GoogleSignIn.getClient(this, gso)
 
-        //COMPTE HORS RESEAUX SOCIAUX
+
+        /*
+        *
+        *  COMPTE CLASSIQUE: BTN DE CREATION DE COMPTE
+        *
+        */
         btnCreationCompte.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 //OUVRE EN EFFET LE FORMULAIRE DE CREATION
@@ -121,6 +148,7 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     override fun onStart() {
         super.onStart()
 
+        // CONNEXION AUTO FB ET GOOGLE
         var accessToken = AccessToken.getCurrentAccessToken()
         isLoggedIn = accessToken != null && !accessToken.isExpired
         if (isLoggedIn!!) {
@@ -150,16 +178,11 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     protected fun getUserFacebookDetails(loginResult: AccessToken) {
         var dataRequest = GraphRequest.newMeRequest(loginResult,
             object: GraphRequest.GraphJSONObjectCallback {
-                override fun onCompleted(jsonObject: JSONObject?, response: GraphResponse?) {
+                override fun onCompleted(jsonObject: JSONObject, response: GraphResponse?) {
                     Log.d("Connexion", jsonObject.toString())
-                    var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
-                    intent.putExtra("userProfile", jsonObject.toString());
-                    try {
-                        Log.d("Facebook Mail", jsonObject!!.getString("email"))
-                    } catch(e: JSONException) {
-                        Log.d("Facebook Mail Error", e.message)
-                    }
-                    startActivity(intent)
+                    socialState = "f"
+                    fUserExtras = jsonObject
+                    userSyncCheckStep1(jsonObject.getString("email"))
                 }
             })
         var permissionParam = Bundle()
@@ -208,47 +231,114 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             google_sign_in.visibility = View.VISIBLE
             google_sign_out.visibility = View.GONE
         } else {
-            var intent = Intent(this, NavigationActivity::class.java)
-            var jsonObject = JSONObject()
+            System.out.println(signInAccount.email)
             try {
-                jsonObject.put("name", signInAccount.displayName)
-                jsonObject.put("email", signInAccount.email)
-                jsonObject.put("picture", signInAccount.photoUrl)
-                Log.d("Intent extras", jsonObject.toString())
+                gUserExtras.put("id", signInAccount.id)
+                gUserExtras.put("name", signInAccount.displayName)
+                gUserExtras.put("email", signInAccount.email)
+                gUserExtras.put("picture", signInAccount.photoUrl)
+                Log.d("G: Intent extras", gUserExtras?.toString())
             } catch (e: JSONException) {
                 Log.e("JSONException", e.message)
             }
-            intent.putExtra("userProfile", jsonObject.toString())
-            startActivity(intent)
 
-            Log.d("User Connected", signInAccount.displayName + " ; " + signInAccount.email)
+            Log.d("G User Connected", signInAccount.displayName + " ; " + signInAccount.email)
+            socialState = "g"
+            userSyncCheckStep1(signInAccount.email)
+        }
+    }
+
+    fun userSyncCheckStep1(mail: String?) {
+        var json = JsonObject()
+        json.addProperty("mail", mail)
+
+        apiManager.syncUserStep1(json)
+    }
+
+    fun userSyncCheckStep2(pseudo: String, mail: String, id: String, type: String) {
+        var json = JsonObject()
+        json.addProperty("pseudo", pseudo)
+        json.addProperty("mail", mail)
+        when(socialState) {
+            "g" -> json.addProperty("googleId", id)
+            "f" -> json.addProperty("facebookId", id)
+        }
+
+        apiManager.syncUserStep2(type, json)
+
+    }
+
+
+    override fun onWorkSyncDone(result: JsonObject) {
+        Log.d("SocialAccount", "CHECKED SYNC WITH " + socialState)
+        when (result.get("exit_code").asInt) {
+            0 -> {
+                Log.d("WorkSyncDone", "Can connect...")
+                continueSocialConnection()
+            }
+            2 -> {
+                Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
+                askPseudo("update")
+            }
+            3 -> {
+                Log.d("WorkSyncDone", "Compte introuvable, prêt à être créé, pseudo nécessaire")
+                askPseudo("create")
+            }
+            else -> { // Note the block
+                print("x is neither 1 nor 2")
+            }
+        }
+    }
+
+    override fun onWorkSyncDone2(result: JsonObject) {
+        when (result.get("exit_code").asInt) {
+            0 -> continueSocialConnection()
+            1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
+        }
+    }
+
+    fun askPseudo(type: String) { //Le type est le type d'opération : create le compte ou update en fonction de l'état renvoyé par API
+        val dialog = PseudoDialog.newInstance(text = "", hint = "Pseudo", isMultiline = false)
+        dialog.onOk = {
+            val text = dialog.editText.text
+            Log.d("ASK PSEUDO", text.toString())
+            when(socialState) {
+                "g" -> {
+                    gUserExtras.put("pseudo", text.toString())
+                    System.out.println(gUserExtras.toString())
+                    userSyncCheckStep2(text.toString(), gUserExtras.getString("email"), gUserExtras.getString("id"), type)
+                }
+                "f" -> {
+                    fUserExtras.put("pseudo", text.toString())
+                    System.out.println(fUserExtras.toString())
+                    userSyncCheckStep2(text.toString(), fUserExtras.getString("email"), fUserExtras.getString("id"), type)
+                }
+            }
+        }
+        dialog.show(supportFragmentManager, "editDescription")
+    }
+
+    //Si tout est ok on continue la connexion avec les réseaux sociaux
+    fun continueSocialConnection() {
+        if(socialState.equals("g")) {
+            var intent = Intent(this, NavigationActivity::class.java)
+
+            intent.putExtra("userProfile", gUserExtras.toString())
+            startActivity(intent)
 
             google_sign_in.visibility = View.GONE
             google_sign_out.visibility = View.VISIBLE
         }
-    }
 
-    /*
-        Retrofit interface callbacks
-     */
-    override fun onWorkUserDone(result: List<User>) {
-        if (result != null) {
-            Log.i("OnWorkDone", "OK")
-            System.out.println("MY USER > " + result.get(0).pseudo)
-        } else {
-            Log.e("OnWorkDone Error", "Not ok")
-        }
-    }
-
-    override fun onWorkCardDone(result: List<Card>) {
-        if (result != null) {
-            Log.d("OnWorkCardDone", result.get(0).flavor)
-        }
-    }
-
-    override fun onWorkCardsDone(result: List<Card>) {
-        if (result != null) {
-            Log.d("OnWorkCardDone", result.get(0).flavor)
+        if(socialState.equals("f")) {
+            var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+            intent.putExtra("userProfile", fUserExtras.toString())
+            try {
+                Log.d("Facebook Mail", fUserExtras!!.getString("email"))
+            } catch(e: JSONException) {
+                Log.d("Facebook Mail Error", e.message)
+            }
+            startActivity(intent)
         }
     }
 }
