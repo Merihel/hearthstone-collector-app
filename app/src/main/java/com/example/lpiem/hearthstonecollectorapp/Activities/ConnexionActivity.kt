@@ -229,7 +229,6 @@ class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
         if (signInAccount == null) {
             Log.d("googleConnexion", "User non connecté...")
             google_sign_in.visibility = View.VISIBLE
-            google_sign_out.visibility = View.GONE
         } else {
             System.out.println(signInAccount.email)
             try {
@@ -327,7 +326,6 @@ class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
             startActivity(intent)
 
             google_sign_in.visibility = View.GONE
-            google_sign_out.visibility = View.VISIBLE
         }
 
         if(socialState.equals("f")) {
