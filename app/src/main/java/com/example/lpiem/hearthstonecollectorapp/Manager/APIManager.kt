@@ -1,10 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Manager
 
 import android.util.Log
-import com.example.lpiem.hearthstonecollectorapp.Interface.APIInterface
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.google.gson.JsonObject
@@ -14,7 +11,8 @@ import retrofit2.Response
 
 class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = null,
                   internal var interfaceCallBackCard: InterfaceCallBackCard? = null,
-                  internal var interfaceCallBackSync: InterfaceCallBackSync? = null) {
+                  internal var interfaceCallBackSync: InterfaceCallBackSync? = null,
+                  internal var interfaceCallBackLogin: InterfaceCallBackLogin? = null) {
     internal var message: String? = null
     internal var nextPage = 1
     internal var nbPages = 100
@@ -274,6 +272,31 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
                 } else {
                     Log.d("[APIManager]createUser", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    // USER LOGIN
+    fun checkLogin(json: JsonObject) {
+
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.checkLogin(json)
+
+        call.enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                if (response.isSuccessful) {
+                    val user = response.body()
+                    Log.d("APIManager", "User Logged In: " + user!!.pseudo!!)
+                    interfaceCallBackLogin?.onWorkLoginDone(user)
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
             }
 

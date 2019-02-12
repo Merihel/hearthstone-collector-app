@@ -124,7 +124,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="49dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -145,6 +145,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="22dp"
             android:layout_marginLeft="22dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@color/com_facebook_blue"
             android:text="@string/connexion_fb"
             android:textAllCaps="false"
@@ -159,8 +161,10 @@
             android:id="@+id/google_sign_in"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="22dp"
             android:layout_marginRight="22dp"
+            android:layout_marginBottom="8dp"
             android:background="@color/colorGoogleBg"
             android:text="@string/connexion_google"
             android:textAllCaps="false"

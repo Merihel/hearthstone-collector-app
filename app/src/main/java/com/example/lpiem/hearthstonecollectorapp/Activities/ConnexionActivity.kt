@@ -10,12 +10,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackLogin
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
@@ -33,7 +35,7 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -83,6 +85,20 @@ class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
             override fun onClick(v: View) {
                 val intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
                 startActivity(intent)
+            }
+        })
+
+        /*
+        * CLASSIQUE : CONNEXION
+        */
+        loginBtnClassic.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View) {
+                Log.d("Login Mail", inpLoginMail.text.toString())
+                Log.d("Login Pass", inpLoginPassword.text.toString())
+                var json = JsonObject()
+                json.addProperty("identifier", inpLoginMail.text.toString())
+                json.addProperty("password", inpLoginPassword.text.toString())
+                apiManager.checkLogin(json)
             }
         })
 
@@ -338,5 +354,10 @@ class ConnexionActivity : InterfaceCallBackSync, AppCompatActivity() {
             }
             startActivity(intent)
         }
+    }
+
+
+    override fun onWorkLoginDone(result: User) {
+        Log.d("Simple Connect With", result.toString())
     }
 }

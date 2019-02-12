@@ -53,7 +53,11 @@ interface APIInterface {
     @POST("/user/sync1")
     abstract fun syncUserStep1(@Body json: JsonObject): Call<JsonObject>
 
-    @POST("/user/sync2/{arg}")
+    @POST("/user/sync2/{arg}") //Arg is the value between Google and Facebook connection
     abstract fun syncUserStep2(@Path("arg") arg: String, @Body json: JsonObject): Call<JsonObject>
+
+    // USER LOGIN //
+    @POST("/user/login")
+    abstract fun checkLogin(@Body json: JsonObject): Call<User>
 
 }
