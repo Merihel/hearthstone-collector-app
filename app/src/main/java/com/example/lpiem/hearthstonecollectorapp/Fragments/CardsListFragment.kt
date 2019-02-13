@@ -21,8 +21,7 @@ import com.example.lpiem.hearthstonecollectorapp.R
 private var rootView: View? = null
 private var llayout: LinearLayout? = null
 
-class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, androidx.fragment.app.Fragment() {
-
+class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
 
     companion object {
         fun newInstance(): CardsListFragment {
@@ -50,7 +49,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
 
     override fun onWorkCardsDone(result: List<Card>) {
         System.out.println("My user cards" + result.toString())
-        llayout = rootView?.findViewById(R.id.cardsListLLayout)
+        llayout = rootView?.findViewById(R.id.cardsListLayout)
         result.forEach {
             var dynamicTextView = TextView(context)
             dynamicTextView.text = it.name

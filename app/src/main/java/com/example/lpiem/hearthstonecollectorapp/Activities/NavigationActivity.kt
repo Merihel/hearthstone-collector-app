@@ -1,15 +1,16 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
-import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.navigation.NavigationView
-import androidx.core.view.GravityCompat
+import android.view.MenuItem
+import android.widget.FrameLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import android.view.MenuItem
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import org.json.JSONObject
@@ -20,6 +21,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var profile_pic_url:JSONObject
 
     private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
+    private var content: FrameLayout? = null
 
     private val decksFragment: androidx.fragment.app.Fragment? = null
     private val tradeFragment: androidx.fragment.app.Fragment? = null
@@ -37,6 +39,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         //setSupportActionBar(toolbar)
 
+        content = findViewById(R.id.content_navigation) as FrameLayout
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -86,15 +89,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item
-        // clicks here.
         when (item.itemId) {
             R.id.nav_cards -> {
-                val fragment = CardsListFragment.newInstance()
+                val fragment = CardsListFragment() //.newInstance()
                 replaceFragment(fragment)
             }
             R.id.nav_decks -> {
-                val fragment = DecksListFragment.newInstance()
+                val fragment = DecksListFragment() //.newInstance()
                 replaceFragment(fragment)
             }
             R.id.nav_trade -> {
@@ -117,10 +118,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun replaceFragment(fragment: androidx.fragment.app.Fragment) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.drawer_layout, fragment)
-        fragmentTransaction.commit()
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.content_navigation, fragment, fragment.javaClass.getSimpleName())
+                .addToBackStack(fragment.javaClass.getSimpleName())
+                .commit()
     }
-
 
 }

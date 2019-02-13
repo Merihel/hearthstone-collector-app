@@ -18,18 +18,16 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.example.lpiem.hearthstonecollectorapp.Manager.FragmentToolbar
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 
 
 private var rootView: View? = null
-private var llayout: LinearLayout? = null
+private var lManager: androidx.recyclerview.widget.LinearLayoutManager? = null
 
-class DecksListFragment : BaseFragment(), InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard {
-    private var decks = ArrayList<Deck>()
-    private var rootView: View? = null
-    private var lManager: LinearLayoutManager? = null
-    private var recyclerView: RecyclerView? = null
+class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard {
+    private var decks = emptyList<Deck>()
+    private var decks2 = mutableListOf<Deck>()
+    private lateinit var adapter : DecksListAdapter
 
     companion object {
         fun newInstance(): CardsListFragment {
@@ -38,24 +36,34 @@ class DecksListFragment : BaseFragment(), InterfaceCallBackDeck, InterfaceCallBa
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_cards_list, container, false)
-        getActivity()?.setTitle("Mes decks");
+        rootView = inflater.inflate(R.layout.fragment_decks_list, container, false)
+
+        getActivity()?.title = "Mes decks";
+        println("on create view decks")
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        println("on view created decks")
+        adapter = DecksListAdapter(emptyList(), activity!!.applicationContext)
+        recycler_view_decks.layoutManager = LinearLayoutManager(context)
+        recycler_view_decks.adapter = adapter
+
         val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         controller.getDecksByUser(1)
     }
 
     override fun onWorkDeckDone(result: List<Deck>) {
         System.out.println("My user decks" + result.toString())
-        recycler_view_decks.adapter = DecksListAdapter(result, getActivity()!!.applicationContext)
-        //recycler_view_decks.layoutManager = LinearLayoutManager(context, 3)
+        decks = result
+
+        decks2.clear()
+        decks2.addAll(result)
+
+        adapter.setData(result)
     }
 
     override fun onWorkUserDone(result: List<User>) {
@@ -65,14 +73,6 @@ class DecksListFragment : BaseFragment(), InterfaceCallBackDeck, InterfaceCallBa
     }
 
     override fun onWorkCardsDone(result: List<Card>) {
-    }
-
-    override protected fun builder(): FragmentToolbar {
-        return FragmentToolbar.Builder()
-                .withId(R.id.toolbar)
-                .withTitle(R.string.nav_drawer_decks)
-                .withMenu(R.menu.fragment_deckslist)
-                .build()
     }
 
 }

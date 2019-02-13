@@ -1,14 +1,16 @@
 package com.example.lpiem.hearthstonecollectorapp.Adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.R
-import kotlinx.android.synthetic.main.fragment_decks_list.view.*
+import kotlinx.android.synthetic.main.list_deck_item.view.*
 
-class DecksListAdapter (val items: List<Deck>, val context: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
+class DecksListAdapter (var items: List<Deck>, val context: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
         lateinit var fragContext: Context
@@ -18,6 +20,11 @@ class DecksListAdapter (val items: List<Deck>, val context: Context) : androidx.
         return items.size
     }
 
+    fun setData(items: List<Deck>) {
+        this.items = items
+        notifyDataSetChanged()
+    }
+
     //Inflates the item view - p0=parent, p1=viewType
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         fragContext = context
@@ -25,13 +32,28 @@ class DecksListAdapter (val items: List<Deck>, val context: Context) : androidx.
     }
 
 
-    //Binds each card in the List to some views - p0=viewHolder, p1=position
-    override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        //p0?.updateWithUrl(items.get(p1).name)
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        viewHolder?.bind(items.get(position).name!!)
+//        p0.itemView.setOnClickListener { v ->
+//            mListener?.onItemClickListener(v, holder.layoutPosition)
+//        }
 
+        if(position %2 == 1) {
+            viewHolder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
+        else {
+            viewHolder.itemView.setBackgroundColor(Color.parseColor("#998341"));
+            viewHolder.itemView.tv_deck_name.setTextColor(Color.parseColor("#FFFFFF"))
+        }
     }
+
 }
 
-class ViewHolder (view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-    //val tvCardName = view.cardsList_card_name
+class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
+    val tvDeckName = view.tv_deck_name
+
+    fun bind(name: String) {
+        tvDeckName.text = name
+    }
+
 }
