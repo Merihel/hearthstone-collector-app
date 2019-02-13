@@ -41,6 +41,9 @@ interface APIInterface {
     @GET("/user/select/{id}")
     abstract fun getUser(@Path("id") id: Int): Call<User>
 
+    @GET("/user/select-by-mail/{mail}")
+    abstract fun getUserByMail(@Path("mail") mail: String): Call<User>
+
     @POST("/user/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
     abstract fun createUser(@Body user: User): Call<User>
@@ -56,7 +59,8 @@ interface APIInterface {
     @POST("/user/sync2/{arg}") //Arg is the value between Google and Facebook connection
     abstract fun syncUserStep2(@Path("arg") arg: String, @Body json: JsonObject): Call<JsonObject>
 
-    // USER LOGIN //
+
+    // USERS LOGIN //
     @POST("/user/login")
     abstract fun checkLogin(@Body json: JsonObject): Call<User>
 

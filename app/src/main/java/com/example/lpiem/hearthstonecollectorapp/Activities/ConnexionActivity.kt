@@ -2,6 +2,7 @@ package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.UserManager
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -10,19 +11,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackLogin
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
+import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
@@ -35,28 +31,28 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, InterfaceCallBackUser, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
     private var fbLoginManager: com.facebook.login.LoginManager? = null
-    private var fUserExtras = JSONObject()
 
     //Variables Google
     private var gClient: GoogleSignInClient? = null
     private var gAccount: GoogleSignInAccount? = null
-    private var gUserExtras = JSONObject()
 
     //Variables autres
     private var isLoggedIn: Boolean? = null
     private var socialState = ""
     private val RC_SIGN_IN = 100
-    private var apiManager = APIManager(null, null, this as InterfaceCallBackSync)
+    private var apiManager = APIManager(this as InterfaceCallBackUser, null, this as InterfaceCallBackSync, this as InterfaceCallBackLogin)
+    private var userExtras = JSONObject()
+    private var hsUserManager = HsUserManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connexion)
-
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
         var bundle = intent.extras
@@ -95,9 +91,11 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
             override fun onClick(v: View) {
                 Log.d("Login Mail", inpLoginMail.text.toString())
                 Log.d("Login Pass", inpLoginPassword.text.toString())
+                Log.d("Login Pass MD5", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
+
                 var json = JsonObject()
                 json.addProperty("identifier", inpLoginMail.text.toString())
-                json.addProperty("password", inpLoginPassword.text.toString())
+                json.addProperty("password", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
                 apiManager.checkLogin(json)
             }
         })
@@ -197,7 +195,8 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
                 override fun onCompleted(jsonObject: JSONObject, response: GraphResponse?) {
                     Log.d("Connexion", jsonObject.toString())
                     socialState = "f"
-                    fUserExtras = jsonObject
+                    jsonObject.put("type", "f")
+                    hsUserManager.userSocialInfos = jsonObject
                     userSyncCheckStep1(jsonObject.getString("email"))
                 }
             })
@@ -248,11 +247,13 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
         } else {
             System.out.println(signInAccount.email)
             try {
-                gUserExtras.put("id", signInAccount.id)
-                gUserExtras.put("name", signInAccount.displayName)
-                gUserExtras.put("email", signInAccount.email)
-                gUserExtras.put("picture", signInAccount.photoUrl)
-                Log.d("G: Intent extras", gUserExtras?.toString())
+                var json = JSONObject()
+                json.put("id", signInAccount.id)
+                json.put("name", signInAccount.displayName)
+                json.put("email", signInAccount.email)
+                json.put("picture", signInAccount.photoUrl)
+                json.put("type", "g")
+                hsUserManager.userSocialInfos = json
             } catch (e: JSONException) {
                 Log.e("JSONException", e.message)
             }
@@ -266,7 +267,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
     fun userSyncCheckStep1(mail: String?) {
         var json = JsonObject()
         json.addProperty("mail", mail)
-
+        apiManager.getUserByMail(mail!!)
         apiManager.syncUserStep1(json)
     }
 
@@ -288,8 +289,8 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
         Log.d("SocialAccount", "CHECKED SYNC WITH " + socialState)
         when (result.get("exit_code").asInt) {
             0 -> {
-                Log.d("WorkSyncDone", "Can connect...")
-                continueSocialConnection()
+                Log.d("WorkSyncDone", "Can connect with: "+hsUserManager.userSocialInfos.get("email") as String)
+                apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
             }
             2 -> {
                 Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
@@ -307,7 +308,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
 
     override fun onWorkSyncDone2(result: JsonObject) {
         when (result.get("exit_code").asInt) {
-            0 -> continueSocialConnection()
+            0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
             1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
         }
     }
@@ -319,14 +320,14 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
             Log.d("ASK PSEUDO", text.toString())
             when(socialState) {
                 "g" -> {
-                    gUserExtras.put("pseudo", text.toString())
-                    System.out.println(gUserExtras.toString())
-                    userSyncCheckStep2(text.toString(), gUserExtras.getString("email"), gUserExtras.getString("id"), type)
+                    hsUserManager.userSocialInfos.put("pseudo", text.toString())
+                    System.out.println(hsUserManager.userSocialInfos.toString())
+                    userSyncCheckStep2(text.toString(), hsUserManager.userSocialInfos.getString("email"), hsUserManager.userSocialInfos.getString("id"), type)
                 }
                 "f" -> {
-                    fUserExtras.put("pseudo", text.toString())
-                    System.out.println(fUserExtras.toString())
-                    userSyncCheckStep2(text.toString(), fUserExtras.getString("email"), fUserExtras.getString("id"), type)
+                    hsUserManager.userSocialInfos.put("pseudo", text.toString())
+                    System.out.println(hsUserManager.userSocialInfos.toString())
+                    userSyncCheckStep2(text.toString(), hsUserManager.userSocialInfos.getString("email"), hsUserManager.userSocialInfos.getString("id"), type)
                 }
             }
         }
@@ -335,29 +336,32 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, AppComp
 
     //Si tout est ok on continue la connexion avec les réseaux sociaux
     fun continueSocialConnection() {
-        if(socialState.equals("g")) {
-            var intent = Intent(this, NavigationActivity::class.java)
-
-            intent.putExtra("userProfile", gUserExtras.toString())
-            startActivity(intent)
-
-            google_sign_in.visibility = View.GONE
-        }
-
-        if(socialState.equals("f")) {
-            var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
-            intent.putExtra("userProfile", fUserExtras.toString())
-            try {
-                Log.d("Facebook Mail", fUserExtras!!.getString("email"))
-            } catch(e: JSONException) {
-                Log.d("Facebook Mail Error", e.message)
-            }
-            startActivity(intent)
-        }
+        var intent = Intent(this, NavigationActivity::class.java)
+        startActivity(intent)
     }
 
+    //Quand on récupère l'user associé aux comptes sociaux
+    override fun onWorkUserDone(result: List<User>) {
+        var user = result.get(0)
+        hsUserManager.loggedUser = user
+        continueSocialConnection()
+    }
+
+    //QUAND LA CONNEXION CLASSIQUE SE FAIT
 
     override fun onWorkLoginDone(result: User) {
         Log.d("Simple Connect With", result.toString())
+        hsUserManager.loggedUser = result
+        Toast.makeText(baseContext, "Bienvenue, "+result.pseudo+" !", Toast.LENGTH_LONG).show()
+        var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+        Log.d("onWorkLoginDone", "NO SOCIAL ACCOUNT")
+        Log.d("onWorkLoginDone", "User Logged: "+hsUserManager.loggedUser.toString())
+
+        startActivity(intent)
+    }
+
+    override fun onWorkLoginError(error: String) {
+        Log.d("onWorkLoginError", error)
+        Toast.makeText(baseContext, error, Toast.LENGTH_LONG).show()
     }
 }

@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
 import com.squareup.picasso.Picasso
@@ -25,6 +26,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var response: JSONObject
     internal lateinit var profile_pic_data:JSONObject
     internal lateinit var profile_pic_url:JSONObject
+
+    private var hsUserManager = HsUserManager
 
     private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
 
@@ -43,6 +46,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
+
+        Log.d("InNavBegin", hsUserManager.loggedUser.toString())
+        Log.d("InNavBegin", hsUserManager.userSocialInfos.toString())
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
