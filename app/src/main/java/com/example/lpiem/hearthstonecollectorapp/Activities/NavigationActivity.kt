@@ -1,6 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import com.bumptech.glide.Glide
+import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.R
@@ -47,8 +50,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
 
-        Log.d("InNavBegin", hsUserManager.loggedUser.toString())
-        Log.d("InNavBegin", hsUserManager.userSocialInfos.toString())
+        Log.d("InNav-User", hsUserManager.loggedUser.toString())
+        Log.d("InNav-UserSocialInfos", hsUserManager.userSocialInfos.toString())
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -57,26 +60,30 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val intent = intent
-        val jsondata = intent.getStringExtra("userProfile")
-        Log.w("Jsondata", jsondata)
         val headerView = nav_view.getHeaderView(0)
 
         try {
-            response = JSONObject(jsondata)
-            Log.e("[NavigationActivity]", response.get("name").toString())
-            headerView.nameUser.text = response.get("name").toString()
+            Log.d("[NavigationActivity]", hsUserManager.loggedUser.pseudo)
+            headerView.nameUser.text = hsUserManager.loggedUser.pseudo
 
-            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
-                println("[NavigationActivity] url picture google ok")
-                profile_pic_url = JSONObject()
-                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
-            } else {
-                profile_pic_data = JSONObject(response.get("picture").toString())
-                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
+            if (hsUserManager.userSocialInfos.get("email") != null) {
+                if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
+                    if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                        var json = hsUserManager.userSocialInfos.get("picture") as JSONObject
+                        var data = json.get("data") as JSONObject
+                        var url = data.get("url") as String
+                        Log.d("Facebook Image URL", url)
+                        Glide.with(this).load(url).into(imgUser)
+                    }
+                } else if (hsUserManager.userSocialInfos.get("type") == "g") {
+                    if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                        var url = hsUserManager.userSocialInfos.get("picture") as Uri
+                        Log.d("Google Image URL", url.toString())
+                        Glide.with(this).load(url.toString()).into(imgUser)
+                        //Picasso.with(this).load(url).into(imgUser)
+                    }
+                }
             }
-
-            //Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -86,9 +93,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val fragment = CardsListFragment.newInstance()
         replaceFragment(fragment)
         nav_view.getMenu().getItem(0).setChecked(true)
-
-
-
     }
 
     override fun onBackPressed() {
