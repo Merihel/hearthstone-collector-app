@@ -32,8 +32,6 @@
         android:id="@+id/border"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:background="#6d5d2c"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

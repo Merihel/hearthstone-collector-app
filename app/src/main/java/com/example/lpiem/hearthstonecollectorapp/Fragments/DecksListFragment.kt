@@ -1,17 +1,18 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.SimpleAdapter
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.DecksListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Adapter.SwipeToDeleteCallback
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
@@ -23,9 +24,14 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
+import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
+import kotlinx.android.synthetic.main.toolbar.view.*
+import android.content.DialogInterface
+import android.graphics.Color
 
 
+@SuppressLint("StaticFieldLeak")
 private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.LinearLayoutManager? = null
 
@@ -45,36 +51,48 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_decks_list, container, false)
 
-        getActivity()?.title = "Mes decks";
-        println("on create view decks")
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("on view created decks")
+
+        // Gestion de la toolbar
+        decks_toolbar.tvTitre.text = "Mes decks"
+        decks_toolbar.ic_menu.setOnClickListener {
+            ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
+        }
+        decks_toolbar.ic_add.setOnClickListener {
+            // TODO: ajout de deck
+        }
+
+        // Adapter et layout manager
         adapter = DecksListAdapter(decks2, activity!!.applicationContext)
         recycler_view_decks.layoutManager = LinearLayoutManager(context)
         recycler_view_decks.adapter = adapter
 
         // Gestion du swipe à gauche pour la suppression
-        val swipeHandler = object : SwipeToDeleteCallback(this!!.context!!) {
+        val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
                 val builder = AlertDialog.Builder(activity)
                         .setTitle("Voulez-vous supprimer ce deck ?")
-                        .setPositiveButton("Oui") {dialog, which ->
+                        .setPositiveButton("Oui") { _, _ ->
                             Toast.makeText(context, "Deck supprimé",Toast.LENGTH_SHORT).show()
                             val adapter = recycler_view_decks.adapter as DecksListAdapter
                             adapter.removeAt(viewHolder.adapterPosition)
                         }
-                        .setNegativeButton("Non") {dialog, which ->
-                            Toast.makeText(context, "Pas de deck supprimé",Toast.LENGTH_SHORT).show()
-                            // enlever le fond rouge
+                        .setNegativeButton("Non") { _, _ ->
+                            // enlever le fond rouge du SwipeToDeleteCallback
                         }
 
                 val dialog: AlertDialog = builder.create()
                 dialog.show()
+                val negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                negativeButton.setBackgroundColor(Color.TRANSPARENT)
+                val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                positiveButton.setBackgroundColor(Color.TRANSPARENT)
+
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

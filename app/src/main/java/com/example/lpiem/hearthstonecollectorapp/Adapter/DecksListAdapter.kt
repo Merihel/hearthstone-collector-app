@@ -35,7 +35,7 @@ class DecksListAdapter (var items: MutableList<Deck>, val context: Context) : an
         notifyItemRemoved(position)
 
         // supprimer dans la base
-        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        // val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         //controller.deleteDeckByUser(1, 1)
     }
 

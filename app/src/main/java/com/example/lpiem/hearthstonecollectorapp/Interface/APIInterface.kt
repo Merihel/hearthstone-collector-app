@@ -62,4 +62,7 @@ interface APIInterface {
     @POST("/deck/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
     abstract fun createDeck(@Body deck: Deck): Call<Deck>
+
+    @POST("/deck/delete/{id}")
+    abstract fun deleteDeck(@Path("id") id: Int): Call<Deck>
 }
