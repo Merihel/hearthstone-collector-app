@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.DialogInterface
+import android.graphics.Canvas
 import android.graphics.Color
 
 
@@ -83,7 +84,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
                             adapter.removeAt(viewHolder.adapterPosition)
                         }
                         .setNegativeButton("Non") { _, _ ->
-                            // enlever le fond rouge du SwipeToDeleteCallback
+                           // onChildDraw(Canvas(), recycler_view_decks, viewHolder, 0.0f, 0.0f, 1, false)
                         }
 
                 val dialog: AlertDialog = builder.create()

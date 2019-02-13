@@ -3,10 +3,14 @@ package com.example.lpiem.hearthstonecollectorapp.Adapter
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import kotlinx.android.synthetic.main.list_deck_item.*
 
 abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
@@ -35,14 +39,16 @@ abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleC
 
     // on calcule manuellement le background de l'icône de suppression
     override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-
         val itemView = viewHolder.itemView
         val itemHeight = itemView.bottom - itemView.top
-        val isCanceled = dX == 0f && !isCurrentlyActive
+        val isCanceled = !isCurrentlyActive //dX == 0f &&
+        Log.d("mlk", "actionState : "+ actionState)
+        Log.d("mlk", "dx : "+ dX)
+        Log.d("mlk", "dy : "+ dY)
 
         if (isCanceled) {
             clearCanvas(c, itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            super.onChildDraw(c, recyclerView, viewHolder, 0.0f, 0.0f, actionState, isCurrentlyActive) // super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             return
         }
 
