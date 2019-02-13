@@ -62,7 +62,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
 
     }
 
-    override fun onWorkDeckDone(result: List<Deck>) {
+    override fun onWorkDeckDone(result: MutableList<Deck>) {
         if (result != null) {
             Log.d("onWorkDeckDone", result.get(0).name)
         }

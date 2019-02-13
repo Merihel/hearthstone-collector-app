@@ -1,14 +1,19 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.SimpleAdapter
+import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.DecksListAdapter
+import com.example.lpiem.hearthstonecollectorapp.Adapter.SwipeToDeleteCallback
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
@@ -48,15 +53,39 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         println("on view created decks")
-        adapter = DecksListAdapter(emptyList(), activity!!.applicationContext)
+        adapter = DecksListAdapter(decks2, activity!!.applicationContext)
         recycler_view_decks.layoutManager = LinearLayoutManager(context)
         recycler_view_decks.adapter = adapter
+
+        // Gestion du swipe à gauche pour la suppression
+        val swipeHandler = object : SwipeToDeleteCallback(this!!.context!!) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                val builder = AlertDialog.Builder(activity)
+                        .setTitle("Voulez-vous supprimer ce deck ?")
+                        .setPositiveButton("Oui") {dialog, which ->
+                            Toast.makeText(context, "Deck supprimé",Toast.LENGTH_SHORT).show()
+                            val adapter = recycler_view_decks.adapter as DecksListAdapter
+                            adapter.removeAt(viewHolder.adapterPosition)
+                        }
+                        .setNegativeButton("Non") {dialog, which ->
+                            Toast.makeText(context, "Pas de deck supprimé",Toast.LENGTH_SHORT).show()
+                            // enlever le fond rouge
+                        }
+
+                val dialog: AlertDialog = builder.create()
+                dialog.show()
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recycler_view_decks)
+
 
         val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         controller.getDecksByUser(1)
     }
 
-    override fun onWorkDeckDone(result: List<Deck>) {
+    override fun onWorkDeckDone(result: MutableList<Deck>) {
         System.out.println("My user decks" + result.toString())
         decks = result
 

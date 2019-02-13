@@ -57,7 +57,7 @@ interface APIInterface {
     abstract fun getDeck(@Path("id") id: Int): Call<Deck>
 
     @GET("/deck/select-by-user/{userId}")
-    abstract fun getDecksByUser(@Path("userId") userId: Int): Call<List<Deck>>
+    abstract fun getDecksByUser(@Path("userId") userId: Int): Call<MutableList<Deck>>
 
     @POST("/deck/new")
     @Headers("Content-Type: application/json;charset=UTF-8")

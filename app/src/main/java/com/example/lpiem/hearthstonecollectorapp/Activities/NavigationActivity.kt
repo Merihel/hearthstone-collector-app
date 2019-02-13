@@ -37,12 +37,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        //setSupportActionBar(toolbar)
 
         content = findViewById(R.id.content_navigation) as FrameLayout
 
+//        val toggle = ActionBarDrawerToggle(
+//                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                this, drawer_layout, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -72,6 +73,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 //        } catch (e: Exception) {
 //            e.printStackTrace()
 //        }
+
+
+        // Fragment par défaut : liste des cartes
+        val fragment = CardsListFragment()
+        replaceFragment(fragment)
+        nav_view.menu.getItem(0).setChecked(true)
 
 
     }

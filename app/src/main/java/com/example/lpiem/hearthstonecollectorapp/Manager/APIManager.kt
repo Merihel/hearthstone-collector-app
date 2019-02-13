@@ -188,8 +188,8 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getDecksByUser(userId)
 
-        call.enqueue(object : Callback<List<Deck>> {
-            override fun onResponse(call: Call<List<Deck>>, response: Response<List<Deck>>) {
+        call.enqueue(object : Callback<MutableList<Deck>> {
+            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
                 if (response.isSuccessful) {
                     val decks = response.body()
                     interfaceCallBackDeck.onWorkDeckDone(decks!!)
@@ -198,10 +198,32 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
                 }
             }
 
-            override fun onFailure(call: Call<List<Deck>>, t: Throwable) {
+            override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
                 t.printStackTrace()
             }
         })
+    }
+
+    fun deleteDeckByUser(userId: Int, deckId: Int){
+//        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+//
+//        var hearthstoneInstance = APISingleton.hearthstoneInstance
+//        var call = hearthstoneInstance!!.deleteDeckByUser(userId, deckId)
+//
+//        call.enqueue(object : Callback<MutableList<Deck>> {
+//            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
+//                if (response.isSuccessful) {
+//                    val decks = response.body()
+//                    interfaceCallBackDeck.onWorkDeckDone(decks!!)
+//                } else {
+//                    Log.d("APIManager", "error : " + response.errorBody()!!)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
+//                t.printStackTrace()
+//            }
+//        })
     }
 
 

@@ -23,13 +23,13 @@
         android:textStyle="bold"
         android:typeface="normal"
         app:fontFamily="@font/montserrat_bold"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toTopOf="@+id/border"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Nom du deck" />
 
     <View
-        android:id="@+id/view"
+        android:id="@+id/border"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginStart="8dp"

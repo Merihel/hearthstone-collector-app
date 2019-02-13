@@ -9,19 +9,31 @@
         android:layout_height="match_parent">
 
         <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="0.2" />
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="0.01"
+            android:background="@color/colorPrimary" />
+
+        <Button
+            android:id="@+id/ic_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.01"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/ic_menu"
+            app:iconTint="@color/colorPrimaryDark"
+            />
 
         <TextView
-            android:id="@+id/txtListes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="0.8"
-            android:text="Liste de cartes"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            app:fontFamily="@font/montserrat_family" />
+        android:id="@+id/txtListes"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_weight="0.8"
+        android:text="Liste de cartes"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:fontFamily="@font/montserrat_family" />
 
     </LinearLayout>
