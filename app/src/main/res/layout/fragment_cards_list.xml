@@ -6,12 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.CardsListFragment">
 
+    <include
+        android:id="@+id/cards_toolbar"
+        layout="@layout/toolbar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cards_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.2" />
-
+        android:layout_height="545dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="0.2"
+        app:layout_constraintTop_toBottomOf="@+id/cards_toolbar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

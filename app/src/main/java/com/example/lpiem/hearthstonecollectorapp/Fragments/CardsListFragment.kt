@@ -7,50 +7,59 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
+import androidx.core.view.GravityCompat
+import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.app_bar_navigation.*
+import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_cards_list.*
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.fragment_decks_list.*
+import kotlinx.android.synthetic.main.toolbar.view.*
 
 
 
 private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.GridLayoutManager? = null
 
-class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, androidx.fragment.app.Fragment() {
-
+class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
 
     companion object {
         fun newInstance(): CardsListFragment {
+            System.out.println("new instance cards list")
             return CardsListFragment()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_cards_list, container, false)
-
-        (activity as AppCompatActivity).supportActionBar!!.setTitle("Mes cartes")
-
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        // Gestion de la toolbar
+        cards_toolbar.tvTitre.text = "Liste de cartes"
+        cards_toolbar.ic_add.visibility = View.GONE
+
+        cards_toolbar.ic_menu.setOnClickListener {
+            ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
+        }
+
+        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
         controller.getCardsByUser(1)
     }
 
@@ -69,6 +78,12 @@ class CardsListFragment : InterfaceCallBackCard, InterfaceCallBackUser, androidx
 
     override fun onWorkUserDone(result: List<User>) {
 
+    }
+
+    override fun onWorkDeckDone(result: MutableList<Deck>) {
+        if (result != null) {
+            Log.d("onWorkDeckDone", result.get(0).name)
+        }
     }
 
 }

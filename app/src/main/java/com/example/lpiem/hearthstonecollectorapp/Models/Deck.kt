@@ -6,5 +6,12 @@ class Deck(id: Int, name: String, description: String) {
     var description: String? = null
     var cardsList: Array<Card>? = null
 
+    override fun toString():String {
+        return "Deck{" +
+                "id=" + id +
+                ", name=" + name +
+                ", description=" + description +
+                '}'
+    }
 
 }

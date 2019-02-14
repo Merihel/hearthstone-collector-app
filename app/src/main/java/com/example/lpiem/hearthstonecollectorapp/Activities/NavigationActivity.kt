@@ -1,6 +1,5 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
-import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
@@ -11,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.FrameLayout
+import androidx.fragment.app.FragmentManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
+import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.example.lpiem.hearthstonecollectorapp.R.id.nav_cards
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.nav_header_navigation.*
@@ -27,6 +27,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var profile_pic_url:JSONObject
 
     private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
+    private var content: FrameLayout? = null
 
     private val decksFragment: androidx.fragment.app.Fragment? = null
     private val tradeFragment: androidx.fragment.app.Fragment? = null
@@ -42,10 +43,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        setSupportActionBar(toolbar)
 
+        content = findViewById(R.id.content_navigation) as FrameLayout
+
+//        val toggle = ActionBarDrawerToggle(
+//                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                this, drawer_layout, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -98,16 +102,14 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item
-        // clicks here.
         when (item.itemId) {
             R.id.nav_cards -> {
-                Log.d("[NavigationActivity]", "itemSelected !")
-                val fragment = CardsListFragment.newInstance()
+                val fragment = CardsListFragment() //.newInstance()
                 replaceFragment(fragment)
             }
             R.id.nav_decks -> {
-                //showFragment(new DecksFragment());
+                val fragment = DecksListFragment() //.newInstance()
+                replaceFragment(fragment)
             }
             R.id.nav_trade -> {
                 // showFragment(new TradeFragment());
@@ -119,8 +121,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 //showFragment(new ShopFragment());
             }
             R.id.nav_deconnexion -> {
-                val intent = Intent(this@NavigationActivity, ConnexionActivity::class.java)
-                intent.putExtra("deconnexion", true)
+                val intent = ConnexionActivity.newIntent(this, true)
                 startActivity(intent)
             }
         }
@@ -130,11 +131,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun replaceFragment(fragment: androidx.fragment.app.Fragment) {
-        Log.d("[NavigationActivity]", "passe dans replaceFragment !")
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.content_navigation, fragment)
-        fragmentTransaction.commit()
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.content_navigation, fragment, fragment.javaClass.getSimpleName())
+                .addToBackStack(fragment.javaClass.getSimpleName())
+                .commit()
     }
-
 
 }

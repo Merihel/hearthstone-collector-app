@@ -1,7 +1,10 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.content.Context
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -10,13 +13,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.facebook.*
 import com.facebook.login.LoginResult
@@ -29,7 +32,7 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -42,6 +45,20 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     //Variables autres
     private var isLoggedIn: Boolean? = null
     private val RC_SIGN_IN = 100
+
+
+
+
+    companion object {
+
+        fun newIntent(context: Context, isDeconnect: Boolean): Intent {
+            val intent = Intent(context, ConnexionActivity::class.java)
+            intent.putExtra("deconnexion", isDeconnect)
+            return intent
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,6 +266,12 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     override fun onWorkCardsDone(result: List<Card>) {
         if (result != null) {
             Log.d("OnWorkCardDone", result.get(0).flavor)
+        }
+    }
+
+    override fun onWorkDeckDone(result: MutableList<Deck>) {
+        if (result != null) {
+            Log.d("onWorkDeckDone", result.get(0).name)
         }
     }
 }

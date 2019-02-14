@@ -3,14 +3,16 @@ package com.example.lpiem.hearthstonecollectorapp.Manager
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.Interface.APIInterface
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, internal var interfaceCallBackCard: InterfaceCallBackCard) {
+class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, internal var interfaceCallBackUser: InterfaceCallBackUser, internal var interfaceCallBackCard: InterfaceCallBackCard) {
     internal var message: String? = null
     internal var nextPage = 1
     internal var nbPages = 100
@@ -179,7 +181,50 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser, int
         })
     }
 
+    // DECKS
+    fun getDecksByUser(userId: Int) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getDecksByUser(userId)
+
+        call.enqueue(object : Callback<MutableList<Deck>> {
+            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
+                if (response.isSuccessful) {
+                    val decks = response.body()
+                    interfaceCallBackDeck.onWorkDeckDone(decks!!)
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun deleteDeckByUser(userId: Int, deckId: Int){
+//        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+//
+//        var hearthstoneInstance = APISingleton.hearthstoneInstance
+//        var call = hearthstoneInstance!!.deleteDeckByUser(userId, deckId)
+//
+//        call.enqueue(object : Callback<MutableList<Deck>> {
+//            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
+//                if (response.isSuccessful) {
+//                    val decks = response.body()
+//                    interfaceCallBackDeck.onWorkDeckDone(decks!!)
+//                } else {
+//                    Log.d("APIManager", "error : " + response.errorBody()!!)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
+//                t.printStackTrace()
+//            }
+//        })
+    }
 
 
     // USERS
