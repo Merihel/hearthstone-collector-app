@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
@@ -50,6 +51,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
 
+
         Log.d("InNav-User", hsUserManager.loggedUser.toString())
         Log.d("InNav-UserSocialInfos", hsUserManager.userSocialInfos.toString())
 
@@ -66,25 +68,31 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             Log.d("[NavigationActivity]", hsUserManager.loggedUser.pseudo)
             headerView.nameUser.text = hsUserManager.loggedUser.pseudo
 
-            if (hsUserManager.userSocialInfos.get("email") != null) {
-                if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
-                    if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
-                        var json = hsUserManager.userSocialInfos.get("picture") as JSONObject
-                        var data = json.get("data") as JSONObject
-                        var url = data.get("url") as String
-                        Log.d("Facebook Image URL", url)
-                        Glide.with(this).load(url).into(imgUser)
-                    }
-                } else if (hsUserManager.userSocialInfos.get("type") == "g") {
-                    if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
-                        var url = hsUserManager.userSocialInfos.get("picture") as Uri
-                        Log.d("Google Image URL", url.toString())
-                        Glide.with(this).load(url.toString()).into(imgUser)
-                        //Picasso.with(this).load(url).into(imgUser)
+            if (hsUserManager.userSocialInfos.isNull("email")) {
+                Log.d("NavigationActivity", "No social email, add default avatar")
+                Glide.with(this).load("https://gazettereview.com/wp-content/uploads/2016/01/mind-control-tech-hearthstone-featured-tech.jpg").into(nav_view.getHeaderView(0).imgUser)
+            } else {
+                if (hsUserManager.userSocialInfos.get("email") != null) {
+                    if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
+                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                            var json = hsUserManager.userSocialInfos.get("picture") as JSONObject
+                            var data = json.get("data") as JSONObject
+                            var url = data.get("url") as String
+                            Log.d("Facebook Image URL", url)
+                            Glide.with(this).load(url).into(nav_view.getHeaderView(0).imgUser)
+                        }
+                    } else if (hsUserManager.userSocialInfos.get("type") == "g") {
+                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                            var url = hsUserManager.userSocialInfos.get("picture") as Uri
+                            Log.d("Google Image URL", url.toString())
+                            Glide.with(this).load(url.toString()).into(nav_view.getHeaderView(0).imgUser)
+                            //Picasso.with(this).load(url).into(imgUser)
+                        }
                     }
                 }
             }
 
+            nav_view.getHeaderView(0).moneyUser.text = hsUserManager.loggedUser.coins.toString()
         } catch (e: Exception) {
             e.printStackTrace()
         }
