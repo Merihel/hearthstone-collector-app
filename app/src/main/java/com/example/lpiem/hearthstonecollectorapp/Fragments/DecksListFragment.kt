@@ -75,25 +75,9 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         // Gestion du swipe à gauche pour la suppression
         val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-                val builder = AlertDialog.Builder(activity)
-                        .setTitle("Voulez-vous supprimer ce deck ?")
-                        .setPositiveButton("Oui") { _, _ ->
-                            Toast.makeText(context, "Deck supprimé",Toast.LENGTH_SHORT).show()
-                            val adapter = recycler_view_decks.adapter as DecksListAdapter
-                            adapter.removeAt(viewHolder.adapterPosition)
-                        }
-                        .setNegativeButton("Non") { _, _ ->
-                           // onChildDraw(Canvas(), recycler_view_decks, viewHolder, 0.0f, 0.0f, 1, false)
-                        }
-
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
-                val negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-                negativeButton.setBackgroundColor(Color.TRANSPARENT)
-                val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-                positiveButton.setBackgroundColor(Color.TRANSPARENT)
-
+                Toast.makeText(context, "Deck supprimé",Toast.LENGTH_SHORT).show()
+                val adapter = recycler_view_decks.adapter as DecksListAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

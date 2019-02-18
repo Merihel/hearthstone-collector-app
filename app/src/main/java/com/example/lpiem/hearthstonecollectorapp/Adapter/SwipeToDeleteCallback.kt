@@ -41,14 +41,11 @@ abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleC
     override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
         val itemView = viewHolder.itemView
         val itemHeight = itemView.bottom - itemView.top
-        val isCanceled = !isCurrentlyActive //dX == 0f &&
-        Log.d("mlk", "actionState : "+ actionState)
-        Log.d("mlk", "dx : "+ dX)
-        Log.d("mlk", "dy : "+ dY)
+        val isCanceled = dX == 0f && !isCurrentlyActive
 
         if (isCanceled) {
             clearCanvas(c, itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
-            super.onChildDraw(c, recyclerView, viewHolder, 0.0f, 0.0f, actionState, isCurrentlyActive) // super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             return
         }
 
