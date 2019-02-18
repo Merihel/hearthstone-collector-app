@@ -10,39 +10,41 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.cards_list_item.view.*
 
-class CardsListAdapter(val items: List<Card>, val context: Context) : RecyclerView.Adapter<ViewHolderCards>() {
+class CardsListAdapter(val items: List<Card>, val context: Context, var listener: Listener) : RecyclerView.Adapter<ViewHolderCards>() {
 
     companion object {
         lateinit var fragContext: Context
     }
 
+    interface Listener {
+        fun onItemClicked(item: Card)
+    }
 
     // Gets the number of cards in the list
     override fun getItemCount(): Int {
         return items.size
     }
 
-    //Inflates the item view - p0=parent, p1=viewType
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolderCards {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderCards {
 
         fragContext = context
-        return ViewHolderCards(LayoutInflater.from(context).inflate(R.layout.cards_list_item, p0, false))
+        return ViewHolderCards(LayoutInflater.from(context).inflate(R.layout.cards_list_item, parent, false))
     }
 
-
-    //Binds each card in the List to some views - p0=viewHolder, p1=position
-    override fun onBindViewHolder(p0: ViewHolderCards, p1: Int) {
-        p0?.updateWithUrl(items[p1]?.imgGold)
-
+    override fun onBindViewHolder(holder: ViewHolderCards, position: Int) {
+        holder?.bind(items[position]?.imgGold)
+        holder.itemView.setOnClickListener {
+            listener.onItemClicked(items[position])
+        }
     }
+
 }
 
 class ViewHolderCards (view: View) : RecyclerView.ViewHolder(view) {
-    // Holds the TextView that will add each card to
     //val tvCardName = view.cardsList_card_name
     val imageView = view.cardsList_card_thumbnail
 
-    fun updateWithUrl(url: String?) {
-            Glide.with(CardsListAdapter.fragContext).load(url).into(imageView)
+    fun bind(url: String?) {
+        Glide.with(CardsListAdapter.fragContext).load(url).into(imageView)
     }
 }

@@ -27,7 +27,11 @@ import kotlinx.android.synthetic.main.fragment_cards_list.*
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
-
+import androidx.core.content.ContextCompat.startActivity
+import android.content.Intent
+import androidx.recyclerview.widget.RecyclerView
+import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
+import com.example.lpiem.hearthstonecollectorapp.Activities.ConnexionActivity
 
 
 private var rootView: View? = null
@@ -70,7 +74,15 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
     override fun onWorkCardsDone(result: List<Card>) {
         System.out.println("My user cards" + result.toString())
 
-        rv_cards_list.adapter = CardsListAdapter(result, getActivity()!!.applicationContext)
+        val listener = object : CardsListAdapter.Listener {
+            override fun onItemClicked(item: Card) {
+                val intent = Intent(activity, CardDetailActivity::class.java)
+                intent.putExtra("cardId", item.id)
+                activity!!.startActivity(intent)
+            }
+        }
+
+        rv_cards_list.adapter = CardsListAdapter(result, getActivity()!!.applicationContext, listener)
         rv_cards_list.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
         //Need to push the cards to the RecyclerView
 
