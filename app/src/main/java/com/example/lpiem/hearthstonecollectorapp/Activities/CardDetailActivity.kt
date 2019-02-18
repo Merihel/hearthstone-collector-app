@@ -2,9 +2,8 @@ package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import com.bumptech.glide.Glide
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
@@ -15,11 +14,6 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.activity_card_detail.*
-import android.os.Build
-import android.graphics.drawable.Drawable
-import android.transition.Transition
-import com.bumptech.glide.request.target.SimpleTarget
-
 
 
 class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser {
@@ -68,11 +62,10 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         println(card!!.name)
 
         txtNom.text = card!!.name
-        txtDescription.text = card!!.text
         txtCost.text = card!!.cost.toString()
         txtHealth.text = card!!.health.toString()
         txtAttack.text = card!!.attack.toString()
-
-        Glide.with(this).load(card!!.img).into(imgCard)
+        txtDescription.text = Html.fromHtml(card!!.text)
+        Glide.with(this).load("https://art.hearthstonejson.com/v1/orig/"+card!!.hsId+".png").into(imgCard)
     }
 }

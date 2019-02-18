@@ -2,13 +2,10 @@ package com.example.lpiem.hearthstonecollectorapp.Fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import androidx.core.view.GravityCompat
 import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
@@ -21,17 +18,11 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
-import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_cards_list.*
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
-import androidx.core.content.ContextCompat.startActivity
 import android.content.Intent
-import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
-import com.example.lpiem.hearthstonecollectorapp.Activities.ConnexionActivity
 
 
 private var rootView: View? = null
