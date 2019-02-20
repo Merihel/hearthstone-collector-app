@@ -345,12 +345,6 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
         dialog.show(supportFragmentManager, "editDescription")
     }
 
-    override fun onWorkDeckDone(result: MutableList<Deck>) {
-        if (result != null) {
-            Log.d("onWorkDeckDone", result.get(0).name)
-        }
-    }
-
     //Si tout est ok on continue la connexion avec les réseaux sociaux
     fun continueSocialConnection() {
         var intent = Intent(this, NavigationActivity::class.java)
