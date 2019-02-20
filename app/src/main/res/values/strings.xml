@@ -18,10 +18,13 @@
     <string name="menu_ic_add">Ajouter</string>
 
     <string name="connexion">Se connecter à Hearthstone Collector</string>
-    <string name="connexion_fb">Se connecter avec Facebook</string>
-    <string name="connexion_google">Se connecter avec Google</string>
+    <string name="login_mail_hint">Adresse e-mail ou pseudo</string>
+    <string name="login_password_hint">Mot de passe</string>
+    <string name="connexion_classic">Se connecter</string>
+    <string name="connexion_fb">Facebook</string>
+    <string name="connexion_google">Google</string>
     <string name="deconnexion_google">Se déconnecter avec Google</string>
-    <string name="creation_compte">Cliquer ici pour créer un compte</string>
+    <string name="creation_compte">Créer un compte</string>
 
     <string name="inscription_pseudo">Pseudo *</string>
     <string name="inscription_prenom">Prénom</string>

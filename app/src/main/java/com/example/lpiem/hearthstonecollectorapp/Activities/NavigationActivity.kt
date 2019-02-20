@@ -1,5 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.fragment.app.Fragment
@@ -10,9 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.activity_navigation.*
@@ -25,6 +31,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     internal lateinit var response: JSONObject
     internal lateinit var profile_pic_data:JSONObject
     internal lateinit var profile_pic_url:JSONObject
+
+    private var hsUserManager = HsUserManager
 
     private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
     private var content: FrameLayout? = null
@@ -48,6 +56,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
 //        val toggle = ActionBarDrawerToggle(
 //                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+
+        Log.d("InNav-User", hsUserManager.loggedUser.toString())
+        Log.d("InNav-UserSocialInfos", hsUserManager.userSocialInfos.toString())
+
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -55,27 +67,41 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val intent = intent
-        val jsondata = intent.getStringExtra("userProfile")
-        Log.w("Jsondata", jsondata)
         val headerView = nav_view.getHeaderView(0)
 
         try {
-            response = JSONObject(jsondata)
-            Log.e("[NavigationActivity]", response.get("name").toString())
-            headerView.nameUser.text = response.get("name").toString()
+            Log.d("[NavigationActivity]", hsUserManager.loggedUser.pseudo)
+            headerView.nameUser.text = hsUserManager.loggedUser.pseudo
 
-            if (!response.isNull("pictureUrlGoogle") && response.has("pictureUrlGoogle")) {
-                println("[NavigationActivity] url picture google ok")
-                profile_pic_url = JSONObject()
-                profile_pic_url.put("url", response.getString("pictureUrlGoogle"))
+            if (hsUserManager.userSocialInfos.isNull("email")) {
+                Log.d("NavigationActivity", "No social email, add default avatar")
+                setHeaderAvatar(hsUserManager.defautThumbnail)
             } else {
-                profile_pic_data = JSONObject(response.get("picture").toString())
-                profile_pic_url = JSONObject(profile_pic_data.getString("data"))
+                if (hsUserManager.userSocialInfos.get("email") != null) {
+                    if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
+                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                            var json = hsUserManager.userSocialInfos.get("picture") as JSONObject
+                            var data = json.get("data") as JSONObject
+                            var url = data.get("url") as String
+                            Log.d("Facebook Image URL", url)
+                            setHeaderAvatar(url)
+                        } else {
+                            setHeaderAvatar(hsUserManager.defautThumbnail)
+                        }
+                    } else if (hsUserManager.userSocialInfos.get("type") == "g") {
+                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de google
+                            var url = hsUserManager.userSocialInfos.get("picture") as Uri
+                            Log.d("Google Image URL", url.toString())
+                            setHeaderAvatar(url.toString())
+                            //Picasso.with(this).load(url).into(imgUser)
+                        } else {
+                            setHeaderAvatar(hsUserManager.defautThumbnail)
+                        }
+                    }
+                }
             }
 
-            //Picasso.with(this).load(profile_pic_url.getString("url")).into(imgUser)
-
+            nav_view.getHeaderView(0).moneyUser.text = hsUserManager.loggedUser.coins.toString()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -84,9 +110,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val fragment = CardsListFragment.newInstance()
         replaceFragment(fragment)
         nav_view.getMenu().getItem(0).setChecked(true)
+    }
 
-
-
+    fun setHeaderAvatar(image: String) {
+        Glide.with(this).load(image).into(nav_view.getHeaderView(0).imgUser)
     }
 
     override fun onBackPressed() {
@@ -137,5 +164,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 .addToBackStack(fragment.javaClass.getSimpleName())
                 .commit()
     }
+
 
 }

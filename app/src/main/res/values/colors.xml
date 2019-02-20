@@ -5,4 +5,5 @@
     <color name="colorAccent">#1a1658</color>
     <color name="colorCardBg">#dfdfdf</color>
     <color name="colorDarkText">#626262</color>
+    <color name="colorGoogleBg">#db3236</color>
 </resources>

@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class User(
-        @SerializedName("id") @Expose var id: Int,
-        @SerializedName("pseudo") @Expose var pseudo: String,
-        @SerializedName("mail") @Expose var mail: String,
-        @SerializedName("coins") @Expose var coins: Int,
+        @SerializedName("id") @Expose var id: Int? = null,
+        @SerializedName("pseudo") @Expose var pseudo: String? = null,
+        @SerializedName("mail") @Expose var mail: String? = null,
+        @SerializedName("coins") @Expose var coins: Int? = null,
         @SerializedName("firstName") @Expose var firstName: String? = null,
         @SerializedName("lastName") @Expose var lastName: String? = null,
         var cards: List<Card>? = null,
