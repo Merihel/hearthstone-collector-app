@@ -12,7 +12,7 @@ import retrofit2.http.Path
 
 interface APIInterface {
     // NOTE SUR LES CALLS
-    // Quand on fait un GET, l'API Symfony va renvoyer un Array, même s'il n'y a qu'un seul résultat. On passe donc des List d'objets au lieu des objets eux-mêmes.
+    // Quand on fait un GET, l'API Symfony va parfois renvoyer un Array, même s'il n'y a qu'un seul résultat. On passe donc dans ce cas là des List d'objets au lieu des objets eux-mêmes.
 
     // CARDS //
     @GET("card/select/{id}")

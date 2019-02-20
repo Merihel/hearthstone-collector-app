@@ -70,7 +70,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
             if (hsUserManager.userSocialInfos.isNull("email")) {
                 Log.d("NavigationActivity", "No social email, add default avatar")
-                Glide.with(this).load("https://gazettereview.com/wp-content/uploads/2016/01/mind-control-tech-hearthstone-featured-tech.jpg").into(nav_view.getHeaderView(0).imgUser)
+                setHeaderAvatar(hsUserManager.defautThumbnail)
             } else {
                 if (hsUserManager.userSocialInfos.get("email") != null) {
                     if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
@@ -79,14 +79,18 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                             var data = json.get("data") as JSONObject
                             var url = data.get("url") as String
                             Log.d("Facebook Image URL", url)
-                            Glide.with(this).load(url).into(nav_view.getHeaderView(0).imgUser)
+                            setHeaderAvatar(url)
+                        } else {
+                            setHeaderAvatar(hsUserManager.defautThumbnail)
                         }
                     } else if (hsUserManager.userSocialInfos.get("type") == "g") {
-                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
+                        if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de google
                             var url = hsUserManager.userSocialInfos.get("picture") as Uri
                             Log.d("Google Image URL", url.toString())
-                            Glide.with(this).load(url.toString()).into(nav_view.getHeaderView(0).imgUser)
+                            setHeaderAvatar(url.toString())
                             //Picasso.with(this).load(url).into(imgUser)
+                        } else {
+                            setHeaderAvatar(hsUserManager.defautThumbnail)
                         }
                     }
                 }
@@ -101,6 +105,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val fragment = CardsListFragment.newInstance()
         replaceFragment(fragment)
         nav_view.getMenu().getItem(0).setChecked(true)
+    }
+
+    fun setHeaderAvatar(image: String) {
+        Glide.with(this).load(image).into(nav_view.getHeaderView(0).imgUser)
     }
 
     override fun onBackPressed() {
