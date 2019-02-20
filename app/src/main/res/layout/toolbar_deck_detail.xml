@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_deck"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="start"
+                android:layout_marginRight="15dp"
+                app:srcCompat="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:id="@+id/txtToolbarDeckDetail"
+                android:layout_width="250dp"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:text="Détail du deck"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/btn_delete"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_delete" />
+
+        </FrameLayout>
+
+</androidx.appcompat.widget.Toolbar>
+
+

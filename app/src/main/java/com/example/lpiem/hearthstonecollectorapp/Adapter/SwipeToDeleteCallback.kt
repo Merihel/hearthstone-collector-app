@@ -3,14 +3,10 @@ package com.example.lpiem.hearthstonecollectorapp.Adapter
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
-import kotlinx.android.synthetic.main.list_deck_item.*
 
 abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 

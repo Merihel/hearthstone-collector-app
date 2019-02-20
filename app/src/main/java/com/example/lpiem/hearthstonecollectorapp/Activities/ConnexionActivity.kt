@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -13,10 +12,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
-import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
-import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck

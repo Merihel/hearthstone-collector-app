@@ -6,10 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
-import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.list_deck_item.view.*
@@ -56,6 +52,7 @@ class DecksListAdapter (var items: MutableList<Deck>, val context: Context, var 
             listener.onItemClicked(items[position])
         }
 
+
         if(position %2 == 1) {
             viewHolder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
@@ -73,5 +70,7 @@ class ViewHolderDecks (view: View) : RecyclerView.ViewHolder(view) {
     fun bind(name: String) {
         tvDeckName.text = name
     }
+
+
 
 }
