@@ -54,7 +54,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
             ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
         }
 
-        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
         controller.getCardsByUser(1)
     }
 

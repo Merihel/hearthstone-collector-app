@@ -4,26 +4,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
-import androidx.fragment.app.Fragment
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
 import android.widget.FrameLayout
-import androidx.fragment.app.FragmentManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.activity_navigation.*
-import kotlinx.android.synthetic.main.app_bar_navigation.*
-import kotlinx.android.synthetic.main.nav_header_navigation.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.json.JSONObject
 

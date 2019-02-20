@@ -30,7 +30,7 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         println("cardId : "+cardId)
 
 
-        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
         controller.getCardById(cardId)
 
         btnEchange?.setOnClickListener({

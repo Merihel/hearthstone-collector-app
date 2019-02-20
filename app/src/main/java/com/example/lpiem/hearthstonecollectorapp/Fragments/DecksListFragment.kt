@@ -84,7 +84,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         itemTouchHelper.attachToRecyclerView(recycler_view_decks)
 
 
-        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
         controller.getDecksByUser(1)
     }
 

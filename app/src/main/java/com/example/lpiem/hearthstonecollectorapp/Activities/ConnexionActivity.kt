@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.UserManager
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -19,7 +18,6 @@ import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
-import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.facebook.*
 import com.facebook.login.LoginResult

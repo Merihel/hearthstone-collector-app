@@ -9,16 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.cards_list_item.view.*
-import android.graphics.drawable.Drawable
-import android.graphics.Bitmap
-import androidx.core.content.ContextCompat
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-
-
-
-
 
 class CardsListAdapter(val items: List<Card>, val context: Context, var listener: Listener) : RecyclerView.Adapter<ViewHolderCards>() {
 
