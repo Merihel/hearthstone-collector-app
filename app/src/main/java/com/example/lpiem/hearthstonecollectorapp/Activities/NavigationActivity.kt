@@ -11,10 +11,12 @@ import android.util.Log
 import android.view.MenuItem
 import com.bumptech.glide.Glide
 import android.widget.FrameLayout
+import com.bumptech.glide.request.RequestOptions
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
+import jp.wasabeef.glide.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.json.JSONObject
@@ -67,9 +69,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
             if (hsUserManager.userSocialInfos.isNull("email")) {
                 Log.d("NavigationActivity", "No social email, add default avatar")
+                setHeaderEmail(hsUserManager.loggedUser.mail!!)
                 setHeaderAvatar(hsUserManager.defautThumbnail)
             } else {
                 if (hsUserManager.userSocialInfos.get("email") != null) {
+                    setHeaderEmail(hsUserManager.userSocialInfos.get("email") as String)
                     if (hsUserManager.userSocialInfos.get("type") == "f") { //On est connecté via Facebook
                         if (hsUserManager.userSocialInfos.get("picture") != null) { //Récupérer l'image de FB
                             var json = hsUserManager.userSocialInfos.get("picture") as JSONObject
@@ -105,7 +109,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     fun setHeaderAvatar(image: String) {
-        Glide.with(this).load(image).into(nav_view.getHeaderView(0).imgUser)
+        Glide.with(this).load(image).apply(RequestOptions.circleCropTransform()).into(nav_view.getHeaderView(0).imgUser)
+    }
+
+    fun setHeaderEmail(email: String) {
+        nav_view.getHeaderView(0).emailUser.text = email
     }
 
     override fun onBackPressed() {
