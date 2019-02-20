@@ -28,8 +28,10 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
+import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
 
 
 @SuppressLint("StaticFieldLeak")
@@ -37,6 +39,7 @@ private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.LinearLayoutManager? = null
 
 class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard {
+
     private var decks = emptyList<Deck>()
     private var decks2 = mutableListOf<Deck>()
     private lateinit var adapter : DecksListAdapter
@@ -68,7 +71,14 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         }
 
         // Adapter et layout manager
-        adapter = DecksListAdapter(decks2, activity!!.applicationContext)
+        val listener = object : DecksListAdapter.Listener {
+            override fun onItemClicked(item: Deck) {
+                val intent = Intent(activity, DeckDetailActivity::class.java)
+                intent.putExtra("deckId", item.id)
+                activity!!.startActivity(intent)
+            }
+        }
+        adapter = DecksListAdapter(decks2, activity!!.applicationContext, listener)
         recycler_view_decks.layoutManager = LinearLayoutManager(context)
         recycler_view_decks.adapter = adapter
 
@@ -88,7 +98,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         controller.getDecksByUser(1)
     }
 
-    override fun onWorkDeckDone(result: MutableList<Deck>) {
+    override fun onWorkDecksDone(result: MutableList<Deck>) {
         System.out.println("My user decks" + result.toString())
         decks = result
 
@@ -106,5 +116,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
 
     override fun onWorkCardsDone(result: List<Card>) {
     }
+
+    override fun onWorkDeckDone(result: List<Deck>) {   }
 
 }

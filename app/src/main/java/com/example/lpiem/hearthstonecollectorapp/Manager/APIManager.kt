@@ -44,8 +44,6 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
                 t.printStackTrace()
             }
         })
-
-
     }
 
     fun getCardsBySet(set: String) {
@@ -192,13 +190,38 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
             override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
                 if (response.isSuccessful) {
                     val decks = response.body()
-                    interfaceCallBackDeck.onWorkDeckDone(decks!!)
+                    interfaceCallBackDeck.onWorkDecksDone(decks!!)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
             }
 
             override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun getDeckById(id: Int) {
+
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getDeck(id)
+
+        call.enqueue(object : Callback<Deck> {
+            override fun onResponse(call: Call<Deck>, response: Response<Deck>) {
+                if (response.isSuccessful) {
+                    val deck = response.body()
+                    val listDeck = ArrayList<Deck>()
+                    listDeck.add(deck!!)
+                    interfaceCallBackDeck.onWorkDeckDone(listDeck)
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<Deck>, t: Throwable) {
                 t.printStackTrace()
             }
         })
@@ -214,7 +237,7 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
 //            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
 //                if (response.isSuccessful) {
 //                    val decks = response.body()
-//                    interfaceCallBackDeck.onWorkDeckDone(decks!!)
+//                    interfaceCallBackDeck.onWorkDecksDone(decks!!)
 //                } else {
 //                    Log.d("APIManager", "error : " + response.errorBody()!!)
 //                }

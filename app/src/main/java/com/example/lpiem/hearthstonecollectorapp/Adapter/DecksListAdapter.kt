@@ -14,10 +14,14 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.list_deck_item.view.*
 
-class DecksListAdapter (var items: MutableList<Deck>, val context: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolderDecks>() {
+class DecksListAdapter (var items: MutableList<Deck>, val context: Context, var listener: Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<ViewHolderDecks>() {
 
     companion object {
         lateinit var fragContext: Context
+    }
+
+    interface Listener {
+        fun onItemClicked(item: Deck)
     }
 
     override fun getItemCount(): Int {
@@ -48,9 +52,9 @@ class DecksListAdapter (var items: MutableList<Deck>, val context: Context) : an
 
     override fun onBindViewHolder(viewHolder: ViewHolderDecks, position: Int) {
         viewHolder.bind(items.get(position).name!!)
-//        p0.itemView.setOnClickListener { v ->
-//            mListener?.onItemClickListener(v, holder.layoutPosition)
-//        }
+        viewHolder.itemView.setOnClickListener {
+            listener.onItemClicked(items[position])
+        }
 
         if(position %2 == 1) {
             viewHolder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
