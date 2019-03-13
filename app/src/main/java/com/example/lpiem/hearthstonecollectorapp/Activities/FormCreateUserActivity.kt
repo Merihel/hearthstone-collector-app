@@ -17,6 +17,8 @@ import com.example.lpiem.hearthstonecollectorapp.R
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
+import kotlin.math.log
 
 class FormCreateUserActivity : AppCompatActivity() {
 
@@ -33,19 +35,24 @@ class FormCreateUserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_form_create_user)
         title = "Inscription"
         val actionBar = supportActionBar
+        this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        //Récupération des fields
-        inpPseudo = findViewById(R.id.inpPseudo)
+
+        //Récupération des champs
         inpFirstName = findViewById(R.id.inpFirstName)
+        inpPseudo = findViewById(R.id.inpPseudo)
         inpLastName = findViewById(R.id.inpLastName)
         inpEmail = findViewById(R.id.inpEmail)
         btnCreate = findViewById(R.id.btnCreate)
 
-        btnCreate?.setOnClickListener(View.OnClickListener {
+        btnCreate?.setOnClickListener {
             val valuePseudo = inpPseudo?.getText().toString()
             val valueFirstName = inpFirstName?.getText().toString()
             val valueLastName = inpLastName?.getText().toString()
             val valueEmail = inpEmail?.getText().toString()
+
+            Log.d("mlk", "pseudo : "+ valuePseudo)
+            Log.d("mlk", "mail : "+ valueEmail)
 
             if (valuePseudo != null || valuePseudo !== "" && valueEmail != null && valueEmail !== "") {
                 val user = User(8, "test", "test1@fzef.fr", 44, null, null, null, null, null, null, null)
@@ -72,7 +79,7 @@ class FormCreateUserActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this@FormCreateUserActivity, "Pseudo et Email ne peuvent pas être vides", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
     }
 
     fun onWorkDone(result: Boolean?) {
@@ -84,9 +91,22 @@ class FormCreateUserActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val myIntent = Intent(this@FormCreateUserActivity, ConnexionActivity::class.java)
-        startActivityForResult(myIntent, 0)
-        return true
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                overridePendingTransition(0, 0)
+                return true
+            }
+            R.id.btnCreate -> {
+                val myIntent = Intent(this@FormCreateUserActivity, ConnexionActivity::class.java)
+                startActivityForResult(myIntent, 0)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+
+
+
     }
 
 }

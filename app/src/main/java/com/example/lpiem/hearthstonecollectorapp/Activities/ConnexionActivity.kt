@@ -1,9 +1,9 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.facebook.login.LoginManager
@@ -12,24 +12,26 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
-import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import android.widget.Toast
+import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
+import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_connexion.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
+class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, InterfaceCallBackUser, AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -39,27 +41,41 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     private var gClient: GoogleSignInClient? = null
     private var gAccount: GoogleSignInAccount? = null
 
-    //TEST DEBUG
-    private var cardsListFragment: androidx.fragment.app.Fragment? = null
-
     //Variables autres
     private var isLoggedIn: Boolean? = null
+    private var socialState = ""
     private val RC_SIGN_IN = 100
+    private var apiManager = APIManager(this as InterfaceCallBackUser, null, this as InterfaceCallBackSync, this as InterfaceCallBackLogin)
+    private var userExtras = JSONObject()
+    private var hsUserManager = HsUserManager
+
+
+    companion object {
+
+        fun newIntent(context: Context, isDeconnect: Boolean): Intent {
+            val intent = Intent(context, ConnexionActivity::class.java)
+            intent.putExtra("deconnexion", isDeconnect)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connexion)
-
-        ////////        TEST         /////////
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard)
-        controller.getCardById(1)
-        controller.getUserById(15)
-
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
         var bundle = intent.extras
-        if (bundle.getBoolean("deconnexion")) {
+
+        /*
+        *
+        *  GOOGLE/FACEBOOK : DECONNEXION
+        *
+        */
+        var boolDeco = false
+        try {boolDeco = bundle.getBoolean("deconnexion")} catch(ex: NullPointerException) {Log.e("ERROR", "Error with deconnexion")}
+        if (boolDeco) {
             Log.d("onCreate","Deconnexion...")
+            //DECONNEXION FACEBOOK
             LoginManager.getInstance().logOut()
 
             //DECONNEXION GOOGLE
@@ -79,8 +95,27 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             }
         })
 
+        /*
+        * CLASSIQUE : CONNEXION
+        */
+        loginBtnClassic.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View) {
+                Log.d("Login Mail", inpLoginMail.text.toString())
+                Log.d("Login Pass", inpLoginPassword.text.toString())
+                Log.d("Login Pass MD5", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
 
-        //FACEBOOK
+                var json = JsonObject()
+                json.addProperty("identifier", inpLoginMail.text.toString())
+                json.addProperty("password", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
+                apiManager.checkLogin(json)
+            }
+        })
+
+        /*
+        *
+        *  FACEBOOK : CONNEXION
+        *
+        */
         fbLoginManager = com.facebook.login.LoginManager.getInstance()
         callbackManager = CallbackManager.Factory.create()
         //Callbacks registration
@@ -100,19 +135,17 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
             }
         })
 
-        //GOOGLE
+        /*
+        *
+        *  GOOGLE : CONNEXION
+        *
+        */
         googleConnexion(gAccount)
 
         //Click listener : Google SignIn Button
         google_sign_in.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 googleSignIn()
-            }
-        })
-        //Click listener : Google SignOut Button
-        google_sign_out.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View) {
-                googleSignOut()
             }
         })
 
@@ -122,18 +155,17 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
                 .build()
         gClient = GoogleSignIn.getClient(this, gso)
 
-        //COMPTE HORS RESEAUX SOCIAUX
+
+        /*
+        *
+        *  COMPTE CLASSIQUE: BTN DE CREATION DE COMPTE
+        *
+        */
         btnCreationCompte.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 //OUVRE EN EFFET LE FORMULAIRE DE CREATION
-                //var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
-                //startActivity(intent)
-
-                //OUVRE LE FRAGMENT DES CARTES POUR TESTER
-                supportFragmentManager
-                        .beginTransaction()
-                        .add(R.id.root_layout_test, CardsListFragment.newInstance(), "cardsListFragment")
-                        .commit()
+                var intent = Intent(this@ConnexionActivity, FormCreateUserActivity::class.java)
+                startActivity(intent)
             }
         })
     }
@@ -141,6 +173,7 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     override fun onStart() {
         super.onStart()
 
+        // CONNEXION AUTO FB ET GOOGLE
         var accessToken = AccessToken.getCurrentAccessToken()
         isLoggedIn = accessToken != null && !accessToken.isExpired
         if (isLoggedIn!!) {
@@ -170,15 +203,12 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
     protected fun getUserFacebookDetails(loginResult: AccessToken) {
         var dataRequest = GraphRequest.newMeRequest(loginResult,
             object: GraphRequest.GraphJSONObjectCallback {
-                override fun onCompleted(jsonObject: JSONObject?, response: GraphResponse?) {
+                override fun onCompleted(jsonObject: JSONObject, response: GraphResponse?) {
                     Log.d("Connexion", jsonObject.toString())
-                    var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
-                    try {
-                        Log.d("Facebook Mail", jsonObject!!.getString("email"))
-                    } catch(e: JSONException) {
-                        Log.d("Facebook Mail Error", e.message)
-                    }
-                    startActivity(intent)
+                    socialState = "f"
+                    jsonObject.put("type", "f")
+                    hsUserManager.userSocialInfos = jsonObject
+                    userSyncCheckStep1(jsonObject.getString("email"))
                 }
             })
         var permissionParam = Bundle()
@@ -225,47 +255,124 @@ class ConnexionActivity : InterfaceCallBackUser, InterfaceCallBackCard, AppCompa
         if (signInAccount == null) {
             Log.d("googleConnexion", "User non connecté...")
             google_sign_in.visibility = View.VISIBLE
-            google_sign_out.visibility = View.GONE
         } else {
-            var intent = Intent(this, NavigationActivity::class.java)
-            var jsonObject = JSONObject()
+            System.out.println(signInAccount.email)
             try {
-                jsonObject.put("name", signInAccount.displayName)
-                jsonObject.put("email", signInAccount.email)
-                jsonObject.put("picture", signInAccount.photoUrl)
-                Log.d("Intent extras", jsonObject.toString())
+                var json = JSONObject()
+                json.put("id", signInAccount.id)
+                json.put("name", signInAccount.displayName)
+                json.put("email", signInAccount.email)
+                json.put("picture", signInAccount.photoUrl)
+                json.put("type", "g")
+                hsUserManager.userSocialInfos = json
             } catch (e: JSONException) {
                 Log.e("JSONException", e.message)
             }
-            intent.putExtra("userProfile", jsonObject.toString())
-            startActivity(intent)
 
-            Log.d("User Connected", signInAccount.displayName + " ; " + signInAccount.email)
-
-            google_sign_in.visibility = View.GONE
-            google_sign_out.visibility = View.VISIBLE
+            Log.d("G User Connected", signInAccount.displayName + " ; " + signInAccount.email)
+            socialState = "g"
+            userSyncCheckStep1(signInAccount.email)
         }
     }
 
+    fun userSyncCheckStep1(mail: String?) {
+        var json = JsonObject()
+        json.addProperty("mail", mail)
+        apiManager.getUserByMail(mail!!)
+        apiManager.syncUserStep1(json)
+    }
 
+    fun userSyncCheckStep2(pseudo: String, mail: String, id: String, type: String) {
+        var json = JsonObject()
+        json.addProperty("pseudo", pseudo)
+        json.addProperty("mail", mail)
+        when(socialState) {
+            "g" -> json.addProperty("googleId", id)
+            "f" -> json.addProperty("facebookId", id)
+        }
+
+        apiManager.syncUserStep2(type, json)
+
+    }
+
+
+    override fun onWorkSyncDone(result: JsonObject) {
+        Log.d("SocialAccount", "CHECKED SYNC WITH " + socialState)
+        when (result.get("exit_code").asInt) {
+            0 -> {
+                Log.d("WorkSyncDone", "Can connect with: "+hsUserManager.userSocialInfos.get("email") as String)
+                apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
+            }
+            2 -> {
+                Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
+                askPseudo("update")
+            }
+            3 -> {
+                Log.d("WorkSyncDone", "Compte introuvable, prêt à être créé, pseudo nécessaire")
+                askPseudo("create")
+            }
+            else -> { // Note the block
+                print("x is neither 1 nor 2")
+            }
+        }
+    }
+
+    override fun onWorkSyncDone2(result: JsonObject) {
+        when (result.get("exit_code").asInt) {
+            0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
+            1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
+        }
+    }
+
+    fun askPseudo(type: String) { //Le type est le type d'opération : create le compte ou update en fonction de l'état renvoyé par API
+        val dialog = PseudoDialog.newInstance(text = "", hint = "Pseudo", isMultiline = false)
+        dialog.onOk = {
+            val text = dialog.editText.text
+            Log.d("ASK PSEUDO", text.toString())
+            when(socialState) {
+                "g" -> {
+                    hsUserManager.userSocialInfos.put("pseudo", text.toString())
+                    System.out.println(hsUserManager.userSocialInfos.toString())
+                    userSyncCheckStep2(text.toString(), hsUserManager.userSocialInfos.getString("email"), hsUserManager.userSocialInfos.getString("id"), type)
+                }
+                "f" -> {
+                    hsUserManager.userSocialInfos.put("pseudo", text.toString())
+                    System.out.println(hsUserManager.userSocialInfos.toString())
+                    userSyncCheckStep2(text.toString(), hsUserManager.userSocialInfos.getString("email"), hsUserManager.userSocialInfos.getString("id"), type)
+                }
+            }
+        }
+        dialog.show(supportFragmentManager, "editDescription")
+    }
+
+    //Si tout est ok on continue la connexion avec les réseaux sociaux
+    fun continueSocialConnection() {
+        var intent = Intent(this, NavigationActivity::class.java)
+        startActivity(intent)
+    }
+
+    //Quand on récupère l'user associé aux comptes sociaux
     override fun onWorkUserDone(result: List<User>) {
-        if (result != null) {
-            Log.i("OnWorkDone", "OK")
-            System.out.println("MY USER > " + result.get(0).pseudo)
-        } else {
-            Log.e("OnWorkDone Error", "Not ok")
-        }
+        var user = result.get(0)
+        hsUserManager.loggedUser = user
+        continueSocialConnection()
     }
 
-    override fun onWorkCardDone(result: List<Card>) {
-        if (result != null) {
-            Log.d("OnWorkCardDone", result.get(0).flavor)
-        }
+    //QUAND LA CONNEXION CLASSIQUE SE FAIT
+
+    override fun onWorkLoginDone(result: User) {
+        Log.d("Simple Connect With", result.toString())
+        hsUserManager.loggedUser = result
+        Toast.makeText(baseContext, "Bienvenue, "+result.pseudo+" !", Toast.LENGTH_LONG).show()
+        var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+        Log.d("onWorkLoginDone", "NO SOCIAL ACCOUNT")
+        Log.d("onWorkLoginDone", "User Logged: "+hsUserManager.loggedUser.toString())
+
+        startActivity(intent)
     }
 
-    override fun onWorkCardsDone(result: List<Card>) {
-        if (result != null) {
-            Log.d("OnWorkCardDone", result.get(0).flavor)
-        }
+    override fun onWorkLoginError(error: String) {
+        Log.d("onWorkLoginError", error)
+        Toast.makeText(baseContext, error, Toast.LENGTH_LONG).show()
     }
 }
