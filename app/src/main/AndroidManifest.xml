@@ -48,7 +48,12 @@
         <activity
             android:name=".Activities.FormCreateUserActivity"
             android:label="@string/title_activity_form_create_user" />
-        <activity android:name=".Activities.CardDetailActivity"></activity>
+        <activity android:name=".Activities.CardDetailActivity" />
+        <activity
+            android:name=".Activities.FriendListActivity"
+            android:label="@string/title_activity_friend_list"
+            android:theme="@style/CutoutActivityTheme" />
+
     </application>
 
 </manifest>

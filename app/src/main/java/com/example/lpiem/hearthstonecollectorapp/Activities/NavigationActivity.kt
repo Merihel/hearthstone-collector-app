@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import com.bumptech.glide.Glide
 import android.widget.FrameLayout
 import com.bumptech.glide.request.RequestOptions
@@ -97,6 +98,15 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
 
             nav_view.getHeaderView(0).moneyUser.text = hsUserManager.loggedUser.coins.toString()
+
+            //On avatar pressed
+            nav_view.getHeaderView(0).imgUser.setOnClickListener(object: View.OnClickListener {
+                override fun onClick(v: View) {
+                    var intent = Intent(this@NavigationActivity, FriendListActivity::class.java)
+                    startActivity(intent)
+                }
+            })
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
