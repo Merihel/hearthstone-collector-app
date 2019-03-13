@@ -71,7 +71,9 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
         *  GOOGLE/FACEBOOK : DECONNEXION
         *
         */
-        if (bundle.getBoolean("deconnexion")) {
+        var boolDeco = false
+        try {boolDeco = bundle.getBoolean("deconnexion")} catch(ex: NullPointerException) {Log.e("ERROR", "Error with deconnexion")}
+        if (boolDeco) {
             Log.d("onCreate","Deconnexion...")
             //DECONNEXION FACEBOOK
             LoginManager.getInstance().logOut()
