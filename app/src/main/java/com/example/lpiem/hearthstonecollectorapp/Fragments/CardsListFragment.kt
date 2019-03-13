@@ -23,10 +23,12 @@ import kotlinx.android.synthetic.main.fragment_cards_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.Intent
 import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 
 
 private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.GridLayoutManager? = null
+private var hsUserManager = HsUserManager
 
 class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
 
@@ -55,7 +57,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
         }
 
         val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
-        controller.getCardsByUser(1)
+        controller.getCardsByUser(hsUserManager.loggedUser.id!!)
     }
 
     override fun onWorkCardDone(result: List<Card>) {
