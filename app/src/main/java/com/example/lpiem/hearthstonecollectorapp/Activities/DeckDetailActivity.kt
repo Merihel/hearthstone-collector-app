@@ -20,12 +20,14 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deck_detail.*
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
 class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser {
+
     var deck: Deck? = null
     var cardsList: MutableList<Card>? = null
 
@@ -87,6 +89,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
                             deck!!.name = newName.toString()
 
                             txtDescription.text = deck!!.description
+                            txtToolbarDeckDetail.text = deck!!.name
 
                             // TODO: modifier dans la base
                             dialog.dismiss()
@@ -103,10 +106,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
             val builder = AlertDialog.Builder(this@DeckDetailActivity)
             builder.setTitle("Voulez-vous supprimer ce deck ?")
                     .setPositiveButton(R.string.positive_button){dialog, which ->
-                         Toast.makeText(applicationContext,"Deck supprimé",Toast.LENGTH_SHORT).show()
-                        // TODO: supprimer en base
-                         finish()
-                         overridePendingTransition(0, 0)
+                        controller.deleteDeckById(deckId)
                      }
                     .setNegativeButton(R.string.cancel){dialog,which ->
                         dialog.cancel()
@@ -157,14 +157,18 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 
         println(deck)
         println("cards list : "+ cardsList!!)
-        //title = deck!!.name
-        //toolbar_deck_detail2.tvTitre.text = deck!!.name
+        txtToolbarDeckDetail.text = deck!!.name
         txtDescription.text = deck!!.description
     }
 
+    override fun onWorkDeleteDeckDone(result: JsonObject) {
+        Toast.makeText(applicationContext, result.get("message").asString,Toast.LENGTH_SHORT).show()
+        finish()
+        overridePendingTransition(0, 0)
+    }
+
     override fun onWorkCardsDone(result: List<Card>) {   }
-
     override fun onWorkUserDone(result: List<User>) {   }
-
     override fun onWorkCardDone(result: List<Card>) {  }
+    override fun onWorkDeckAddedDone(result: JsonObject) {   }
 }

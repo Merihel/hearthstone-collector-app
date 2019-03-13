@@ -23,13 +23,13 @@ import kotlinx.android.synthetic.main.fragment_cards_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.Intent
 import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
+import com.google.gson.JsonObject
 
 
 private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.GridLayoutManager? = null
 
 class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
-
     companion object {
         fun newInstance(): CardsListFragment {
             System.out.println("new instance cards list")
@@ -90,5 +90,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
     }
 
     override fun onWorkDeckDone(result: List<Deck>) {   }
+    override fun onWorkDeleteDeckDone(result: JsonObject) {   }
+    override fun onWorkDeckAddedDone(result: JsonObject) {   }
 
 }

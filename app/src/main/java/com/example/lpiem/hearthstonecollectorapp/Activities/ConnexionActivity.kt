@@ -23,6 +23,7 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_connexion.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -30,7 +31,6 @@ import java.util.*
 
 
 class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard, AppCompatActivity() {
-
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
     private var fbLoginManager: com.facebook.login.LoginManager? = null
@@ -64,18 +64,18 @@ class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, Interfac
         gAccount = GoogleSignIn.getLastSignedInAccount(this)
 
         var bundle = intent.extras
-        if (bundle.getBoolean("deconnexion")) {
-            Log.d("onCreate","Deconnexion...")
-            LoginManager.getInstance().logOut()
-
-            //DECONNEXION GOOGLE
-            var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestEmail()
-                    .requestProfile()
-                    .build()
-            gClient = GoogleSignIn.getClient(this, gso)
-            googleSignOut()
-        }
+//        if (bundle.getBoolean("deconnexion")) {
+//            Log.d("onCreate","Deconnexion...")
+//            LoginManager.getInstance().logOut()
+//
+//            //DECONNEXION GOOGLE
+//            var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                    .requestEmail()
+//                    .requestProfile()
+//                    .build()
+//            gClient = GoogleSignIn.getClient(this, gso)
+//            googleSignOut()
+//        }
 
         //TESTS ---- BOUTON D'ACCES RAPIDE SUR L'IMAGE
         imgLogo.setOnClickListener(object: View.OnClickListener {
@@ -273,5 +273,7 @@ class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, Interfac
     }
 
     override fun onWorkDeckDone(result: List<Deck>) {   }
+    override fun onWorkDeleteDeckDone(result: JsonObject) {   }
+    override fun onWorkDeckAddedDone(result: JsonObject) {   }
 
 }

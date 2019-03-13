@@ -3,6 +3,7 @@ package com.example.lpiem.hearthstonecollectorapp.Interface
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -61,8 +62,8 @@ interface APIInterface {
 
     @POST("/deck/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    abstract fun createDeck(@Body deck: Deck): Call<Deck>
+    abstract fun createDeck(@Body deck: Deck): Call<JsonObject>
 
     @POST("/deck/delete/{id}")
-    abstract fun deleteDeck(@Path("id") id: Int): Call<Deck>
+    abstract fun deleteDeckById(@Path("id") id: Int): Call<JsonObject>
 }

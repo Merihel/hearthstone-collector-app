@@ -27,7 +27,13 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.Intent
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
+import com.google.gson.JsonObject
+import kotlinx.android.synthetic.main.activity_deck_detail.*
+import kotlinx.android.synthetic.main.dialog_edit_deck.*
+import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
 
 @SuppressLint("StaticFieldLeak")
@@ -35,7 +41,6 @@ private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.LinearLayoutManager? = null
 
 class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard {
-
     private var decks = emptyList<Deck>()
     private var decks2 = mutableListOf<Deck>()
     private lateinit var adapter : DecksListAdapter
@@ -50,12 +55,19 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_decks_list, container, false)
-
         return rootView
+    }
+
+    override fun onResume() {
+        println("on resume deck list")
+        super.onResume()
+        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
+        controller.getDecksByUser(1)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
 
         // Gestion de la toolbar
         decks_toolbar.tvTitre.text = "Mes decks"
@@ -63,7 +75,41 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
             ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
         }
         decks_toolbar.ic_add.setOnClickListener {
-            // TODO: ajout de deck
+            val builder = AlertDialog.Builder(this!!.activity!!)
+            builder.setTitle("Créer un deck")
+            val view = this.layoutInflater.inflate(R.layout.dialog_edit_deck, null)
+            builder.setView(view)
+
+            val titreEditText = view.findViewById<View>(R.id.dialogDeckNameEdit) as EditText
+            val descriptionEditText = view.findViewById<View>(R.id.dialogDeckDescriptionEdit) as EditText
+
+            builder.setPositiveButton(android.R.string.ok) { dialog, p1 ->
+                val newName = titreEditText.text
+                val newDescription = descriptionEditText.text
+
+                if (newName.isNullOrEmpty()) {
+                    println("name is empty")
+                    dialogDeckNameEdit.error = "Titre vide"//getString(R.string.validation_empty)
+                }
+
+                else if (newDescription.isNullOrEmpty()) {
+                    println("description is empty")
+                    dialogDeckDescriptionEdit.error = "Description vide"//getString(R.string.validation_empty)
+                }
+
+                else {
+                    println("création du deck ok")
+                    val deck = Deck(null, newName.toString(), newDescription.toString())
+                    controller.createDeck(deck)
+                    dialog.dismiss()
+                }
+            }
+
+                    .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+                        dialog.cancel()
+                    }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
         }
 
         // Adapter et layout manager
@@ -81,7 +127,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         // Gestion du swipe à gauche pour la suppression
         val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                Toast.makeText(context, "Deck supprimé",Toast.LENGTH_SHORT).show()
+                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id)
                 val adapter = recycler_view_decks.adapter as DecksListAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
             }
@@ -89,9 +135,6 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(recycler_view_decks)
 
-
-        val controller = APIManager(this as InterfaceCallBackDeck, this as InterfaceCallBackUser, this as InterfaceCallBackCard)
-        controller.getDecksByUser(1)
     }
 
     override fun onWorkDecksDone(result: MutableList<Deck>) {
@@ -114,5 +157,17 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
     }
 
     override fun onWorkDeckDone(result: List<Deck>) {   }
+
+    override fun onWorkDeleteDeckDone(result: JsonObject) {
+        Toast.makeText(context, result.get("message").asString,Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onWorkDeckAddedDone(result: JsonObject) {
+        println("on work deck added done : result id"+result.get("id").asInt)
+        Toast.makeText(context, "Deck créée",Toast.LENGTH_SHORT).show()
+        val intent = Intent(activity, DeckDetailActivity::class.java)
+        intent.putExtra("deckId", result.get("id").asInt)
+        activity!!.startActivity(intent)
+    }
 
 }
