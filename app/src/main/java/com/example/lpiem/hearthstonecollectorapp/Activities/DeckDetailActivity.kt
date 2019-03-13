@@ -4,7 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListInDeckAdapter
@@ -17,6 +21,8 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.activity_deck_detail.*
+import kotlinx.android.synthetic.main.activity_navigation.*
+import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
 class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser {
@@ -26,7 +32,6 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_deck_detail)
-        //this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val deckId = intent.getIntExtra("deckId", 0)
         println("deckId : "+deckId)
@@ -46,12 +51,71 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         controller.getDeckById(deckId)
 
         // Gestion de la toolbar
-//        decks_toolbar.ic_menu.setOnClickListener {
-//            ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
-//        }
-//        decks_toolbar.ic_add.setOnClickListener {
-//            // TODO: suppression + modification de deck
-//        }
+        btn_back.setOnClickListener {
+            finish()
+            overridePendingTransition(0, 0)
+        }
+        btn_edit.setOnClickListener {
+            val builder = AlertDialog.Builder(this@DeckDetailActivity)
+            builder.setTitle("Modifier le deck")
+            val view = this.layoutInflater.inflate(R.layout.dialog_edit_deck, null)
+            builder.setView(view)
+
+            val titreEditText = view.findViewById<View>(R.id.dialogDeckNameEdit) as EditText
+            val descriptionEditText = view.findViewById<View>(R.id.dialogDeckDescriptionEdit) as EditText
+            titreEditText.setText(deck!!.name)
+            descriptionEditText.setText(deck!!.description)
+
+            builder.setPositiveButton(android.R.string.ok) { dialog, p1 ->
+                val newName = titreEditText.text
+                val newDescription = descriptionEditText.text
+                println("new name : "+newName.toString())
+
+                        if (newName.isNullOrEmpty()) {
+                            println("name is empty")
+                            dialogDeckNameEdit.error = "Titre vide"//getString(R.string.validation_empty)
+                        }
+
+                        else if (newDescription.isNullOrEmpty()) {
+                            println("description is empty")
+                            dialogDeckDescriptionEdit.error = "Description vide"//getString(R.string.validation_empty)
+                        }
+
+                       else {
+                            println("modif ok")
+                            deck!!.description = newDescription.toString()
+                            deck!!.name = newName.toString()
+
+                            txtDescription.text = deck!!.description
+
+                            // TODO: modifier dans la base
+                            dialog.dismiss()
+                        }
+                    }
+
+                   .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+                        dialog.cancel()
+                   }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+        btn_delete.setOnClickListener {
+            val builder = AlertDialog.Builder(this@DeckDetailActivity)
+            builder.setTitle("Voulez-vous supprimer ce deck ?")
+                    .setPositiveButton(R.string.positive_button){dialog, which ->
+                         Toast.makeText(applicationContext,"Deck supprimé",Toast.LENGTH_SHORT).show()
+                        // TODO: supprimer en base
+                         finish()
+                         overridePendingTransition(0, 0)
+                     }
+                    .setNegativeButton(R.string.cancel){dialog,which ->
+                        dialog.cancel()
+                    }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -62,6 +126,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
                 return true
             }
         }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -92,7 +157,8 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 
         println(deck)
         println("cards list : "+ cardsList!!)
-        title = deck!!.name
+        //title = deck!!.name
+        //toolbar_deck_detail2.tvTitre.text = deck!!.name
         txtDescription.text = deck!!.description
     }
 
