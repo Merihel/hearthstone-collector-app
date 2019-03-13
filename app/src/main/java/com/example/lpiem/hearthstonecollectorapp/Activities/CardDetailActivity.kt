@@ -57,15 +57,17 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
     override fun onWorkUserDone(result: List<User>) {   }
 
     override fun onWorkCardDone(result: List<Card>) {
-        println(result)
-        card = result[0]
-        println(card!!.name)
+        if(!this.isFinishing) {
+            println(result)
+            card = result[0]
+            println(card!!.name)
 
-        txtNom.text = card!!.name
-        txtCost.text = card!!.cost.toString()
-        txtHealth.text = card!!.health.toString()
-        txtAttack.text = card!!.attack.toString()
-        txtDescription.text = Html.fromHtml(card!!.text)
-        Glide.with(this).load("https://art.hearthstonejson.com/v1/orig/"+card!!.hsId+".png").into(imgCard)
+            txtNom.text = card!!.name
+            txtCost.text = card!!.cost.toString()
+            txtHealth.text = card!!.health.toString()
+            txtAttack.text = card!!.attack.toString()
+            txtDescription.text = Html.fromHtml(card!!.text)
+            Glide.with(this).load("https://art.hearthstonejson.com/v1/orig/"+card!!.hsId+".png").into(imgCard)
+        }
     }
 }
