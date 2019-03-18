@@ -275,5 +275,6 @@ class ConnexionActivity : InterfaceCallBackDeck, InterfaceCallBackUser, Interfac
     override fun onWorkDeckDone(result: List<Deck>) {   }
     override fun onWorkDeleteDeckDone(result: JsonObject) {   }
     override fun onWorkDeckAddedDone(result: JsonObject) {   }
+    override fun onWorkDeckUpdatedDone(result: JsonObject) {   }
 
 }

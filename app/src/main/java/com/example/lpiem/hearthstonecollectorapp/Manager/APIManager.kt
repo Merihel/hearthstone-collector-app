@@ -317,6 +317,31 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
         })
     }
 
+    fun updateDeck(deck: Deck){
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.updateDeck(deck)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val deck = response.body()
+                    interfaceCallBackDeck.onWorkDeckUpdatedDone(deck!!)
+
+                } else {
+                    val jObjError = JSONObject(response.errorBody()!!.toString())
+                    Log.d("APIManager", "error : " + response.errorBody().toString()!! + ", msg : "+ jObjError.getString("message"))
+
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
+    }
+
 
     // USERS
 

@@ -8,6 +8,7 @@ interface InterfaceCallBackDeck {
     public fun onWorkDeckDone(result: List<Deck>)
     public fun onWorkDeleteDeckDone(result: JsonObject)
     public fun onWorkDeckAddedDone(result: JsonObject)
+    public fun onWorkDeckUpdatedDone(result: JsonObject)
 
 
 }

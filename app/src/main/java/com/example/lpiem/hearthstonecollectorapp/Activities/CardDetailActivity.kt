@@ -75,6 +75,8 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
     override fun onWorkDeleteDeckDone(result: JsonObject) {   }
     override fun onWorkDeckAddedDone(result: JsonObject) {   }
 
+    override fun onWorkDeckUpdatedDone(result: JsonObject) { }
+
     override fun onWorkCardDone(result: List<Card>) {
         println(result)
         card = result[0]

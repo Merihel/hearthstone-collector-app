@@ -147,16 +147,11 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         adapter.setData(result)
     }
 
-    override fun onWorkUserDone(result: List<User>) {
-    }
-
-    override fun onWorkCardDone(result: List<Card>) {
-    }
-
-    override fun onWorkCardsDone(result: List<Card>) {
-    }
-
+    override fun onWorkUserDone(result: List<User>) {   }
+    override fun onWorkCardDone(result: List<Card>) {   }
+    override fun onWorkCardsDone(result: List<Card>) {   }
     override fun onWorkDeckDone(result: List<Deck>) {   }
+    override fun onWorkDeckUpdatedDone(result: JsonObject) {   }
 
     override fun onWorkDeleteDeckDone(result: JsonObject) {
         Toast.makeText(context, result.get("message").asString,Toast.LENGTH_SHORT).show()

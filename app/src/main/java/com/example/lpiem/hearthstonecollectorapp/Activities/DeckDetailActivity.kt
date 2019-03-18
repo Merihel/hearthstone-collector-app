@@ -69,29 +69,29 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
             descriptionEditText.setText(deck!!.description)
 
             builder.setPositiveButton(android.R.string.ok) { dialog, p1 ->
-                val newName = titreEditText.text
-                val newDescription = descriptionEditText.text
-                println("new name : "+newName.toString())
+                val newName = titreEditText.text.toString()
+                val newDescription = descriptionEditText.text.toString()
+                println("new name : $newName")
 
-                        if (newName.isNullOrEmpty()) {
+                        if (newName.isEmpty()) {
                             println("name is empty")
                             dialogDeckNameEdit.error = "Titre vide"//getString(R.string.validation_empty)
                         }
 
-                        else if (newDescription.isNullOrEmpty()) {
+                        else if (newDescription.isEmpty()) {
                             println("description is empty")
                             dialogDeckDescriptionEdit.error = "Description vide"//getString(R.string.validation_empty)
                         }
 
                        else {
                             println("modif ok")
-                            deck!!.description = newDescription.toString()
-                            deck!!.name = newName.toString()
+                            deck!!.description = newDescription
+                            deck!!.name = newName
 
                             txtDescription.text = deck!!.description
                             txtToolbarDeckDetail.text = deck!!.name
 
-                            // TODO: modifier dans la base
+                            controller.updateDeck(deck!!)
                             dialog.dismiss()
                         }
                     }
@@ -167,8 +167,14 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         overridePendingTransition(0, 0)
     }
 
+    override fun onWorkDeckUpdatedDone(result: JsonObject) {
+        println(result)
+        Toast.makeText(applicationContext, result.get("message").asString,Toast.LENGTH_SHORT).show()
+    }
+
     override fun onWorkCardsDone(result: List<Card>) {   }
     override fun onWorkUserDone(result: List<User>) {   }
     override fun onWorkCardDone(result: List<Card>) {  }
     override fun onWorkDeckAddedDone(result: JsonObject) {   }
+
 }
