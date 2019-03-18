@@ -9,7 +9,7 @@ import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import kotlinx.android.synthetic.main.friends_list_item.view.*
 
-class FriendsListAdapter(val items: List<User>, val context: Context, var listener: Listener) : RecyclerView.Adapter<ViewHolderFriends>() {
+class FriendsListAdapter(val items: List<User>, val context: Context, var listener: Listener, val acceptedList: Boolean) : RecyclerView.Adapter<ViewHolderFriends>() {
 
     companion object {
         lateinit var fragContext: Context
@@ -27,7 +27,12 @@ class FriendsListAdapter(val items: List<User>, val context: Context, var listen
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderFriends {
 
         fragContext = context
-        return ViewHolderFriends(LayoutInflater.from(context).inflate(R.layout.friends_list_item, parent, false))
+        if (acceptedList) {
+            return ViewHolderFriends(LayoutInflater.from(context).inflate(R.layout.friends_list_item, parent, false))
+        } else {
+            return ViewHolderFriends(LayoutInflater.from(context).inflate(R.layout.fragment_pending_friend_list, parent, false))
+        }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolderFriends, position: Int) {
