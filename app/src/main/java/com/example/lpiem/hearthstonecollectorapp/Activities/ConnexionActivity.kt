@@ -12,6 +12,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.view.View
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import android.widget.Toast
 import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
 import com.example.lpiem.hearthstonecollectorapp.Interface.*

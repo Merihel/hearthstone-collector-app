@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_deck"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="start"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
+                app:srcCompat="@drawable/ic_arrow_back"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/txtToolbarDeckDetail"
+                android:layout_width="210dp"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginEnd="30dp"
+                android:layout_marginRight="30dp"
+                android:gravity="center_vertical"
+                android:text="Détail du deck"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/btn_delete"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="end"
+                android:tint="@android:color/white"
+                app:srcCompat="@drawable/ic_delete_black" />
+
+            <ImageButton
+                android:id="@+id/btn_edit"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="end"
+                android:layout_marginEnd="50dp"
+                android:layout_marginRight="50dp"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_edit" />
+
+        </FrameLayout>
+
+</androidx.appcompat.widget.Toolbar>
+
+

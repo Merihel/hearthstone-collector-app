@@ -52,6 +52,8 @@ interface APIInterface {
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
 
+//    @POST("/user/set-deck")
+//    abstract fun setDeckToUser(@Body user: User): Call<User>
 
 
     // DECKS //
@@ -63,10 +65,10 @@ interface APIInterface {
 
     @POST("/deck/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    abstract fun createDeck(@Body deck: Deck): Call<Deck>
+    abstract fun createDeck(@Body deck: Deck): Call<JsonObject>
 
-    @POST("/deck/delete/{id}")
-    abstract fun deleteDeck(@Path("id") id: Int): Call<Deck>
+    @POST("/deck/update")
+    abstract fun updateDeck(@Body deck: Deck): Call<JsonObject>
 
 //    @POST("/user/set-deck")
 //    abstract fun setDeckToUser(@Body user: User): Call<User>
@@ -84,4 +86,5 @@ interface APIInterface {
     @POST("/user/login")
     abstract fun checkLogin(@Body json: JsonObject): Call<User>
 
+    abstract fun deleteDeckById(@Path("id") id: Int): Call<JsonObject>
 }

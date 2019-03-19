@@ -24,14 +24,14 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 import android.content.Intent
 import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
+import com.google.gson.JsonObject
 
 
 private var rootView: View? = null
 private var lManager: androidx.recyclerview.widget.GridLayoutManager? = null
 private var hsUserManager = HsUserManager
 
-class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
-
+class CardsListFragment :  InterfaceCallBackCard, InterfaceCallBackUser, Fragment() {
     companion object {
         fun newInstance(): CardsListFragment {
             System.out.println("new instance cards list")
@@ -56,7 +56,7 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
             ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
         }
 
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
+        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, null)
         controller.getCardsByUser(hsUserManager.loggedUser.id!!)
     }
 
@@ -84,11 +84,4 @@ class CardsListFragment :  InterfaceCallBackDeck, InterfaceCallBackCard, Interfa
     override fun onWorkUserDone(result: List<User>) {
 
     }
-
-    override fun onWorkDeckDone(result: MutableList<Deck>) {
-        if (result != null) {
-            Log.d("onWorkDeckDone", result.get(0).name)
-        }
-    }
-
 }
