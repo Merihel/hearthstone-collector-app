@@ -2,6 +2,7 @@ package com.example.lpiem.hearthstonecollectorapp.Interface
 
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
+import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -83,5 +84,17 @@ interface APIInterface {
     // USERS LOGIN //
     @POST("/user/login")
     abstract fun checkLogin(@Body json: JsonObject): Call<User>
+
+    // FRIENDSHIPS //
+    @GET("/friendship/selectByUser/{userId}")
+    abstract fun getFriendshipsByUser(@Path("userId") userId: Int): Call<List<Friendship>>
+
+    @GET("/friendship/selectByUserPending/{userId}")
+    abstract fun getPendingFriendshipsByUser(@Path("userId") userId: Int): Call<List<Friendship>>
+
+    @GET("/friendship/delete/{friendshipId}")
+    abstract fun deleteFriendship(@Path("friendshipId") friendshipId: Int): Call<JsonObject>
+
+
 
 }

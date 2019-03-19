@@ -27,6 +27,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="center_vertical|center_horizontal|center"
             android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
             android:gravity="center_vertical|start"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -35,7 +36,7 @@
             android:textSize="18sp" />
 
         <ImageButton
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_add_friend"
             style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
