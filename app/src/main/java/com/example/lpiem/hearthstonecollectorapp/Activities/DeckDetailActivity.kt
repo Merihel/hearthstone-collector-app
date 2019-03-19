@@ -1,14 +1,14 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.GravityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListInDeckAdapter
@@ -22,7 +22,6 @@ import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deck_detail.*
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
@@ -36,7 +35,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         setContentView(R.layout.activity_deck_detail)
 
         val deckId = intent.getIntExtra("deckId", 0)
-        println("deckId : "+deckId)
+        println("deckId : $deckId")
 
 
         // SET ADAPTER NULL
@@ -65,6 +64,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 
             val titreEditText = view.findViewById<View>(R.id.dialogDeckNameEdit) as EditText
             val descriptionEditText = view.findViewById<View>(R.id.dialogDeckDescriptionEdit) as EditText
+
             titreEditText.setText(deck!!.name)
             descriptionEditText.setText(deck!!.description)
 
@@ -73,32 +73,33 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
                 val newDescription = descriptionEditText.text.toString()
                 println("new name : $newName")
 
-                        if (newName.isEmpty()) {
-                            println("name is empty")
-                            dialogDeckNameEdit.error = "Titre vide"//getString(R.string.validation_empty)
-                        }
+                if (newName.isEmpty()) {
+                    println("name is empty")
+                    dialogDeckNameEdit?.error = "Titre vide"
+                    Toast.makeText(applicationContext, "Titre vide : deck non ajouté",Toast.LENGTH_SHORT).show()
 
-                        else if (newDescription.isEmpty()) {
-                            println("description is empty")
-                            dialogDeckDescriptionEdit.error = "Description vide"//getString(R.string.validation_empty)
-                        }
+                } else if (newDescription.isEmpty()) {
+                    println("description is empty")
+                    dialogDeckDescriptionEdit?.error = "Description vide"
+                    Toast.makeText(applicationContext, "Description vide : deck non ajouté",Toast.LENGTH_SHORT).show()
 
-                       else {
-                            println("modif ok")
-                            deck!!.description = newDescription
-                            deck!!.name = newName
+                } else {
+                    println("modif ok")
+                    deck!!.description = newDescription
+                    deck!!.name = newName
 
-                            txtDescription.text = deck!!.description
-                            txtToolbarDeckDetail.text = deck!!.name
+                    txtDescription.text = deck!!.description
+                    txtToolbarDeckDetail.text = deck!!.name
 
-                            controller.updateDeck(deck!!)
-                            dialog.dismiss()
-                        }
+                    controller.updateDeck(deck!!)
+                    dialog.dismiss()
+                }
+            }
+
+                    .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+                        dialog.cancel()
                     }
 
-                   .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
-                        dialog.cancel()
-                   }
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }

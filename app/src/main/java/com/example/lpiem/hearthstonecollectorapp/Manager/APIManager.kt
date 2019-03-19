@@ -294,8 +294,9 @@ class APIManager (internal var interfaceCallBackDeck: InterfaceCallBackDeck, int
 
     fun createDeck(deck: Deck) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
-
         var hearthstoneInstance = APISingleton.hearthstoneInstance
+
+        // TODO : récupérer ID du user pour l'ajouter au json
         var call = hearthstoneInstance!!.createDeck(deck)
 
         call.enqueue(object : Callback<JsonObject> {

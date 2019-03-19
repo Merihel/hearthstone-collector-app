@@ -74,6 +74,8 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         decks_toolbar.ic_menu.setOnClickListener {
             ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
         }
+
+        // Création d'un deck
         decks_toolbar.ic_add.setOnClickListener {
             val builder = AlertDialog.Builder(this!!.activity!!)
             builder.setTitle("Créer un deck")
