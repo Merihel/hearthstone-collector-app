@@ -99,7 +99,7 @@ class OldFriendListActivity : AppCompatActivity() {
     class TabFragment : InterfaceCallBackFriendship, Fragment() {
 
         private var hsUserManager = HsUserManager
-        private val controller = APIManager(null, null, null, null, null, this as InterfaceCallBackFriendship)
+        private val controller = APIManager()
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
@@ -111,11 +111,11 @@ class OldFriendListActivity : AppCompatActivity() {
 
             if (arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
                 var rootView = inflater.inflate(R.layout.fragment_friend_list, container, false)
-                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
                 return rootView
             } else {
                 var rootView = inflater.inflate(R.layout.fragment_pending_friend_list, container, false)
-                controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!)
+                controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
                 return rootView
             }
             //rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
@@ -168,20 +168,20 @@ class OldFriendListActivity : AppCompatActivity() {
             builder.setMessage("Êtes-vous sûr de vouloir supprimer '"+ friendship.user2.pseudo +"' ?")
 
             // Set a positive button and its click listener on alert dialog
-            builder.setPositiveButton("Oui"){dialog, which ->
+            builder.setPositiveButton("Oui"){ _, _ ->
                 // Do something when user press the positive button
-                controller.deleteFriendship(friendship.id)
+                controller.deleteFriendship(friendship.id,this)
 
                 if(arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
-                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
                 } else {
-                    controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!)
+                    controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
                 }
             }
 
 
             // Display a negative button on alert dialog
-            builder.setNegativeButton("Non"){dialog,which ->
+            builder.setNegativeButton("Non"){ _, _ ->
                 Toast.makeText(requireContext(),"Opération annulée",Toast.LENGTH_SHORT).show()
             }
 

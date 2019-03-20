@@ -2,30 +2,27 @@ package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackLogin
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
+import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
+import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
+import com.facebook.*
 import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import android.view.View
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
-import com.example.lpiem.hearthstonecollectorapp.Models.Deck
-import android.widget.Toast
-import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
-import com.example.lpiem.hearthstonecollectorapp.Interface.*
-import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
-import com.example.lpiem.hearthstonecollectorapp.Models.User
-import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
-import com.facebook.*
-import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -50,7 +47,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
     private var isLoggedIn: Boolean? = null
     private var socialState = ""
     private val RC_SIGN_IN = 100
-    private var apiManager = APIManager(this as InterfaceCallBackUser, null, this as InterfaceCallBackSync, this as InterfaceCallBackLogin)
+    private var apiManager = APIManager()
     private var userExtras = JSONObject()
     private var hsUserManager = HsUserManager
 
@@ -112,7 +109,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
                 var json = JsonObject()
                 json.addProperty("identifier", inpLoginMail.text.toString())
                 json.addProperty("password", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
-                apiManager.checkLogin(json)
+                apiManager.checkLogin(json, this@ConnexionActivity)
             }
         })
 
@@ -283,8 +280,8 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
     fun userSyncCheckStep1(mail: String?) {
         var json = JsonObject()
         json.addProperty("mail", mail)
-        apiManager.getUserByMail(mail!!)
-        apiManager.syncUserStep1(json)
+        apiManager.getUserByMail(mail!!,this)
+        apiManager.syncUserStep1(json,this)
     }
 
     fun userSyncCheckStep2(pseudo: String, mail: String, id: String, type: String) {
@@ -296,7 +293,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
             "f" -> json.addProperty("facebookId", id)
         }
 
-        apiManager.syncUserStep2(type, json)
+        apiManager.syncUserStep2(type, json,this)
 
     }
 
@@ -306,7 +303,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
         when (result.get("exit_code").asInt) {
             0 -> {
                 Log.d("WorkSyncDone", "Can connect with: "+hsUserManager.userSocialInfos.get("email") as String)
-                apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
+                apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String,this)
             }
             2 -> {
                 Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
@@ -324,7 +321,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
 
     override fun onWorkSyncDone2(result: JsonObject) {
         when (result.get("exit_code").asInt) {
-            0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String)
+            0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String,this)
             1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
         }
     }

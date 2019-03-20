@@ -22,34 +22,14 @@ import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.json.JSONObject
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    internal lateinit var response: JSONObject
-    internal lateinit var profile_pic_data:JSONObject
-    internal lateinit var profile_pic_url:JSONObject
-
     private var hsUserManager = HsUserManager
-
-    private var drawerLayout: androidx.drawerlayout.widget.DrawerLayout? = null
     private var content: FrameLayout? = null
-
-    private val decksFragment: androidx.fragment.app.Fragment? = null
-    private val tradeFragment: androidx.fragment.app.Fragment? = null
-    private val quizzFragment: androidx.fragment.app.Fragment? = null
-    private val shopFragment: androidx.fragment.app.Fragment? = null
-
-    private val FRAGMENT_CARDSLIST = 0
-    private val FRAGMENT_DECKS = 1
-    private val FRAGMENT_TRADE = 2
-    private val FRAGMENT_QUIZZ = 3
-    private val FRAGMENT_SHOP = 4
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
 
         content = findViewById(R.id.content_navigation) as FrameLayout
-
-//        val toggle = ActionBarDrawerToggle(
-//                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
 
         Log.d("InNav-User", hsUserManager.loggedUser.toString())
         Log.d("InNav-UserSocialInfos", hsUserManager.userSocialInfos.toString())
@@ -140,11 +120,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_cards -> {
-                val fragment = CardsListFragment() //.newInstance()
+                val fragment = CardsListFragment()
                 replaceFragment(fragment)
             }
             R.id.nav_decks -> {
-                val fragment = DecksListFragment() //.newInstance()
+                val fragment = DecksListFragment()
                 replaceFragment(fragment)
             }
             R.id.nav_trade -> {

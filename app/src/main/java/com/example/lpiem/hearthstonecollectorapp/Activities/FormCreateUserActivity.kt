@@ -1,45 +1,31 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
+import androidx.appcompat.app.AppCompatActivity
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-
-import com.example.lpiem.hearthstonecollectorapp.Manager.APISingleton
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.activity_connexion.*
 import kotlinx.android.synthetic.main.activity_form_create_user.*
-
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.IOException
-import kotlin.math.log
 
 class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
     private val context = this
     private var user = User()
     private var hsUserManager = HsUserManager
-    val controller = APIManager(this as InterfaceCallBackUser, null, null, null, null)
+    val controller = APIManager()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form_create_user)
         title = "Inscription"
-        val actionBar = supportActionBar
         this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
 
@@ -61,7 +47,7 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
                     println(user.toString())
 
 
-                    controller.createUser(user)
+                    controller.createUser(user,this)
                 } else {
                     Toast.makeText(this@FormCreateUserActivity, "Les mots de passe de concordent pas", Toast.LENGTH_LONG).show()
                 }
@@ -72,8 +58,8 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
     }
 
     override fun onWorkUserDone(result: List<User>) {
-        hsUserManager.loggedUser = result.get(0)
-        var intent = Intent(this@FormCreateUserActivity, NavigationActivity::class.java)
+        hsUserManager.loggedUser = result[0]
+        val intent = Intent(this@FormCreateUserActivity, NavigationActivity::class.java)
         startActivity(intent)
     }
 
@@ -83,7 +69,7 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
     }
 
     private fun connectNewUser() {
-        controller.getUserByMail(user.mail!!);
+        controller.getUserByMail(user.mail!!,this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

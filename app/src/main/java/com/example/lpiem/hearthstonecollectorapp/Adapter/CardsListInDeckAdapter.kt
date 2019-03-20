@@ -71,7 +71,7 @@ class CardsListInDeckAdapter(var items: MutableList<Card>, val context: Context,
 
     }
 
-    open interface BtnClickListener {
+    interface BtnClickListener {
         fun onBtnClick(position: Int, viewHolder: RecyclerView.ViewHolder)
         fun onCardClick(position: Int)
     }

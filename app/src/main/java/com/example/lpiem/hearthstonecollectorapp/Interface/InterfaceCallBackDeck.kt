@@ -4,11 +4,11 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.google.gson.JsonObject
 
 interface InterfaceCallBackDeck {
-    public fun onWorkDecksDone(result: List<Deck>)
-    public fun onWorkDeckDone(result: List<Deck>)
-    public fun onWorkDeleteDeckDone(result: JsonObject)
-    public fun onWorkDeckAddedDone(result: JsonObject)
-    public fun onWorkDeckUpdatedDone(result: JsonObject)
+    fun onWorkDecksDone(result: List<Deck>)
+    fun onWorkDeckDone(result: List<Deck>)
+    fun onWorkDeleteDeckDone(result: JsonObject)
+    fun onWorkDeckAddedDone(result: JsonObject)
+    fun onWorkDeckUpdatedDone(result: JsonObject)
 
 
 }

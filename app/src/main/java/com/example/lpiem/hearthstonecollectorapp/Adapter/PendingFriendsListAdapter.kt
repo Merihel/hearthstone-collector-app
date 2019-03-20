@@ -1,14 +1,12 @@
 package com.example.lpiem.hearthstonecollectorapp.Adapter;
 
 import android.content.Context
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 import kotlinx.android.synthetic.main.fragment_pending_friend_list.view.*
 import kotlinx.android.synthetic.main.friends_list_item.view.*
 
@@ -34,7 +32,7 @@ class PendingFriendsListAdapter(val items: List<Friendship>, val context: Contex
     }
 
     override fun onBindViewHolder(holder: PendingViewHolderFriends, position: Int) {
-        holder?.bind(items[position]?.user2.pseudo)
+        holder.bind(items[position].user2.pseudo)
         holder.itemView.setOnClickListener {
             listener.onItemClicked(items[position])
         }
