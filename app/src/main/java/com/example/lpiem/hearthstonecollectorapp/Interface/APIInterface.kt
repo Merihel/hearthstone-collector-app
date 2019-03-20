@@ -48,7 +48,7 @@ interface APIInterface {
 
     @POST("/user/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    abstract fun createUser(@Body user: User): Call<User>
+    abstract fun createUser(@Body user: User): Call<JsonObject>
 
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
@@ -62,11 +62,11 @@ interface APIInterface {
     abstract fun getDeck(@Path("id") id: Int): Call<Deck>
 
     @GET("/deck/select-by-user/{userId}")
-    abstract fun getDecksByUser(@Path("userId") userId: Int): Call<MutableList<Deck>>
+    abstract fun getDecksByUser(@Path("userId") userId: Int): Call<List<Deck>>
 
     @POST("/deck/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    abstract fun createDeck(@Body deck: Deck): Call<JsonObject>
+    abstract fun createDeck(@Body json: JsonObject): Call<JsonObject>
 
     @POST("/deck/update")
     abstract fun updateDeck(@Body deck: Deck): Call<JsonObject>
