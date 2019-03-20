@@ -1,230 +1,135 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
-
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import android.os.Bundle
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.FriendsListAdapter
-import com.example.lpiem.hearthstonecollectorapp.Adapter.PendingFriendsListAdapter
+import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackFriendship
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
-
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_friend_list.*
+import kotlinx.android.synthetic.main.fragment_friend_list.*
 import kotlinx.android.synthetic.main.fragment_friend_list.view.*
-import kotlinx.android.synthetic.main.fragment_pending_friend_list.view.*
+import kotlinx.android.synthetic.main.toolbar_friend_list.view.*
 
-class FriendListActivity : AppCompatActivity() {
+class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
 
-    /**
-     * The [androidx.viewpager.widget.PagerAdapter] that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * androidx.fragment.app.FragmentStatePagerAdapter.
-     */
-    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private var hsUserManager = HsUserManager
+    private val controller = APIManager(null, null, null, null, null, this as InterfaceCallBackFriendship)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        // Set up the ViewPager with the sections adapter.
-        container.adapter = mSectionsPagerAdapter
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+
+        friends_toolbar.btn_add_friend.setOnClickListener {
+            askFriendIdentity()
+        }
+
+        //TODO Trouver comment revenir (back) sans refaire d'intent
+        friends_toolbar.friends_btn_back.setOnClickListener {
+            var intent = Intent(this@FriendListActivity, NavigationActivity::class.java)
+
+            startActivity(intent)
+        }
+
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //menuInflater.inflate(R.menu.menu_friend_list, menu)
-        return true
+    private fun askFriendIdentity() {
+        val dialog = PseudoDialog.newInstance(text = "", hint = "Pseudo", isMultiline = false)
+        dialog.onOk = {
+            val text = dialog.editText.text
+            val jsonFriendshipAdd = JsonObject()
+            jsonFriendshipAdd.addProperty("user1", hsUserManager.loggedUser.id!!)
+            jsonFriendshipAdd.addProperty("user2", dialog.editText.text.toString())
+            jsonFriendshipAdd.addProperty("isAccepted", false)
+            jsonFriendshipAdd.addProperty("whoDemanding", hsUserManager.loggedUser.id!!)
+            controller.addFriendship(jsonFriendshipAdd)
+            Log.d("ASK PSEUDO", text.toString())
+        }
+        dialog.onCancel = {dialog.dismiss()}
+        dialog.show(supportFragmentManager, "editDescription")
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        //NOT USED
-        return true
+    override fun onFriendshipDone(result: List<Friendship>) {
+        Log.d("onFriendshipDone", result[0].id.toString())
+        addDataToFriendList(result)
+    }
+    override fun onPendingFriendshipDone(result: List<Friendship>) {
+    }
+    override fun onDeleteDone(result: JsonObject) {
+        Log.d("onDeleteDone", result.get("exit_code").asString)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
     }
 
-
-    /**
-     * A [FragmentPagerAdapter] that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a TabFragment (defined as a static inner class below).
-            return TabFragment.newInstance(position + 1)
-        }
-
-        override fun getCount(): Int {
-            // Show 3 total pages.
-            return 2
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            when (position) {
-                0 -> return "SECTION 1"
-                1 -> return "SECTION 2"
-            }
-            return null
-        }
+    override fun onAddDone(result: JsonObject) {
+        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    class TabFragment : InterfaceCallBackFriendship, Fragment() {
+    override fun onAcceptDone(result: JsonObject) {
+        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+    }
 
-        private var hsUserManager = HsUserManager
-        private val controller = APIManager(null, null, null, null, null, this as InterfaceCallBackFriendship)
+    fun openDeleteDialog(friendship: Friendship) {
+        val builder = AlertDialog.Builder(this)
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
-            /* TODO Add friend
-            friends_toolbar.btn_add_friend.setOnClickListener(
+        // Set the alert dialog title
+        builder.setTitle("Supprimer " + friendship.user2.pseudo)
 
-            )
-            */
+        // Display a message on alert dialog
+        builder.setMessage("Êtes-vous sûr de vouloir supprimer '"+ friendship.user2.pseudo +"' ?")
 
-            if (arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
-                var rootView = inflater.inflate(R.layout.fragment_friend_list, container, false)
-                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
-                return rootView
-            } else {
-                var rootView = inflater.inflate(R.layout.fragment_pending_friend_list, container, false)
-                controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!)
-                return rootView
-            }
-            //rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
+        // Set a positive button and its click listener on alert dialog
+        builder.setPositiveButton("Oui"){dialog, which ->
+            // Do something when user press the positive button
+            controller.deleteFriendship(friendship.id)
         }
 
-        companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
-            private val ARG_SECTION_NUMBER = "section_number"
+        // Display a negative button on alert dialog
+        builder.setNegativeButton("Non"){dialog,which ->
+            Toast.makeText(applicationContext,"Opération annulée",Toast.LENGTH_SHORT).show()
+        }
 
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
-            fun newInstance(sectionNumber: Int): TabFragment {
-                val fragment = TabFragment()
-                val args = Bundle()
-                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-                fragment.arguments = args
-                return fragment
+        // Finally, make the alert dialog using builder
+        val dialog: AlertDialog = builder.create()
+
+        // Display the alert dialog on app interface
+        dialog.show()
+    }
+
+    private fun addDataToFriendList(res: List<Friendship>) {
+        val listenerFriendList = object : FriendsListAdapter.Listener {
+            override fun onItemClicked(item: Friendship) {
+                Log.d("onItemClicked", "Clicked on "+item.user2.pseudo+" !")
+            }
+            override fun onDeleteClicked(item: Friendship) {
+                Log.d("onDeleteClicked", "Deleting "+item.user2.pseudo+" ?")
+                openDeleteDialog(item)
+            }
+            override fun onAcceptClicked(item: Friendship) {
+                controller.acceptFriendship(item.id)
             }
         }
 
-        override fun onFriendshipDone(result: List<Friendship>) {
-            Log.d("onFriendshipDone", result[0].id.toString())
-            addDataToFriendList(result)
-        }
-        override fun onPendingFriendshipDone(result: List<Friendship>) {
-            Log.d("onPFriendshipDone", result[0].id.toString())
-            addDataToPendingFriendList(result)
-        }
-        override fun onDeleteDone(result: JsonObject) {
-            Log.d("onDeleteDone", result.get("exit_code").asString)
-            Toast.makeText(this.requireContext(), result.get("message").asString, Toast.LENGTH_LONG).show()
+        for(item in res) {
+            Log.d("addDataToFriendlistItem", "Item id: "+item.id + ", isAccepted: "+item.isAccepted.toString())
         }
 
-        fun openDeleteDialog(friendship: Friendship) {
-            val builder = AlertDialog.Builder(this.requireContext())
-
-            // Set the alert dialog title
-            builder.setTitle("Supprimer " + friendship.user2.pseudo)
-
-            // Display a message on alert dialog
-            builder.setMessage("Êtes-vous sûr de vouloir supprimer '"+ friendship.user2.pseudo +"' ?")
-
-            // Set a positive button and its click listener on alert dialog
-            builder.setPositiveButton("Oui"){dialog, which ->
-                // Do something when user press the positive button
-                controller.deleteFriendship(friendship.id)
-
-                if(arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
-                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
-                } else {
-                    controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!)
-                }
-            }
-
-
-            // Display a negative button on alert dialog
-            builder.setNegativeButton("Non"){dialog,which ->
-                Toast.makeText(requireContext(),"Opération annulée",Toast.LENGTH_SHORT).show()
-            }
-
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-
-            // Display the alert dialog on app interface
-            dialog.show()
-        }
-
-        fun addDataToFriendList(res: List<Friendship>): View {
-            val listenerFriendList = object : FriendsListAdapter.Listener {
-                override fun onItemClicked(item: Friendship) {
-                    Log.d("onItemClicked", "Clicked on "+item.user2.pseudo+" !")
-                }
-                override fun onDeleteClicked(item: Friendship) {
-                    Log.d("onDeleteClicked", "Deleting "+item.user2.pseudo+" ?")
-                    openDeleteDialog(item)
-                }
-            }
-
-            Log.d("addDataToFriendlist", res[0].id.toString())
-
-            var rootView = view!!.rootView
-
-            rootView.rv_friends_list.adapter = FriendsListAdapter(res, getActivity()!!.applicationContext, listenerFriendList)
-            rootView.rv_friends_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(getActivity()!!.applicationContext)
-            return rootView
-        }
-
-        fun addDataToPendingFriendList(res: List<Friendship>): View {
-            val listenerPendingFriendList = object : PendingFriendsListAdapter.Listener {
-                override fun onItemClicked(item: Friendship) {
-                    Log.d("onItemClicked", "Clicked on "+item.user2.pseudo+" !")
-                }
-                override fun onDeleteClicked(item: Friendship) {
-                    Log.d("onDeleteClicked", "Deleting "+item.user2.pseudo+" ?")
-                    openDeleteDialog(item)
-                }
-            }
-
-            Log.d("addDataToFriendlist", res[0].id.toString())
-
-            var rootView = view!!.rootView
-
-            rootView.rv_pending_friends_list.adapter = PendingFriendsListAdapter(res, getActivity()!!.applicationContext, listenerPendingFriendList)
-            rootView.rv_pending_friends_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(getActivity()!!.applicationContext)
-            return rootView
-        }
+        rv_friends_list.adapter = FriendsListAdapter(res, this!!.applicationContext, listenerFriendList)
+        rv_friends_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this!!.applicationContext)
     }
 }

@@ -95,6 +95,10 @@ interface APIInterface {
     @GET("/friendship/delete/{friendshipId}")
     abstract fun deleteFriendship(@Path("friendshipId") friendshipId: Int): Call<JsonObject>
 
+    @POST("/friendship/new")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    abstract fun addFriendship(@Body json: JsonObject): Call<JsonObject>
 
-
+    @GET("/friendship/accept/{friendshipId}")
+    abstract fun acceptFriendship(@Path("friendshipId") friendshipId: Int): Call<JsonObject>
 }

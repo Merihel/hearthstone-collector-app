@@ -6,4 +6,7 @@
     <color name="colorCardBg">#dfdfdf</color>
     <color name="colorDarkText">#626262</color>
     <color name="colorGoogleBg">#db3236</color>
+    <color name="colorGreenFriend">#32db3a</color>
+    <color name="colorRedFriend">#ca1a1e</color>
+    <color name="colorOrangeFriend">#ca721a</color>
 </resources>

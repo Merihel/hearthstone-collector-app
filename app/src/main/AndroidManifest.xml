@@ -50,10 +50,13 @@
             android:label="@string/title_activity_form_create_user" />
         <activity android:name=".Activities.CardDetailActivity" />
         <activity
-            android:name=".Activities.FriendListActivity"
+            android:name=".Activities.OldFriendListActivity"
             android:label="@string/title_activity_friend_list"
             android:theme="@style/CutoutActivityTheme" />
-
+        <activity
+            android:name=".Activities.FriendListActivity"
+            android:theme="@style/CutoutActivityTheme"
+            android:label="@string/title_activity_friend_list"></activity>
     </application>
 
 </manifest>

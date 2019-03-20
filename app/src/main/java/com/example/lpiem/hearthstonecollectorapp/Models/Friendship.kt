@@ -7,5 +7,7 @@ data class Friendship(
         @SerializedName("id") @Expose var id: Int,
         @SerializedName("user1") @Expose var user1: User,
         @SerializedName("user2") @Expose var user2: User,
-        @SerializedName("isAccepted") @Expose var cost: Boolean
+        @SerializedName("isAccepted") @Expose var isAccepted: Boolean,
+        @SerializedName("whoDemanding") @Expose var whoDemanding: Int
+
 )

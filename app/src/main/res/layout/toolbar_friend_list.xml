@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <ImageButton
-            android:id="@+id/btn_back"
+            android:id="@+id/friends_btn_back"
             style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
@@ -19,6 +19,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginRight="0dp"
             app:srcCompat="@drawable/ic_arrow_back"
+            android:tint="@android:color/white"
             tools:ignore="ContentDescription,VectorDrawableCompat" />
 
         <TextView

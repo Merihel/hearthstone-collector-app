@@ -7,4 +7,6 @@ interface InterfaceCallBackFriendship {
     public fun onFriendshipDone(result: List<Friendship>)
     public fun onPendingFriendshipDone(result: List<Friendship>)
     public fun onDeleteDone(result: JsonObject)
+    public fun onAddDone(result: JsonObject)
+    public fun onAcceptDone(result: JsonObject)
 }

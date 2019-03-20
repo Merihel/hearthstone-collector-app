@@ -5,10 +5,10 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.FriendListActivity$TabFragment">
+    tools:context=".Activities.OldFriendListActivity$TabFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_friends_list"
+        android:id="@+id/rv_friends_list_old"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
