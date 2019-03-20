@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_weight="0.01"
+    android:background="@color/colorPrimary"
+    android:id="@+id/toolbar"
+    android:outlineAmbientShadowColor="@color/colorPrimaryDark">
+
+    <Button
+        android:id="@+id/ic_menu"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.01"
+        android:cursorVisible="false"
+        app:icon="@drawable/ic_menu"
+        app:iconTint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tvTitre"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.025"
+        android:gravity="left|center_vertical"
+        android:text="Titre"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/ic_add"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.01"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_add" />
+
+</LinearLayout>

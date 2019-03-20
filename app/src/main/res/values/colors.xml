@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#DFA325</color>
+    <color name="colorPrimary">#dfa325</color>
     <color name="colorPrimaryDark">#684f1c</color>
     <color name="colorAccent">#1a1658</color>
+    <color name="colorCardBg">#dfdfdf</color>
+    <color name="colorDarkText">#626262</color>
+    <color name="colorGoogleBg">#db3236</color>
+    <color name="colorGreenFriend">#32db3a</color>
+    <color name="colorRedFriend">#ca1a1e</color>
+    <color name="colorOrangeFriend">#ca721a</color>
 </resources>
