@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/friends_btn_back"
+            style="@style/Widget.AppCompat.ActionButton"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="start"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="0dp"
+            app:srcCompat="@drawable/ic_arrow_back"
+            android:tint="@android:color/white"
+            tools:ignore="ContentDescription,VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/txtToolbarDeckDetail"
+            android:layout_width="140dp"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="center_vertical|center_horizontal|center"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="center_vertical|start"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="Amis"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:id="@+id/btn_add_friend"
+            style="@style/Widget.AppCompat.ActionButton"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="end"
+            android:tint="@android:color/white"
+            app:srcCompat="@drawable/ic_add" />
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.Toolbar>

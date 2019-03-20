@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
+import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -19,7 +20,8 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
                   internal var interfaceCallBackCard: InterfaceCallBackCard? = null,
                   internal var interfaceCallBackSync: InterfaceCallBackSync? = null,
                   internal var interfaceCallBackLogin: InterfaceCallBackLogin? = null,
-                  internal var interfaceCallBackDeck: InterfaceCallBackDeck? = null) {
+                  internal var interfaceCallBackDeck: InterfaceCallBackDeck? = null,
+                  internal var interfaceCallBackFriendship: InterfaceCallBackFriendship? = null) {
     internal var message: String? = null
     internal var nextPage = 1
     internal var nbPages = 100
@@ -496,6 +498,122 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
             }
 
             override fun onFailure(call: Call<User>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    //FRIENDSHIP
+    fun getFriendshipsByUser(userId: Int) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getFriendshipsByUser(userId)
+
+        call.enqueue(object : Callback<List<Friendship>> {
+            override fun onResponse(call: Call<List<Friendship>>, response: Response<List<Friendship>>) {
+                if (response.isSuccessful) {
+                    val friendships = response.body()
+                    if (friendships?.size != 0) Log.d("APIManager", "Friendship by user: " + friendships!![0].user1.pseudo + " => " + friendships!![0].user2.pseudo)
+                    interfaceCallBackFriendship?.onFriendshipDone(friendships)
+                } else {
+                    Log.d("APIManager", "getFriendshipByUser-error: " + response.errorBody()!!.string())
+                }
+            }
+
+            override fun onFailure(call: Call<List<Friendship>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun getPendingFriendshipsByUser(userId: Int) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.getPendingFriendshipsByUser(userId)
+
+        call.enqueue(object : Callback<List<Friendship>> {
+            override fun onResponse(call: Call<List<Friendship>>, response: Response<List<Friendship>>) {
+                if (response.isSuccessful) {
+                    val friendships = response.body()
+                    Log.d("APIManager", "Pending Friendships by user: " + friendships!![0].user1.pseudo + " => " + friendships!![0].user2.pseudo)
+                    interfaceCallBackFriendship?.onPendingFriendshipDone(friendships)
+                } else {
+                    Log.d("APIManager", "getPendingFriendshipByUser-error: " + response.errorBody()!!.string())
+                }
+            }
+
+            override fun onFailure(call: Call<List<Friendship>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun deleteFriendship(friendshipId: Int) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.deleteFriendship(friendshipId)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val json = response.body()
+                    Log.d("APIManager", "successfully deleted Friendship with msg: " + json!!.get("devMessage").asString)
+                    interfaceCallBackFriendship?.onDeleteDone(json)
+                } else {
+                    Log.d("APIManager", "deleteFriendship-error: " + response.errorBody()!!.string())
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun addFriendship(friendship: JsonObject) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.addFriendship(friendship)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val json = response.body()
+                    Log.d("APIManager", "successfully added Friendship with msg: " + json!!.get("devMessage").asString)
+                    interfaceCallBackFriendship?.onAddDone(json)
+                } else {
+                    Log.d("APIManager", "addFriendship-error: " + response.errorBody()!!.string())
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun acceptFriendship(friendshipId: Int) {
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.acceptFriendship(friendshipId)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val json = response.body()
+                    Log.d("APIManager", "successfully accepted Friendship with msg: " + json!!.get("devMessage").asString)
+                    interfaceCallBackFriendship?.onAcceptDone(json)
+                } else {
+                    Log.d("APIManager", "acceptFriendship-error: " + response.errorBody()!!.string())
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 t.printStackTrace()
             }
         })
