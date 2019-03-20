@@ -82,6 +82,8 @@ class CardsListFragment :  InterfaceCallBackCard, InterfaceCallBackUser, Fragmen
     }
 
     override fun onWorkUserDone(result: List<User>) {
+    }
 
+    override fun onWorkAddDone(result: JsonObject) {
     }
 }

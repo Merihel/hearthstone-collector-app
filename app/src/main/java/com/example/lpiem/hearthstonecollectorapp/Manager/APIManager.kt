@@ -454,19 +454,19 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         var call = hearthstoneInstance!!.createUser(user)
 
 
-        call.enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if (response.isSuccessful) {
-                    val user = response.body()
+                    val json = response.body()
                     //fetchData(response)
-                    Log.d("[APIManager]createUser", "card text : " + user!!.toString()!!)
-
+                    Log.d("APIManager", "successfully added user with msg: " + json!!.get("devMessage").asString)
+                    interfaceCallBackUser?.onWorkAddDone(json)
                 } else {
-                    Log.d("[APIManager]createUser", "error : " + response.errorBody()!!)
+                    Log.d("APIManager", "createUser-error: " + response.errorBody()!!.string())
                 }
             }
 
-            override fun onFailure(call: Call<User>, t: Throwable) {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 t.printStackTrace()
             }
         })

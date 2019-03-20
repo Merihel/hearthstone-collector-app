@@ -48,7 +48,7 @@ interface APIInterface {
 
     @POST("/user/new")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    abstract fun createUser(@Body user: User): Call<User>
+    abstract fun createUser(@Body user: User): Call<JsonObject>
 
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
