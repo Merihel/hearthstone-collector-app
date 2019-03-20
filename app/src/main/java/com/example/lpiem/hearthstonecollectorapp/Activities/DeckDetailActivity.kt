@@ -29,6 +29,8 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 
     var deck: Deck? = null
     var cardsList: MutableList<Card>? = null
+    val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +50,6 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 //        rvCardsInDeckDetail.layoutManager = LinearLayoutManager(this)
 
 
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
         controller.getDeckById(deckId)
 
         // Gestion de la toolbar
@@ -131,18 +132,22 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onWorkDecksDone(result: MutableList<Deck>) {  }
+    override fun onWorkDecksDone(result: List<Deck>) {  }
 
     override fun onWorkDeckDone(result: List<Deck>) {
         deck = result[0]
         cardsList = result[0].cardsList?.toMutableList()
+        deck!!.cardsList = result[0].cardsList
 
         // ON CLICK
         var cardsAdapter = CardsListInDeckAdapter(this.cardsList!!, this, object : CardsListInDeckAdapter.BtnClickListener {
             override fun onBtnClick(position: Int, viewHolder: RecyclerView.ViewHolder) {
-                Toast.makeText(applicationContext, "Carte supprimée",Toast.LENGTH_SHORT).show()
                 val adapter = rvCardsInDeckDetail.adapter as CardsListInDeckAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
+
+               //deck!!.cardsList!!.toMutableList().removeAt(viewHolder.adapterPosition)
+               // deck!!.cardsList = adapter.items.toTypedArray()
+               //  controller.updateDeck(deck!!)
             }
 
             override fun onCardClick(position: Int) {

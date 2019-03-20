@@ -68,7 +68,7 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onWorkDecksDone(result: MutableList<Deck>) {  }
+    override fun onWorkDecksDone(result: List<Deck>) {  }
     override fun onWorkCardsDone(result: List<Card>) {   }
     override fun onWorkUserDone(result: List<User>) {   }
     override fun onWorkAddDone(result: JsonObject) {   }
