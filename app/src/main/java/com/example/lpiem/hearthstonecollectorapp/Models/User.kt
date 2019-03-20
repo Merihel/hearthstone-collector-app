@@ -14,7 +14,9 @@ class User(
         var decks: List<Deck>? = null,
         var wishlist: List<Card>? = null,
         @SerializedName("facebookId") @Expose var facebookId: String? = null,
-        @SerializedName("googleId") @Expose var googleId: String? = null
+        @SerializedName("googleId") @Expose var googleId: String? = null,
+        @SerializedName("password") @Expose var password: String? = null
+
 ) {
     override fun toString():String {
         return "UserJava{" +

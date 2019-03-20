@@ -149,6 +149,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
     override fun onWorkUserDone(result: List<User>) {   }
     override fun onWorkCardDone(result: List<Card>) {   }
     override fun onWorkCardsDone(result: List<Card>) {   }
+    override fun onWorkAddDone(result: JsonObject) {   }
     override fun onWorkDeckDone(result: List<Deck>) {   }
     override fun onWorkDeckUpdatedDone(result: JsonObject) {   }
 

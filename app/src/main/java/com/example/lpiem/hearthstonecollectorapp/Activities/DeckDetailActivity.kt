@@ -175,6 +175,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 
     override fun onWorkCardsDone(result: List<Card>) {   }
     override fun onWorkUserDone(result: List<User>) {   }
+    override fun onWorkAddDone(result: JsonObject) {   }
     override fun onWorkCardDone(result: List<Card>) {  }
     override fun onWorkDeckAddedDone(result: JsonObject) {   }
 

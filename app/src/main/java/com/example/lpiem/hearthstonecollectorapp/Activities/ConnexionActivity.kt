@@ -380,4 +380,6 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
         Log.d("onWorkLoginError", error)
         Toast.makeText(baseContext, error, Toast.LENGTH_LONG).show()
     }
+
+    override fun onWorkAddDone(result: JsonObject) {}
 }
