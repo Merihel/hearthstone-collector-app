@@ -39,9 +39,11 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
 
         //TODO Trouver comment revenir (back) sans refaire d'intent
         friends_toolbar.friends_btn_back.setOnClickListener {
-            var intent = Intent(this@FriendListActivity, NavigationActivity::class.java)
+//            var intent = Intent(this@FriendListActivity, NavigationActivity::class.java)
+//            startActivity(intent)
 
-            startActivity(intent)
+            finish()
+            overridePendingTransition(0, 0)
         }
 
     }
@@ -63,7 +65,9 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
     }
 
     override fun onFriendshipDone(result: List<Friendship>) {
-        Log.d("onFriendshipDone", result[0].id.toString())
+        if (result.size != 0) {
+            Log.d("onFriendshipDone", result[0].id.toString())
+        }
         addDataToFriendList(result)
     }
     override fun onPendingFriendshipDone(result: List<Friendship>) {

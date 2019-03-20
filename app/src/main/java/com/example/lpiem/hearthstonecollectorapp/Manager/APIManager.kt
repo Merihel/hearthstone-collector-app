@@ -398,7 +398,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
             override fun onResponse(call: Call<List<Friendship>>, response: Response<List<Friendship>>) {
                 if (response.isSuccessful) {
                     val friendships = response.body()
-                    Log.d("APIManager", "Friendship by user: " + friendships!![0].user1.pseudo + " => " + friendships!![0].user2.pseudo)
+                    if (friendships?.size != 0) Log.d("APIManager", "Friendship by user: " + friendships!![0].user1.pseudo + " => " + friendships!![0].user2.pseudo)
                     interfaceCallBackFriendship?.onFriendshipDone(friendships)
                 } else {
                     Log.d("APIManager", "getFriendshipByUser-error: " + response.errorBody()!!.string())
