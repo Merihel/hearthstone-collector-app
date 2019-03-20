@@ -52,6 +52,10 @@
             android:name=".Activities.DeckDetailActivity"
             android:theme="@style/CutoutActivityTheme">
         </activity>
+        <activity
+            android:name=".Activities.FriendListActivity"
+            android:theme="@style/CutoutActivityTheme">
+        </activity>
     </application>
 
 </manifest>
