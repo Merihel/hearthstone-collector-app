@@ -79,7 +79,7 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
 
     override fun onWorkAddDone(result: JsonObject) {
         Toast.makeText(this, result.get("message").asString, Toast.LENGTH_LONG).show()
-        connectNewUser()
+        if (result.get("exit_code").asInt == 200) connectNewUser()
     }
 
     private fun connectNewUser() {

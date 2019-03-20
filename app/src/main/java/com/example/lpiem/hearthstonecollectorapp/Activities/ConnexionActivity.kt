@@ -368,6 +368,7 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
     override fun onWorkLoginDone(result: User) {
         Log.d("Simple Connect With", result.toString())
         hsUserManager.loggedUser = result
+        hsUserManager.deleteSocial()
         Toast.makeText(baseContext, "Bienvenue, "+result.pseudo+" !", Toast.LENGTH_LONG).show()
         var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
         Log.d("onWorkLoginDone", "NO SOCIAL ACCOUNT")
