@@ -1,6 +1,5 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,24 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListInDeckAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deck_detail.*
 import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
-class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, InterfaceCallBackCard, InterfaceCallBackUser {
+class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
 
     var deck: Deck? = null
     var cardsList: MutableList<Card>? = null
-    val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
+    val controller = APIManager()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +46,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
 //        rvCardsInDeckDetail.layoutManager = LinearLayoutManager(this)
 
 
-        controller.getDeckById(deckId)
+        controller.getDeckById(deckId, this)
 
         // Gestion de la toolbar
         btn_back.setOnClickListener {
@@ -69,7 +65,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
             titreEditText.setText(deck!!.name)
             descriptionEditText.setText(deck!!.description)
 
-            builder.setPositiveButton(android.R.string.ok) { dialog, p1 ->
+            builder.setPositiveButton(android.R.string.ok) { dialog, _ ->
                 val newName = titreEditText.text.toString()
                 val newDescription = descriptionEditText.text.toString()
                 println("new name : $newName")
@@ -92,12 +88,12 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
                     txtDescription.text = deck!!.description
                     txtToolbarDeckDetail.text = deck!!.name
 
-                    controller.updateDeck(deck!!)
+                    controller.updateDeck(deck!!, this)
                     dialog.dismiss()
                 }
             }
 
-                    .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                         dialog.cancel()
                     }
 
@@ -107,10 +103,10 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         btn_delete.setOnClickListener {
             val builder = AlertDialog.Builder(this@DeckDetailActivity)
             builder.setTitle("Voulez-vous supprimer ce deck ?")
-                    .setPositiveButton(R.string.positive_button){dialog, which ->
-                        controller.deleteDeckById(deckId)
+                    .setPositiveButton(R.string.positive_button){ _, _ ->
+                        controller.deleteDeckById(deckId, this)
                      }
-                    .setNegativeButton(R.string.cancel){dialog,which ->
+                    .setNegativeButton(R.string.cancel){ dialog, _ ->
                         dialog.cancel()
                     }
 
@@ -140,7 +136,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         deck!!.cardsList = result[0].cardsList
 
         // ON CLICK
-        var cardsAdapter = CardsListInDeckAdapter(this.cardsList!!, this, object : CardsListInDeckAdapter.BtnClickListener {
+        val cardsAdapter = CardsListInDeckAdapter(this.cardsList!!, this, object : CardsListInDeckAdapter.BtnClickListener {
             override fun onBtnClick(position: Int, viewHolder: RecyclerView.ViewHolder) {
                 val adapter = rvCardsInDeckDetail.adapter as CardsListInDeckAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
@@ -178,10 +174,6 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         Toast.makeText(applicationContext, result.get("message").asString,Toast.LENGTH_SHORT).show()
     }
 
-    override fun onWorkCardsDone(result: List<Card>) {   }
-    override fun onWorkUserDone(result: List<User>) {   }
-    override fun onWorkAddDone(result: JsonObject) {   }
-    override fun onWorkCardDone(result: List<Card>) {  }
     override fun onWorkDeckAddedDone(result: JsonObject) {   }
 
 }

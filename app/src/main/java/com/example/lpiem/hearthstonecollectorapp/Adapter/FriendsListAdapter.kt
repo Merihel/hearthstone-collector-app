@@ -2,17 +2,15 @@ package com.example.lpiem.hearthstonecollectorapp.Adapter;
 
 import android.content.Context
 import android.graphics.Typeface
-import android.opengl.Visibility
 import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 import kotlinx.android.synthetic.main.friends_list_item.view.*
 
 private var hsUserManager = HsUserManager
@@ -40,7 +38,7 @@ class FriendsListAdapter(val items: List<Friendship>, val context: Context, var 
     }
 
     override fun onBindViewHolder(holder: ViewHolderFriends, position: Int) {
-        holder?.bind(items[position])
+        holder.bind(items[position])
         holder.itemView.setOnClickListener {
             listener.onItemClicked(items[position])
         }

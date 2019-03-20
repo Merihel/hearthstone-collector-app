@@ -1,44 +1,39 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
 import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.DecksListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Adapter.SwipeToDeleteCallback
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
-import com.example.lpiem.hearthstonecollectorapp.Models.User
-import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import com.example.lpiem.hearthstonecollectorapp.R
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_navigation.*
+import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
 import kotlinx.android.synthetic.main.toolbar.view.*
-import android.content.Intent
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
-import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
-import com.google.gson.JsonObject
 
 
 @SuppressLint("StaticFieldLeak")
 private var rootView: View? = null
-private var lManager: androidx.recyclerview.widget.LinearLayoutManager? = null
 
-class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUser, InterfaceCallBackCard {
+class DecksListFragment : Fragment(), InterfaceCallBackDeck {
     private var decks = emptyList<Deck>()
     private var decks2 = mutableListOf<Deck>()
     private lateinit var adapter : DecksListAdapter
@@ -59,13 +54,13 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
     override fun onResume() {
         println("on resume deck list")
         super.onResume()
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
-        controller.getDecksByUser(HsUserManager.loggedUser.id!!)
+        val controller = APIManager()
+        controller.getDecksByUser(HsUserManager.loggedUser.id!!, this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
+        val controller = APIManager()
 
         // Gestion de la toolbar
         decks_toolbar.tvTitre.text = "Mes decks"
@@ -75,7 +70,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
 
         // Création d'un deck
         decks_toolbar.ic_add.setOnClickListener {
-            val builder = AlertDialog.Builder(this!!.activity!!)
+            val builder = AlertDialog.Builder(this.activity!!)
             builder.setTitle("Créer un deck")
             val view = this.layoutInflater.inflate(R.layout.dialog_edit_deck, null)
             builder.setView(view)
@@ -100,12 +95,12 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
                 else {
                     println("création du deck ok")
                     val deck = Deck(null, newName.toString(), newDescription.toString(), null, HsUserManager.loggedUser)
-                    controller.createDeck(deck)
+                    controller.createDeck(deck, this)
                     dialog.dismiss()
                 }
             }
 
-                    .setNegativeButton(android.R.string.cancel) { dialog, p1 ->
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                         dialog.cancel()
                     }
             val dialog: AlertDialog = builder.create()
@@ -127,7 +122,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         // Gestion du swipe à gauche pour la suppression
         val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id!!)
+                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id!!, this@DecksListFragment)
                 val adapter = recycler_view_decks.adapter as DecksListAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
             }
@@ -146,11 +141,6 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
 
         adapter.setData(result as MutableList<Deck>)
     }
-
-    override fun onWorkUserDone(result: List<User>) {   }
-    override fun onWorkCardDone(result: List<Card>) {   }
-    override fun onWorkCardsDone(result: List<Card>) {   }
-    override fun onWorkAddDone(result: JsonObject) {   }
     override fun onWorkDeckDone(result: List<Deck>) {   }
     override fun onWorkDeckUpdatedDone(result: JsonObject) {   }
 

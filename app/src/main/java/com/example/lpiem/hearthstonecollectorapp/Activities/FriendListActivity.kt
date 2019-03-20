@@ -1,11 +1,8 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
-import android.os.Bundle
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
+import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.FriendsListAdapter
@@ -17,31 +14,25 @@ import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_friend_list.*
-import kotlinx.android.synthetic.main.fragment_friend_list.*
-import kotlinx.android.synthetic.main.fragment_friend_list.view.*
 import kotlinx.android.synthetic.main.toolbar_friend_list.view.*
 
 class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
 
     private var hsUserManager = HsUserManager
-    private val controller = APIManager(null, null, null, null, null, this as InterfaceCallBackFriendship)
+    private val controller = APIManager()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
 
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
 
         friends_toolbar.btn_add_friend.setOnClickListener {
             askFriendIdentity()
         }
 
-        //TODO Trouver comment revenir (back) sans refaire d'intent
         friends_toolbar.friends_btn_back.setOnClickListener {
-//            var intent = Intent(this@FriendListActivity, NavigationActivity::class.java)
-//            startActivity(intent)
-
             finish()
             overridePendingTransition(0, 0)
         }
@@ -57,7 +48,7 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
             jsonFriendshipAdd.addProperty("user2", dialog.editText.text.toString())
             jsonFriendshipAdd.addProperty("isAccepted", false)
             jsonFriendshipAdd.addProperty("whoDemanding", hsUserManager.loggedUser.id!!)
-            controller.addFriendship(jsonFriendshipAdd)
+            controller.addFriendship(jsonFriendshipAdd,this)
             Log.d("ASK PSEUDO", text.toString())
         }
         dialog.onCancel = {dialog.dismiss()}
@@ -65,7 +56,7 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
     }
 
     override fun onFriendshipDone(result: List<Friendship>) {
-        if (result.size != 0) {
+        if (result.isNotEmpty()) {
             Log.d("onFriendshipDone", result[0].id.toString())
         }
         addDataToFriendList(result)
@@ -74,18 +65,18 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
     }
     override fun onDeleteDone(result: JsonObject) {
         Log.d("onDeleteDone", result.get("exit_code").asString)
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!, this)
         Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
     }
 
     override fun onAddDone(result: JsonObject) {
         Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
     }
 
     override fun onAcceptDone(result: JsonObject) {
         Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
     }
 
     fun openDeleteDialog(friendship: Friendship) {
@@ -98,13 +89,13 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
         builder.setMessage("Êtes-vous sûr de vouloir supprimer '"+ friendship.user2.pseudo +"' ?")
 
         // Set a positive button and its click listener on alert dialog
-        builder.setPositiveButton("Oui"){dialog, which ->
+        builder.setPositiveButton("Oui"){ _, _ ->
             // Do something when user press the positive button
-            controller.deleteFriendship(friendship.id)
+            controller.deleteFriendship(friendship.id,this)
         }
 
         // Display a negative button on alert dialog
-        builder.setNegativeButton("Non"){dialog,which ->
+        builder.setNegativeButton("Non"){ _, _ ->
             Toast.makeText(applicationContext,"Opération annulée",Toast.LENGTH_SHORT).show()
         }
 
@@ -125,7 +116,7 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
                 openDeleteDialog(item)
             }
             override fun onAcceptClicked(item: Friendship) {
-                controller.acceptFriendship(item.id)
+                controller.acceptFriendship(item.id,this@FriendListActivity)
             }
         }
 
@@ -133,7 +124,7 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
             Log.d("addDataToFriendlistItem", "Item id: "+item.id + ", isAccepted: "+item.isAccepted.toString())
         }
 
-        rv_friends_list.adapter = FriendsListAdapter(res, this!!.applicationContext, listenerFriendList)
-        rv_friends_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this!!.applicationContext)
+        rv_friends_list.adapter = FriendsListAdapter(res, this.applicationContext, listenerFriendList)
+        rv_friends_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.applicationContext)
     }
 }

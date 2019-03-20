@@ -3,16 +3,16 @@ package com.example.lpiem.hearthstonecollectorapp.Manager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
 import org.json.JSONObject
 
-class HsUserManager {
+class HsUserManager() {
 
     companion object {
         var loggedUser = User()
-            public set
-            public get
+            set
+            get
 
         var userSocialInfos = JSONObject()
-            public set
-            public get
+            set
+            get
 
         var defautThumbnail = "https://lh3.googleusercontent.com/a-/AAuE7mBcLqrbCXYjenRbaQURI7z4mLeUGdwf05n9UGxD_Q"
 
@@ -23,7 +23,7 @@ class HsUserManager {
 
     private var instance: HsUserManager
 
-    constructor() {
+    init {
         instance = this
     }
 

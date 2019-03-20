@@ -1,6 +1,7 @@
 package com.example.lpiem.hearthstonecollectorapp.Manager
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.example.lpiem.hearthstonecollectorapp.Interface.*
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
@@ -10,27 +11,14 @@ import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
-import org.json.JSONObject
-import java.security.AccessController.getContext
 
 
-class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = null,
-                  internal var interfaceCallBackCard: InterfaceCallBackCard? = null,
-                  internal var interfaceCallBackSync: InterfaceCallBackSync? = null,
-                  internal var interfaceCallBackLogin: InterfaceCallBackLogin? = null,
-                  internal var interfaceCallBackDeck: InterfaceCallBackDeck? = null,
-                  internal var interfaceCallBackFriendship: InterfaceCallBackFriendship? = null) {
+class APIManager {
     internal var message: String? = null
-    internal var nextPage = 1
-    internal var nbPages = 100
 
     // CARDS
 
-    fun getCardById(id: Int) {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun getCardById(id: Int, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCard(id)
@@ -55,9 +43,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun getCardById2(id: Int) : MutableLiveData<List<Card>> {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun getCardById2(id: Int, interfaceCallBackCard: InterfaceCallBackCard?) : MutableLiveData<List<Card>> {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCard(id)
@@ -92,9 +78,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         return liveData
     }
 
-    fun getCardsBySet(set: String) {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun getCardsBySet(set: String, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsBySet(set)
@@ -120,9 +104,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
     }
 
-    fun getCardsByRace(race: String) {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun getCardsByRace(race: String, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getCardsByRace(race)
@@ -145,7 +127,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
     }
 
-    fun getCardsByFaction(faction: String) {
+    fun getCardsByFaction(faction: String, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -172,7 +154,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun getCardsByUser(userId: Int) {
+    fun getCardsByUser(userId: Int, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -199,9 +181,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
     }
 
-    fun createCard(card: Card) {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun createCard(card: Card, interfaceCallBackCard: InterfaceCallBackCard?) {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.createCard(card)
@@ -212,7 +192,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
                 if (response.isSuccessful) {
                     val card = response.body()
                     //fetchData(response)
-                    Log.d("APIManager", "card text : " + card!!.text!!)
+                    Log.d("APIManager", "card text : " + card!!.text)
 
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
@@ -226,7 +206,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
     }
 
     // DECKS
-    fun getDecksByUser(userId: Int) {
+    fun getDecksByUser(userId: Int, interfaceCallBackDeck: InterfaceCallBackDeck?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
@@ -248,9 +228,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun getDeckById(id: Int) {
-
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun getDeckById(id: Int, interfaceCallBackDeck: InterfaceCallBackDeck?) {
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getDeck(id)
@@ -273,8 +251,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun deleteDeckById(deckId: Int){
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun deleteDeckById(deckId: Int, interfaceCallBackDeck: InterfaceCallBackDeck?){
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.deleteDeckById(deckId)
@@ -295,8 +272,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun createDeck(deck: Deck) {
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun createDeck(deck: Deck, interfaceCallBackDeck: InterfaceCallBackDeck?) {
         var hearthstoneInstance = APISingleton.hearthstoneInstance
 
         var json = JsonObject()
@@ -323,8 +299,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun updateDeck(deck: Deck){
-        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+    fun updateDeck(deck: Deck, interfaceCallBackDeck: InterfaceCallBackDeck?){
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.updateDeck(deck)
 
@@ -349,7 +324,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
     // USERS SYNC
 
-    fun syncUserStep1(mail: JsonObject) {
+    fun syncUserStep1(mail: JsonObject, interfaceCallBackSync: InterfaceCallBackSync?) {
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.syncUserStep1(mail)
 
@@ -369,7 +344,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun syncUserStep2(arg: String, json: JsonObject) {
+    fun syncUserStep2(arg: String, json: JsonObject, interfaceCallBackSync: InterfaceCallBackSync?) {
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.syncUserStep2(arg, json)
         System.out.println(json.toString())
@@ -393,7 +368,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
 
     // USERS
 
-    fun getUserById(id: Int) {
+    fun getUserById(id: Int, interfaceCallBackUser: InterfaceCallBackUser?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -420,7 +395,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun getUserByMail(mail: String) {
+    fun getUserByMail(mail: String, interfaceCallBackUser: InterfaceCallBackUser?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -447,7 +422,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun createUser(user: User) {
+    fun createUser(user: User, interfaceCallBackUser: InterfaceCallBackUser?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -474,7 +449,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
     }
 
     // USER LOGIN
-    fun checkLogin(json: JsonObject) {
+    fun checkLogin(json: JsonObject, interfaceCallBackLogin: InterfaceCallBackLogin?) {
 
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
@@ -486,7 +461,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
                 if (response.isSuccessful) {
                     val user = response.body()
                     if (user?.id != 0 && user?.mail != null) {
-                        Log.d("APIManager", "User Logged In: " + user?.toString())
+                        Log.d("APIManager", "User Logged In: " + user.toString())
                         interfaceCallBackLogin?.onWorkLoginDone(user)
                     } else {
                         Log.e("APIManager", "Login Error: Une erreur interne est survenue")
@@ -505,7 +480,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
     }
 
     //FRIENDSHIP
-    fun getFriendshipsByUser(userId: Int) {
+    fun getFriendshipsByUser(userId: Int, interfaceCallBackFriendship: InterfaceCallBackFriendship?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
@@ -528,7 +503,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun getPendingFriendshipsByUser(userId: Int) {
+    fun getPendingFriendshipsByUser(userId: Int, interfaceCallBackFriendship: InterfaceCallBackFriendship?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
@@ -551,7 +526,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun deleteFriendship(friendshipId: Int) {
+    fun deleteFriendship(friendshipId: Int, interfaceCallBackFriendship: InterfaceCallBackFriendship?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
@@ -574,7 +549,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun addFriendship(friendship: JsonObject) {
+    fun addFriendship(friendship: JsonObject, interfaceCallBackFriendship: InterfaceCallBackFriendship?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance
@@ -597,7 +572,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         })
     }
 
-    fun acceptFriendship(friendshipId: Int) {
+    fun acceptFriendship(friendshipId: Int, interfaceCallBackFriendship: InterfaceCallBackFriendship?) {
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
 
         var hearthstoneInstance = APISingleton.hearthstoneInstance

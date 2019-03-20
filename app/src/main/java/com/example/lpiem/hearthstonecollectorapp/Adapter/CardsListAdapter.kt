@@ -33,7 +33,7 @@ class CardsListAdapter(val items: List<Card>, val context: Context, var listener
     }
 
     override fun onBindViewHolder(holder: ViewHolderCards, position: Int) {
-        holder?.bind(items[position]?.imgGold)
+        holder.bind(items[position].imgGold)
         holder.itemView.setOnClickListener {
             listener.onItemClicked(items[position])
         }
