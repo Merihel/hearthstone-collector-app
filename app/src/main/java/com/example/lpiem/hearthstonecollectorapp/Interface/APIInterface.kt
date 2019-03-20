@@ -73,9 +73,6 @@ interface APIInterface {
     @POST("/deck/delete/{id}")
     abstract fun deleteDeckById(@Path("id") id: Int): Call<JsonObject>
 
-//    @POST("/user/set-deck")
-//    abstract fun setDeckToUser(@Body user: User): Call<User>
-
 
     // USERS SYNC //
     @POST("/user/sync1")

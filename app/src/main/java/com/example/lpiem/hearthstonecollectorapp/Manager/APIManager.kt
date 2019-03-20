@@ -333,8 +333,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
                     interfaceCallBackDeck?.onWorkDeckUpdatedDone(deck!!)
 
                 } else {
-                    val jObjError = JSONObject(response.errorBody()!!.toString())
-                    Log.d("APIManager", "error : " + response.errorBody().toString()!! + ", msg : "+ jObjError.getString("message"))
+                    Log.d("APIManager", "error : " + response.errorBody())
 
                 }
             }
