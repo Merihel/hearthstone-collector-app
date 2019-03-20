@@ -230,17 +230,17 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         var hearthstoneInstance = APISingleton.hearthstoneInstance
         var call = hearthstoneInstance!!.getDecksByUser(userId)
 
-        call.enqueue(object : Callback<MutableList<Deck>> {
-            override fun onResponse(call: Call<MutableList<Deck>>, response: Response<MutableList<Deck>>) {
+        call.enqueue(object : Callback<List<Deck>> {
+            override fun onResponse(call: Call<List<Deck>>, response: Response<List<Deck>>) {
                 if (response.isSuccessful) {
                     val decks = response.body()
-                    interfaceCallBackDeck?.onWorkDeckDone(decks!!)
+                    interfaceCallBackDeck?.onWorkDecksDone(decks!!)
                 } else {
                     Log.d("APIManager", "error : " + response.errorBody()!!)
                 }
             }
 
-            override fun onFailure(call: Call<MutableList<Deck>>, t: Throwable) {
+            override fun onFailure(call: Call<List<Deck>>, t: Throwable) {
                 t.printStackTrace()
             }
         })
@@ -297,8 +297,12 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
         var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
         var hearthstoneInstance = APISingleton.hearthstoneInstance
 
-        // TODO : récupérer ID du user pour l'ajouter au json
-        var call = hearthstoneInstance!!.createDeck(deck)
+        var json = JsonObject()
+        json.addProperty("name", deck.name)
+        json.addProperty("description", deck.description)
+        json.addProperty("user_id", deck.user?.id)
+
+        var call = hearthstoneInstance!!.createDeck(json)
 
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -307,9 +311,7 @@ class APIManager (internal var interfaceCallBackUser: InterfaceCallBackUser? = n
                     interfaceCallBackDeck?.onWorkDeckAddedDone(deck!!)
 
                 } else {
-                    val jObjError = JSONObject(response.errorBody()!!.toString())
-                    Log.d("APIManager", "error : " + response.errorBody().toString()!! + ", msg : "+ jObjError.getString("message"))
-
+                    Log.d("APIManager", "error : " + response.errorBody())
                 }
             }
 

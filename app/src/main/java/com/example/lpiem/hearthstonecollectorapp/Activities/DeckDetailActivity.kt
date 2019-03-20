@@ -131,7 +131,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck, Interface
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onWorkDecksDone(result: MutableList<Deck>) {  }
+    override fun onWorkDecksDone(result: List<Deck>) {  }
 
     override fun onWorkDeckDone(result: List<Deck>) {
         deck = result[0]

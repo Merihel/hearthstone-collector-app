@@ -30,6 +30,7 @@ import android.content.Intent
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
+import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.google.gson.JsonObject
 
 
@@ -59,7 +60,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         println("on resume deck list")
         super.onResume()
         val controller = APIManager(this as InterfaceCallBackUser, this as InterfaceCallBackCard, null, null, this as InterfaceCallBackDeck)
-        controller.getDecksByUser(1)
+        controller.getDecksByUser(HsUserManager.loggedUser.id!!)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,7 +99,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
 
                 else {
                     println("création du deck ok")
-                    val deck = Deck(null, newName.toString(), newDescription.toString())
+                    val deck = Deck(null, newName.toString(), newDescription.toString(), null, HsUserManager.loggedUser)
                     controller.createDeck(deck)
                     dialog.dismiss()
                 }
@@ -126,7 +127,7 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
         // Gestion du swipe à gauche pour la suppression
         val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id)
+                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id!!)
                 val adapter = recycler_view_decks.adapter as DecksListAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
             }
@@ -136,14 +137,14 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck, InterfaceCallBackUs
 
     }
 
-    override fun onWorkDecksDone(result: MutableList<Deck>) {
+    override fun onWorkDecksDone(result: List<Deck>) {
         System.out.println("My user decks" + result.toString())
         decks = result
 
         decks2.clear()
         decks2.addAll(result)
 
-        adapter.setData(result)
+        adapter.setData(result as MutableList<Deck>)
     }
 
     override fun onWorkUserDone(result: List<User>) {   }
