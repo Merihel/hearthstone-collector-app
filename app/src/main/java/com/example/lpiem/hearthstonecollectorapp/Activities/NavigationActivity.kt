@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.lpiem.hearthstonecollectorapp.Fragments.CardsListFragment
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Fragments.DecksListFragment
+import com.example.lpiem.hearthstonecollectorapp.Fragments.TradeListFragment
 import com.example.lpiem.hearthstonecollectorapp.R
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
@@ -128,7 +129,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 replaceFragment(fragment)
             }
             R.id.nav_trade -> {
-                // showFragment(new TradeFragment());
+                val fragment = TradeListFragment()
+                replaceFragment(fragment)
             }
             R.id.nav_quizz -> {
                 //showFragment(new QuizzFragment());

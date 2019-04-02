@@ -39,6 +39,8 @@
     <string name="cancel">Annuler</string>
     <string name="positive_button">Oui</string>
 
+    <string name="trade_item_avec">avec</string>
+
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_form_create_user">FormCreateUserActivity</string>

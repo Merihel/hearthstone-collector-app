@@ -103,4 +103,7 @@ interface APIInterface {
 
     @GET("/friendship/accept/{friendshipId}")
     abstract fun acceptFriendship(@Path("friendshipId") friendshipId: Int): Call<JsonObject>
+
+    // TRADE //
+    // ICI //
 }
