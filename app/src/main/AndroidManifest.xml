@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Activities.NewTradeActivity"></activity>
         <activity
             android:name=".Activities.ConnexionActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -24,6 +25,7 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -50,12 +52,10 @@
         <activity android:name=".Activities.CardDetailActivity" />
         <activity
             android:name=".Activities.DeckDetailActivity"
-            android:theme="@style/CutoutActivityTheme">
-        </activity>
+            android:theme="@style/CutoutActivityTheme"></activity>
         <activity
             android:name=".Activities.FriendListActivity"
-            android:theme="@style/CutoutActivityTheme">
-        </activity>
+            android:theme="@style/CutoutActivityTheme"></activity>
     </application>
 
 </manifest>

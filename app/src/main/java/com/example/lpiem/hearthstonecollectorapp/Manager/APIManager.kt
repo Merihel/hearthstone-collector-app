@@ -469,7 +469,7 @@ class APIManager {
                     }
 
                 } else {
-                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                    Log.d("APIManager", "error : " + response.errorBody().toString()!!)
                 }
             }
 
