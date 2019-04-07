@@ -1,8 +1,10 @@
 package com.example.lpiem.hearthstonecollectorapp.Activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -46,6 +48,9 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackCard {
         })
 
         btnEchange?.setOnClickListener({
+            var intent = Intent(this@CardDetailActivity, NewTradeActivity::class.java)
+            intent.putExtra("selectedCard", card!!.id)
+            startActivity(intent)
         })
 
     }
