@@ -8,9 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object APISingleton {
-
-    //private val URL_API = "http://127.0.0.1:8000"
-    private val URL_API = "http://10.0.2.2:8000"
+    private val URL_API = "http://172.31.247.232:8000/" //"http://nilsw-iem.ddns.net"
     var hearthstoneInstance: APIInterface? = null
     get() {
         if (field == null)

@@ -22,20 +22,16 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackCard {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_detail)
-        title = "Détail de la carte"
+        title = getString(R.string.card_detail_navbar)
         this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val cardId = intent.getIntExtra("cardId", 0)
-        println("cardId : $cardId")
-
-
         val controller = APIManager()
         controller.getCardById(cardId, this)
 
         controller.getCardById2(cardId, this).observe(this, Observer {
             println(it)
             card = it[0]
-            println(card!!.name)
 
             txtNom.text = card!!.name
             txtCost.text = card!!.cost.toString()
@@ -47,7 +43,6 @@ class CardDetailActivity : AppCompatActivity(), InterfaceCallBackCard {
 
         btnEchange?.setOnClickListener({
         })
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -33,21 +33,21 @@
     <string name="inscription_mdp">Mot de passe *</string>
     <string name="inscription_mdp_confirmation">Confirmer le mot de passe *</string>
     <string name="inscription_action">S\'inscrire</string>
+    <string name="inscription_navbar">S\'inscrire</string>
     <string name="inscription_obligatoires">* Champs obligatoires</string>
     <string name="inscription_label_identifiants">IDENTIFIANTS</string>
 
     <string name="cancel">Annuler</string>
     <string name="positive_button">Oui</string>
 
+    <string name="card_detail_navbar">Détail de la carte</string>
+
+    <string name="deck_detail_navbar">"Modifier le deck"</string>
+    <string name="deck_detail_delete_deck">Voulez-vous supprimer ce deck ?</string>
+
+    <string name="trade_navbar">Mes échanges</string>
     <string name="trade_item_avec">avec</string>
 
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_form_create_user">FormCreateUserActivity</string>
-    <string name="title_activity_friend_list">FriendListActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
 
 </resources>

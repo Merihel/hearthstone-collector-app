@@ -11,4 +11,20 @@ class Trade(
             @SerializedName("cardAsker") @Expose var cardAsker: Card? = null,
             @SerializedName("cardAsked") @Expose var cardAsked: Card? = null,
             @SerializedName("isAskerOk") @Expose var isAskerOk: Boolean? = null,
-            @SerializedName("isAskedOk") @Expose var isAskedOk: Boolean? = null )
+            @SerializedName("isAskedOk") @Expose var isAskedOk: Boolean? = null) {
+
+
+    override fun toString():String {
+        return "Trade{" +
+                "id=" + id +
+                ", userAsker=" + userAsker +
+                ", userAsked=" + userAsked +
+                ", status=" + status +
+                ", isAskerOk=" + isAskerOk +
+                ", isAskedOk=" + isAskedOk +
+                '}'
+    }
+}
+
+
+

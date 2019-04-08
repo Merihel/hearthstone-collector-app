@@ -1,9 +1,6 @@
 package com.example.lpiem.hearthstonecollectorapp.Interface
 
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
-import com.example.lpiem.hearthstonecollectorapp.Models.Deck
-import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
-import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.example.lpiem.hearthstonecollectorapp.Models.*
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
@@ -105,5 +102,13 @@ interface APIInterface {
     abstract fun acceptFriendship(@Path("friendshipId") friendshipId: Int): Call<JsonObject>
 
     // TRADE //
-    // ICI //
+    @GET("/trade/select/{userId}")
+    abstract fun selectTradeByUser(@Path("userId") userId: Int): Call<List<Trade>>
+
+    @POST("/trade/new")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    abstract fun addTrade(@Body json: JsonObject): Call<JsonObject>
+
+    @POST("trade/updateStatus")
+    abstract fun updateStatus(@Body json: JsonObject): Call<JsonObject>
 }

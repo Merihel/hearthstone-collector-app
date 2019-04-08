@@ -3,10 +3,7 @@ package com.example.lpiem.hearthstonecollectorapp.Manager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.lpiem.hearthstonecollectorapp.Interface.*
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
-import com.example.lpiem.hearthstonecollectorapp.Models.Deck
-import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
-import com.example.lpiem.hearthstonecollectorapp.Models.User
+import com.example.lpiem.hearthstonecollectorapp.Models.*
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -604,6 +601,66 @@ class APIManager {
 //        interfaceCallBackController.onWorkDone(true)
 //    }
 
+
+    // TRADES //
+
+    fun selectTradeByUser(userId: Int, interfaceCallBackTrade: InterfaceCallBackTrade?){
+        var hearthstoneApi: APIInterface = APISingleton.hearthstoneInstance!!
+
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        var call = hearthstoneInstance!!.selectTradeByUser(userId)
+
+        call.enqueue(object : Callback<List<Trade>> {
+            override fun onResponse(call: Call<List<Trade>>, response: Response<List<Trade>>) {
+                if (response.isSuccessful) {
+                    val trades = response.body()
+
+                    interfaceCallBackTrade?.onWorkTradesDone(trades!!)
+                    Log.d("APIManager", "test isAskedOk: " + trades!![0].isAskedOk)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Trade>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    fun updateStatus(tradeId: Int, tradeStatus: String, interfaceCallBackTrade: InterfaceCallBackTrade?){
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+
+        var json = JsonObject()
+        json.addProperty("id", tradeId)
+        json.addProperty("status", tradeStatus)
+        var call = hearthstoneInstance!!.updateStatus(json)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val trade = response.body()
+                    interfaceCallBackTrade?.onWorkTradeUpdated(trade!!)
+
+                } else {
+                    Log.d("APIManager", "error : " + response.errorBody())
+
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+
+
+
+    fun addTrade(){
+
+    }
 
 
 

@@ -1,9 +1,11 @@
 package com.example.lpiem.hearthstonecollectorapp.Fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +14,7 @@ import com.example.lpiem.hearthstonecollectorapp.Adapter.TradeListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackTrade
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
-import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Trade
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.google.gson.JsonObject
@@ -30,30 +30,20 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
 
     companion object {
         fun newInstance(): TradeListFragment {
-            System.out.println("new instance trade list")
             return TradeListFragment()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_trade_list, container, false)
         return rootView
     }
 
     override fun onResume() {
-        println("on resume trade list")
-        super.onResume()
-        val controller = APIManager()
-
-        // Valeurs de test
-        val userAsked = User(null, null, null, null, "Jean", "Truc", null, null, null, null, null, null)
-        val cardAsker = Card(0, "0", "invocateur", 10, 5, true, 1, 2, "blabla", "guerrier", "test", "test", "test", "test", "test", "test", "test", "test", "test")
-        trades.add(0, Trade(null, null, userAsked, null, cardAsker, null, null, null))
-        trades.add(1, Trade(null, null, userAsked, null, cardAsker, null, null, null))
-
-       // controller.getDecksByUser(HsUserManager.loggedUser.id!!, this)
+       super.onResume()
+       val controller = APIManager()
+       controller.selectTradeByUser(HsUserManager.loggedUser.id!!, this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,7 +51,7 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
         val controller = APIManager()
 
         // Gestion de la toolbar
-        trades_toolbar.tvTitre.text = "Mes échanges"
+        trades_toolbar.tvTitre.text = getString(R.string.trade_navbar)
         trades_toolbar.ic_menu.setOnClickListener {
             ((activity) as NavigationActivity).drawer_layout.openDrawer(GravityCompat.START)
         }
@@ -69,10 +59,11 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
 
         // Adapter et layout manager
         val listener = object : TradeListAdapter.Listener {
-            override fun onItemClicked(item: Trade) {
-                //val intent = Intent(activity, TradeDetailActivity::class.java)
-                //intent.putExtra("tradeId", item.id)
-                //activity!!.startActivity(intent)
+            override fun onDeleteClicked(item: Trade) {
+                controller.updateStatus(item.id!!, "OUT", this@TradeListFragment)
+            }
+            override fun onAcceptClicked(item: Trade) {
+                controller.updateStatus(item.id!!, "OK", this@TradeListFragment)
             }
         }
         adapter = TradeListAdapter(trades, activity!!.applicationContext, listener)
@@ -81,8 +72,30 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
 
     }
 
-    override fun onWorkTradesDone(result: JsonObject) {   }
-    override fun onWorkTradeAdded(result: JsonObject) {   }
+    override fun onWorkTradesDone(result: List<Trade>) {
+        System.out.println("My trades" + result.toString())
+        trades.clear()
+
+        for(trade in result){
+            // On ajoute uniquement dans la liste les échanges qui sont en attente
+            if(trade.status == "PENDING"){
+                trades.add(trade)
+            }
+        }
+
+        adapter.setData(trades)
+    }
+
+    override fun onWorkTradeUpdated(result: JsonObject) {
+        Log.d("mlk", result.get("message").asString)
+        Toast.makeText(context, result.get("message").asString, Toast.LENGTH_SHORT).show()
+        adapter.notifyDataSetChanged()
+
+        val controller = APIManager()
+        controller.selectTradeByUser(HsUserManager.loggedUser.id!!, this)
+    }
+
+    override fun onWorkTradeAdded(result: JsonObject) {    }
 
 
 }

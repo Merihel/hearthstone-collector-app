@@ -55,7 +55,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
         }
         btn_edit.setOnClickListener {
             val builder = AlertDialog.Builder(this@DeckDetailActivity)
-            builder.setTitle("Modifier le deck")
+            builder.setTitle(getString(R.string.card_detail_navbar))
             val view = this.layoutInflater.inflate(R.layout.dialog_edit_deck, null)
             builder.setView(view)
 
@@ -68,20 +68,16 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
             builder.setPositiveButton(android.R.string.ok) { dialog, _ ->
                 val newName = titreEditText.text.toString()
                 val newDescription = descriptionEditText.text.toString()
-                println("new name : $newName")
 
                 if (newName.isEmpty()) {
-                    println("name is empty")
                     dialogDeckNameEdit?.error = "Titre vide"
                     Toast.makeText(applicationContext, "Titre vide : deck non ajouté",Toast.LENGTH_SHORT).show()
 
                 } else if (newDescription.isEmpty()) {
-                    println("description is empty")
                     dialogDeckDescriptionEdit?.error = "Description vide"
                     Toast.makeText(applicationContext, "Description vide : deck non ajouté",Toast.LENGTH_SHORT).show()
 
                 } else {
-                    println("modif ok")
                     deck!!.description = newDescription
                     deck!!.name = newName
 
@@ -92,7 +88,6 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
                     dialog.dismiss()
                 }
             }
-
                     .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                         dialog.cancel()
                     }
@@ -102,7 +97,7 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
         }
         btn_delete.setOnClickListener {
             val builder = AlertDialog.Builder(this@DeckDetailActivity)
-            builder.setTitle("Voulez-vous supprimer ce deck ?")
+            builder.setTitle(getString(R.string.deck_detail_delete_deck))
                     .setPositiveButton(R.string.positive_button){ _, _ ->
                         controller.deleteDeckById(deckId, this)
                      }

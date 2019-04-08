@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.R
