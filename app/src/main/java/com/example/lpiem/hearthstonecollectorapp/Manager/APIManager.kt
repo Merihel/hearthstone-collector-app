@@ -538,4 +538,37 @@ class APIManager {
         return liveData
     }
 
+    fun newTrade(userAsker: Int, userAsked: Int, cardAsker: Int, cardAsked: Int, status: String, isAskerOk: Boolean, isAskedOk: Boolean) : MutableLiveData<JsonObject> {
+        var hearthstoneInstance = APISingleton.hearthstoneInstance
+        val liveData = MutableLiveData<JsonObject>()
+
+        var json = JsonObject()
+        json.addProperty("userAsker", userAsker)
+        json.addProperty("userAsked", userAsked)
+        json.addProperty("cardAsker", cardAsker)
+        json.addProperty("cardAsked", cardAsked)
+        json.addProperty("status", status)
+        json.addProperty("isAskerOk", isAskerOk)
+        json.addProperty("isAskedOk", isAskedOk)
+        var call = hearthstoneInstance!!.addTrade(json)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val response = response.body()
+                    liveData.postValue(response)
+                } else {
+                    liveData.postValue(null)
+                    Log.d("APIManager", "error : " + response.errorBody())
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                t.printStackTrace()
+                liveData.postValue(null)
+            }
+        })
+        return liveData
+    }
+
 }

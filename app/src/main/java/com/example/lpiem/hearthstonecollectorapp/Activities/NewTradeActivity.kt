@@ -10,25 +10,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackFriendship
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
 import com.example.lpiem.hearthstonecollectorapp.Models.User
-import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.activity_card_detail.*
 import kotlinx.android.synthetic.main.activity_new_trade.*
 
-class NewTradeActivity : AppCompatActivity(), InterfaceCallBackFriendship, InterfaceCallBackCard, AdapterView.OnItemSelectedListener {
+class NewTradeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     //Amis et adapters du spinner
-    var listFriends : ArrayList<Friendship> = arrayListOf()
-    var spinnerFriends: Spinner? = null
-    var aa: ArrayAdapter<Friendship>? = null
+    private var listFriends : ArrayList<Friendship> = arrayListOf()
+    private var spinnerFriends: Spinner? = null
+    private var aa: ArrayAdapter<Friendship>? = null
 
     //Cards à echanger avec user : ces trois doivent être != null pour lancer le trade
     var selectedForTrade: Card? = null
@@ -53,15 +50,32 @@ class NewTradeActivity : AppCompatActivity(), InterfaceCallBackFriendship, Inter
         // Set Adapter to Spinner
         spinnerFriends!!.adapter = aa
 
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+        //controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+            if (it.isNotEmpty()) {
+                Log.d("onFriendshipDone", it[0].id.toString())
+                listFriends.add(Friendship(0, User(0, "NONE"), User(0, "Choisissez un ami..."), true, 0))
+                for (friendship in it) {
+                    listFriends.add(friendship)
+                }
+                aa!!.notifyDataSetChanged()
+            }
+        })
+
         val intent = intent
         val cardId = intent.getIntExtra("selectedCard", 0)
         Log.d("CARDID", cardId.toString())
-        controller.getCardById(cardId, this)
+
+        //TODO MUTABLE LIVE DATA
+        controller.getCardById(cardId).observe(this, Observer {
+            selectedForTrade = it[0]
+            Glide.with(this).load(selectedForTrade!!.img).into(new_trade_selected_card)
+        })
 
         new_trade_btn_execute.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View) {
                 if (selectedForTrade != null && wantedForTrade != null && withUser != null) {
+                    executeNewTrade()
                     Log.d("NewTrade", "New trade possible, j'échange "+selectedForTrade!!.name+" avec "+withUser!!.pseudo+" pour la carte "+wantedForTrade!!.name)
                 } else {
                     Log.e("NODATA", "Echange impossible, il manque des données")
@@ -97,34 +111,17 @@ class NewTradeActivity : AppCompatActivity(), InterfaceCallBackFriendship, Inter
 
     }
 
-    //Friendships methods
-
-    override fun onFriendshipDone(result: List<Friendship>) {
-        if (result.isNotEmpty()) {
-            Log.d("onFriendshipDone", result[0].id.toString())
-            listFriends.add(Friendship(0, User(0, "NONE"), User(0, "Choisissez un ami..."), true, 0))
-            for (friendship in result) {
-                listFriends.add(friendship)
+    fun executeNewTrade() {
+        controller.newTrade(hsUserManager.loggedUser.id!!, withUser!!.id!!, selectedForTrade!!.id, wantedForTrade!!.id, "PENDING", true, false).observe(this, Observer {
+            if (it != null) {
+                Log.d("NewTradeResponse", it.get("devMessage").asString)
+                Toast.makeText(this, it.get("message").asString, Toast.LENGTH_LONG).show()
+                var intent = Intent(this@NewTradeActivity, NavigationActivity::class.java)
+                startActivity(intent)
+            } else {
+                Log.e("NewTradeResponse", "'it' is null")
             }
-            aa!!.notifyDataSetChanged()
-
-        }
-    }
-    override fun onPendingFriendshipDone(result: List<Friendship>) {
-    }
-    override fun onDeleteDone(result: JsonObject) {
-    }
-    override fun onAddDone(result: JsonObject) {
-    }
-    override fun onAcceptDone(result: JsonObject) {
+        })
     }
 
-    override fun onWorkCardDone(result: List<Card>) {
-        selectedForTrade = result.get(0)
-        Glide.with(this).load(selectedForTrade!!.img).into(new_trade_selected_card)
-    }
-
-    override fun onWorkCardsDone(result: List<Card>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }

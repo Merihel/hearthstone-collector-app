@@ -72,6 +72,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/CutoutActivityTheme"></activity>
 
+        <activity
+            android:name=".Activities.NewTradeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/CutoutActivityTheme"></activity>
+
         <activity android:name=".Activities.SplashScreenActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"

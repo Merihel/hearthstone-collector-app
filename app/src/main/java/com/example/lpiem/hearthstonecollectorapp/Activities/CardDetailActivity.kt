@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
