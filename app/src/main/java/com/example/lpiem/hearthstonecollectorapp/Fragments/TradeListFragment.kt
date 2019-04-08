@@ -89,10 +89,10 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
     override fun onWorkTradeUpdated(result: JsonObject) {
         Log.d("mlk", result.get("message").asString)
         Toast.makeText(context, result.get("message").asString, Toast.LENGTH_SHORT).show()
-        adapter.notifyDataSetChanged()
 
         val controller = APIManager()
         controller.selectTradeByUser(HsUserManager.loggedUser.id!!, this)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onWorkTradeAdded(result: JsonObject) {    }

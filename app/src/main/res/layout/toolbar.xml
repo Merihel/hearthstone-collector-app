@@ -15,6 +15,7 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
         android:layout_weight="0.01"
         android:cursorVisible="false"
         app:icon="@drawable/ic_menu"
