@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
+import androidx.lifecycle.Observer
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.User
@@ -15,7 +15,7 @@ import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_form_create_user.*
 
-class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
+class FormCreateUserActivity : AppCompatActivity() {
     private val context = this
     private var user = User()
     private var hsUserManager = HsUserManager
@@ -47,7 +47,11 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
                     println(user.toString())
 
 
-                    controller.createUser(user,this)
+                    controller.createUser(user).observe(this, Observer {
+                        Toast.makeText(this, it.get("message").asString, Toast.LENGTH_LONG).show()
+                        if (it.get("exit_code").asInt == 200) connectNewUser()
+                    })
+
                 } else {
                     Toast.makeText(this@FormCreateUserActivity, "Les mots de passe de concordent pas", Toast.LENGTH_LONG).show()
                 }
@@ -57,19 +61,12 @@ class FormCreateUserActivity : AppCompatActivity(), InterfaceCallBackUser {
         }
     }
 
-    override fun onWorkUserDone(result: List<User>) {
-        hsUserManager.loggedUser = result[0]
-        val intent = Intent(this@FormCreateUserActivity, NavigationActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onWorkAddDone(result: JsonObject) {
-        Toast.makeText(this, result.get("message").asString, Toast.LENGTH_LONG).show()
-        if (result.get("exit_code").asInt == 200) connectNewUser()
-    }
-
     private fun connectNewUser() {
-        controller.getUserByMail(user.mail!!,this)
+        controller.getUserByMail(user.mail!!).observe(this, Observer {
+            hsUserManager.loggedUser = it[0]
+            val intent = Intent(this@FormCreateUserActivity, NavigationActivity::class.java)
+            startActivity(intent)
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

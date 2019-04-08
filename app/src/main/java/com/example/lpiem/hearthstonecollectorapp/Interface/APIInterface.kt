@@ -17,18 +17,6 @@ interface APIInterface {
     @GET("card/select/{id}")
     abstract fun getCard(@Path("id") id: Int): Call<Card>
 
-    @GET("card/select/{set}")
-    abstract fun getCardsBySet(@Path("set") set: String): Call<List<Card>>
-
-    @GET("card/select/{class}")
-    abstract fun getCardsByClass(@Path("class") classCard: String): Call<List<Card>>
-
-    @GET("card/select/{race}")
-    abstract fun getCardsByRace(@Path("race") race: String): Call<List<Card>>
-
-    @GET("card/select/{faction}")
-    abstract fun getCardsByFaction(@Path("faction") faction: String): Call<List<Card>>
-
     @GET("card/select-by-user/{userId}")
     abstract fun getCardsByUser(@Path("userId") userId: Int) : Call<List<Card>>
 
@@ -49,10 +37,6 @@ interface APIInterface {
 
     @POST("/user/update")
     abstract fun updateUser(@Body user: User): Call<User>
-
-//    @POST("/user/set-deck")
-//    abstract fun setDeckToUser(@Body user: User): Call<User>
-
 
     // DECKS //
     @GET("deck/select/{id}")

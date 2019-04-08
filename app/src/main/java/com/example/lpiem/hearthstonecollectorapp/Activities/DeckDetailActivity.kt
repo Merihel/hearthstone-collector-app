@@ -8,20 +8,19 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListInDeckAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deck_detail.*
 import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.toolbar_deck_detail.*
 
-class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
+class DeckDetailActivity : AppCompatActivity() {
 
     var deck: Deck? = null
     var cardsList: MutableList<Card>? = null
@@ -46,7 +45,39 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
 //        rvCardsInDeckDetail.layoutManager = LinearLayoutManager(this)
 
 
-        controller.getDeckById(deckId, this)
+        controller.getDeckById(deckId).observe(this, Observer {
+            deck = it[0]
+            cardsList = it[0].cardsList?.toMutableList()
+            deck!!.cardsList = it[0].cardsList
+
+            // ON CLICK
+            val cardsAdapter = CardsListInDeckAdapter(this.cardsList!!, this, object : CardsListInDeckAdapter.BtnClickListener {
+                override fun onBtnClick(position: Int, viewHolder: RecyclerView.ViewHolder) {
+                    val adapter = rvCardsInDeckDetail.adapter as CardsListInDeckAdapter
+                    adapter.removeAt(viewHolder.adapterPosition)
+
+                    //deck!!.cardsList!!.toMutableList().removeAt(viewHolder.adapterPosition)
+                    // deck!!.cardsList = adapter.items.toTypedArray()
+                    //  controller.updateDeck(deck!!)
+                }
+
+                override fun onCardClick(position: Int) {
+                    val intent = Intent(this@DeckDetailActivity, CardDetailActivity::class.java)
+                    intent.putExtra("cardId", cardsList!![position].id)
+                    startActivityForResult(intent, 0)
+                }
+            })
+
+            // Adapter et layout manager
+            rvCardsInDeckDetail.adapter = cardsAdapter //CardsListInDeckAdapter(this!!.cardsList!!, this)
+            rvCardsInDeckDetail.layoutManager = LinearLayoutManager(this)
+
+            println(deck)
+            println("cards list : "+ cardsList!!)
+            txtToolbarDeckDetail.text = deck!!.name
+            txtDescription.text = deck!!.description
+        })
+
 
         // Gestion de la toolbar
         btn_back.setOnClickListener {
@@ -84,7 +115,10 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
                     txtDescription.text = deck!!.description
                     txtToolbarDeckDetail.text = deck!!.name
 
-                    controller.updateDeck(deck!!, this)
+                    controller.updateDeck(deck!!).observe(this, Observer {
+                        println(it)
+                        Toast.makeText(applicationContext, it.get("message").asString,Toast.LENGTH_SHORT).show()
+                    })
                     dialog.dismiss()
                 }
             }
@@ -99,7 +133,11 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
             val builder = AlertDialog.Builder(this@DeckDetailActivity)
             builder.setTitle(getString(R.string.deck_detail_delete_deck))
                     .setPositiveButton(R.string.positive_button){ _, _ ->
-                        controller.deleteDeckById(deckId, this)
+                        controller.deleteDeckById(deckId).observe(this, Observer {
+                            Toast.makeText(applicationContext, it.get("message").asString,Toast.LENGTH_SHORT).show()
+                            finish()
+                            overridePendingTransition(0, 0)
+                        })
                      }
                     .setNegativeButton(R.string.cancel){ dialog, _ ->
                         dialog.cancel()
@@ -108,7 +146,6 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -122,53 +159,5 @@ class DeckDetailActivity : AppCompatActivity(), InterfaceCallBackDeck {
 
         return super.onOptionsItemSelected(item)
     }
-
-    override fun onWorkDecksDone(result: List<Deck>) {  }
-
-    override fun onWorkDeckDone(result: List<Deck>) {
-        deck = result[0]
-        cardsList = result[0].cardsList?.toMutableList()
-        deck!!.cardsList = result[0].cardsList
-
-        // ON CLICK
-        val cardsAdapter = CardsListInDeckAdapter(this.cardsList!!, this, object : CardsListInDeckAdapter.BtnClickListener {
-            override fun onBtnClick(position: Int, viewHolder: RecyclerView.ViewHolder) {
-                val adapter = rvCardsInDeckDetail.adapter as CardsListInDeckAdapter
-                adapter.removeAt(viewHolder.adapterPosition)
-
-               //deck!!.cardsList!!.toMutableList().removeAt(viewHolder.adapterPosition)
-               // deck!!.cardsList = adapter.items.toTypedArray()
-               //  controller.updateDeck(deck!!)
-            }
-
-            override fun onCardClick(position: Int) {
-                val intent = Intent(this@DeckDetailActivity, CardDetailActivity::class.java)
-                intent.putExtra("cardId", cardsList!![position].id)
-                startActivityForResult(intent, 0)
-            }
-        })
-
-        // Adapter et layout manager
-        rvCardsInDeckDetail.adapter = cardsAdapter //CardsListInDeckAdapter(this!!.cardsList!!, this)
-        rvCardsInDeckDetail.layoutManager = LinearLayoutManager(this)
-
-        println(deck)
-        println("cards list : "+ cardsList!!)
-        txtToolbarDeckDetail.text = deck!!.name
-        txtDescription.text = deck!!.description
-    }
-
-    override fun onWorkDeleteDeckDone(result: JsonObject) {
-        Toast.makeText(applicationContext, result.get("message").asString,Toast.LENGTH_SHORT).show()
-        finish()
-        overridePendingTransition(0, 0)
-    }
-
-    override fun onWorkDeckUpdatedDone(result: JsonObject) {
-        println(result)
-        Toast.makeText(applicationContext, result.get("message").asString,Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onWorkDeckAddedDone(result: JsonObject) {   }
 
 }

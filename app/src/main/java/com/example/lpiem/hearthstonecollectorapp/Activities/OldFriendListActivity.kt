@@ -14,9 +14,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.lpiem.hearthstonecollectorapp.Adapter.FriendsListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Adapter.PendingFriendsListAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackFriendship
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
@@ -96,7 +96,7 @@ class OldFriendListActivity : AppCompatActivity() {
     /**
      * A placeholder fragment containing a simple view.
      */
-    class TabFragment : InterfaceCallBackFriendship, Fragment() {
+    class TabFragment : Fragment() {
 
         private var hsUserManager = HsUserManager
         private val controller = APIManager()
@@ -111,11 +111,16 @@ class OldFriendListActivity : AppCompatActivity() {
 
             if (arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
                 var rootView = inflater.inflate(R.layout.fragment_friend_list, container, false)
-                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                    addDataToPendingFriendList(it)
+
+                })
                 return rootView
             } else {
                 var rootView = inflater.inflate(R.layout.fragment_pending_friend_list, container, false)
-                controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+                controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                    addDataToPendingFriendList(it)
+                })
                 return rootView
             }
             //rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
@@ -141,23 +146,6 @@ class OldFriendListActivity : AppCompatActivity() {
             }
         }
 
-        override fun onFriendshipDone(result: List<Friendship>) {
-            Log.d("onFriendshipDone", result[0].id.toString())
-            addDataToFriendList(result)
-        }
-        override fun onPendingFriendshipDone(result: List<Friendship>) {
-            Log.d("onPFriendshipDone", result[0].id.toString())
-            addDataToPendingFriendList(result)
-        }
-        override fun onDeleteDone(result: JsonObject) {
-            Log.d("onDeleteDone", result.get("exit_code").asString)
-            Toast.makeText(this.requireContext(), result.get("message").asString, Toast.LENGTH_LONG).show()
-        }
-
-        override fun onAddDone(result: JsonObject) {}
-
-        override fun onAcceptDone(result: JsonObject) {}
-
         fun openDeleteDialog(friendship: Friendship) {
             val builder = AlertDialog.Builder(this.requireContext())
 
@@ -170,12 +158,22 @@ class OldFriendListActivity : AppCompatActivity() {
             // Set a positive button and its click listener on alert dialog
             builder.setPositiveButton("Oui"){ _, _ ->
                 // Do something when user press the positive button
-                controller.deleteFriendship(friendship.id,this)
+                controller.deleteFriendship(friendship.id).observe(this, Observer {
+                    Log.d("onDeleteDone", it.get("exit_code").asString)
+                    Toast.makeText(this.requireContext(), it.get("message").asString, Toast.LENGTH_LONG).show()
+
+                })
 
                 if(arguments?.getInt(ARG_SECTION_NUMBER) == 1) {
-                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                        Log.d("onFriendshipDone", it[0].id.toString())
+                        addDataToFriendList(it)
+                    })
                 } else {
-                    controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+                    controller.getPendingFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                        Log.d("onPFriendshipDone", it[0].id.toString())
+                        addDataToPendingFriendList(it)
+                    })
                 }
             }
 
