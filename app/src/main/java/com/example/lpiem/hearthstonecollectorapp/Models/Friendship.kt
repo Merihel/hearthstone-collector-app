@@ -10,4 +10,11 @@ data class Friendship(
         @SerializedName("isAccepted") @Expose var isAccepted: Boolean,
         @SerializedName("whoDemanding") @Expose var whoDemanding: Int
 
-)
+
+
+
+) {
+    override fun toString():String {
+        return user2.pseudo!!
+    }
+}
