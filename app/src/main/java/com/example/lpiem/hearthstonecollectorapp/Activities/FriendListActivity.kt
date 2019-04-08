@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.lpiem.hearthstonecollectorapp.Adapter.FriendsListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackFriendship
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Friendship
@@ -16,17 +16,18 @@ import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_friend_list.*
 import kotlinx.android.synthetic.main.toolbar_friend_list.view.*
 
-class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
+class FriendListActivity : AppCompatActivity() {
 
     private var hsUserManager = HsUserManager
     private val controller = APIManager()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_list)
 
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
+        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+            onFriendshipDone(it)
+        })
 
         friends_toolbar.btn_add_friend.setOnClickListener {
             askFriendIdentity()
@@ -48,35 +49,25 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
             jsonFriendshipAdd.addProperty("user2", dialog.editText.text.toString())
             jsonFriendshipAdd.addProperty("isAccepted", false)
             jsonFriendshipAdd.addProperty("whoDemanding", hsUserManager.loggedUser.id!!)
-            controller.addFriendship(jsonFriendshipAdd,this)
+
+            controller.addFriendship(jsonFriendshipAdd).observe(this, Observer {
+                Toast.makeText(applicationContext, it.get("message").asString, Toast.LENGTH_LONG).show()
+                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                    onFriendshipDone(it)
+                })
+            })
+
             Log.d("ASK PSEUDO", text.toString())
         }
         dialog.onCancel = {dialog.dismiss()}
         dialog.show(supportFragmentManager, "editDescription")
     }
 
-    override fun onFriendshipDone(result: List<Friendship>) {
+    fun onFriendshipDone(result: List<Friendship>) {
         if (result.isNotEmpty()) {
             Log.d("onFriendshipDone", result[0].id.toString())
         }
         addDataToFriendList(result)
-    }
-    override fun onPendingFriendshipDone(result: List<Friendship>) {
-    }
-    override fun onDeleteDone(result: JsonObject) {
-        Log.d("onDeleteDone", result.get("exit_code").asString)
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!, this)
-        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onAddDone(result: JsonObject) {
-        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
-    }
-
-    override fun onAcceptDone(result: JsonObject) {
-        Toast.makeText(applicationContext, result.get("message").asString, Toast.LENGTH_LONG).show()
-        controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!,this)
     }
 
     fun openDeleteDialog(friendship: Friendship) {
@@ -91,7 +82,14 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("Oui"){ _, _ ->
             // Do something when user press the positive button
-            controller.deleteFriendship(friendship.id,this)
+            controller.deleteFriendship(friendship.id).observe(this, Observer {
+                Log.d("onDeleteDone", it.get("exit_code").asString)
+                controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+                    onFriendshipDone(it)
+                })
+
+                Toast.makeText(applicationContext, it.get("message").asString, Toast.LENGTH_LONG).show()
+            })
         }
 
         // Display a negative button on alert dialog
@@ -116,7 +114,12 @@ class FriendListActivity : AppCompatActivity(), InterfaceCallBackFriendship {
                 openDeleteDialog(item)
             }
             override fun onAcceptClicked(item: Friendship) {
-                controller.acceptFriendship(item.id,this@FriendListActivity)
+                controller.acceptFriendship(item.id).observe(this@FriendListActivity, Observer {
+                    Toast.makeText(applicationContext, it.get("message").asString, Toast.LENGTH_LONG).show()
+                    controller.getFriendshipsByUser(hsUserManager.loggedUser.id!!).observe(this@FriendListActivity, Observer {
+                        onFriendshipDone(it)
+                    })
+                })
             }
         }
 

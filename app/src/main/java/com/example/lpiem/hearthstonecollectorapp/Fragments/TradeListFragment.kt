@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.TradeListAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackTrade
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Trade
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 private var rootView: View? = null
 
-class TradeListFragment : Fragment(), InterfaceCallBackTrade {
+class TradeListFragment : Fragment() {
     private var trades = mutableListOf<Trade>()
     private lateinit var adapter : TradeListAdapter
 
@@ -43,7 +43,9 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
     override fun onResume() {
        super.onResume()
        val controller = APIManager()
-       controller.selectTradeByUser(HsUserManager.loggedUser.id!!, this)
+       controller.selectTradeByUser(HsUserManager.loggedUser.id!!).observe(this, Observer {
+           onWorkTradesDone(it)
+       })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,10 +62,14 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
         // Adapter et layout manager
         val listener = object : TradeListAdapter.Listener {
             override fun onDeleteClicked(item: Trade) {
-                controller.updateStatus(item.id!!, "OUT", this@TradeListFragment)
+                controller.updateStatus(item.id!!, "OUT").observe(this@TradeListFragment, Observer {
+                    onWorkTradeUpdated(it)
+                })
             }
             override fun onAcceptClicked(item: Trade) {
-                controller.updateStatus(item.id!!, "OK", this@TradeListFragment)
+                controller.updateStatus(item.id!!, "OK").observe(this@TradeListFragment, Observer {
+                    onWorkTradeUpdated(it)
+                })
             }
         }
         adapter = TradeListAdapter(trades, activity!!.applicationContext, listener)
@@ -72,7 +78,7 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
 
     }
 
-    override fun onWorkTradesDone(result: List<Trade>) {
+    fun onWorkTradesDone(result: List<Trade>) {
         System.out.println("My trades" + result.toString())
         trades.clear()
 
@@ -82,20 +88,19 @@ class TradeListFragment : Fragment(), InterfaceCallBackTrade {
                 trades.add(trade)
             }
         }
-
         adapter.setData(trades)
     }
 
-    override fun onWorkTradeUpdated(result: JsonObject) {
+    fun onWorkTradeUpdated(result: JsonObject) {
         Log.d("mlk", result.get("message").asString)
         Toast.makeText(context, result.get("message").asString, Toast.LENGTH_SHORT).show()
 
         val controller = APIManager()
-        controller.selectTradeByUser(HsUserManager.loggedUser.id!!, this)
+        controller.selectTradeByUser(HsUserManager.loggedUser.id!!).observe(this, Observer {
+            onWorkTradesDone(it)
+        })
         adapter.notifyDataSetChanged()
     }
-
-    override fun onWorkTradeAdded(result: JsonObject) {    }
 
 
 }

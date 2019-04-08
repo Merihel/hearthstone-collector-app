@@ -8,12 +8,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lpiem.hearthstonecollectorapp.Fragments.PseudoDialog
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackLogin
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackSync
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackUser
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
-import com.example.lpiem.hearthstonecollectorapp.Models.User
 import com.example.lpiem.hearthstonecollectorapp.R
 import com.example.lpiem.hearthstonecollectorapp.Util.HashUtil
 import com.facebook.*
@@ -33,7 +29,7 @@ import org.json.JSONObject
 import java.util.*
 
 
-class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, InterfaceCallBackUser, AppCompatActivity() {
+class ConnexionActivity : AppCompatActivity() {
 
     //Variables Facebook
     private var callbackManager: CallbackManager? = null
@@ -109,7 +105,24 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
                 var json = JsonObject()
                 json.addProperty("identifier", inpLoginMail.text.toString())
                 json.addProperty("password", HashUtil.toMD5Hash(inpLoginPassword.text.toString()))
-                apiManager.checkLogin(json, this@ConnexionActivity)
+                apiManager.checkLogin(json).observe(this@ConnexionActivity, androidx.lifecycle.Observer {
+                    if (it == null) {
+                        Log.d("onWorkLoginError", "Connexion: Utilisateur ou mot de passe incorrect")
+                        Toast.makeText(baseContext, "Connexion: Utilisateur ou mot de passe incorrect", Toast.LENGTH_LONG).show()
+                    } else {
+                        Log.d("Simple Connect With", it.toString())
+                        hsUserManager.loggedUser = it
+                        hsUserManager.deleteSocial()
+                        Toast.makeText(baseContext, "Bienvenue, "+it.pseudo+" !", Toast.LENGTH_LONG).show()
+                        var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
+                        Log.d("onWorkLoginDone", "NO SOCIAL ACCOUNT")
+                        Log.d("onWorkLoginDone", "User Logged: "+hsUserManager.loggedUser.toString())
+
+                        startActivity(intent)
+                    }
+
+
+                })
             }
         })
 
@@ -280,8 +293,37 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
     fun userSyncCheckStep1(mail: String?) {
         var json = JsonObject()
         json.addProperty("mail", mail)
-        apiManager.getUserByMail(mail!!,this)
-        apiManager.syncUserStep1(json,this)
+        apiManager.getUserByMail(mail!!).observe(this, androidx.lifecycle.Observer {
+                var user = it.get(0)
+                hsUserManager.loggedUser = user
+                continueSocialConnection()
+        })
+
+        apiManager.syncUserStep1(json).observe(this, androidx.lifecycle.Observer { it ->
+
+            Log.d("SocialAccount", "CHECKED SYNC WITH " + socialState)
+            when (it.get("exit_code").asInt) {
+                0 -> {
+                    Log.d("WorkSyncDone", "Can connect with: "+hsUserManager.userSocialInfos.get("email") as String)
+                    apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String).observe(this, androidx.lifecycle.Observer {
+                        var user = it.get(0)
+                        hsUserManager.loggedUser = user
+                        continueSocialConnection()
+                    })
+                }
+                2 -> {
+                    Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
+                    askPseudo("update")
+                }
+                3 -> {
+                    Log.d("WorkSyncDone", "Compte introuvable, prêt à être créé, pseudo nécessaire")
+                    askPseudo("create")
+                }
+                else -> { // Note the block
+                    print("x is neither 1 nor 2")
+                }
+            }
+        })
     }
 
     fun userSyncCheckStep2(pseudo: String, mail: String, id: String, type: String) {
@@ -293,37 +335,17 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
             "f" -> json.addProperty("facebookId", id)
         }
 
-        apiManager.syncUserStep2(type, json,this)
-
-    }
-
-
-    override fun onWorkSyncDone(result: JsonObject) {
-        Log.d("SocialAccount", "CHECKED SYNC WITH " + socialState)
-        when (result.get("exit_code").asInt) {
-            0 -> {
-                Log.d("WorkSyncDone", "Can connect with: "+hsUserManager.userSocialInfos.get("email") as String)
-                apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String,this)
+        apiManager.syncUserStep2(type, json).observe(this, androidx.lifecycle.Observer {
+            when (it.get("exit_code").asInt) {
+                0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String).observe(this, androidx.lifecycle.Observer {
+                    var user = it.get(0)
+                    hsUserManager.loggedUser = user
+                    continueSocialConnection()
+                })
+                1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
             }
-            2 -> {
-                Log.d("WorkSyncDone", "Compte trouvé, pseudo nécessaire")
-                askPseudo("update")
-            }
-            3 -> {
-                Log.d("WorkSyncDone", "Compte introuvable, prêt à être créé, pseudo nécessaire")
-                askPseudo("create")
-            }
-            else -> { // Note the block
-                print("x is neither 1 nor 2")
-            }
-        }
-    }
+        })
 
-    override fun onWorkSyncDone2(result: JsonObject) {
-        when (result.get("exit_code").asInt) {
-            0 -> apiManager.getUserByMail(hsUserManager.userSocialInfos.get("email") as String,this)
-            1 -> Toast.makeText(this, "Une erreur est survenue lors de la création de compte", Toast.LENGTH_LONG)
-        }
     }
 
     fun askPseudo(type: String) { //Le type est le type d'opération : create le compte ou update en fonction de l'état renvoyé par API
@@ -352,32 +374,4 @@ class ConnexionActivity : InterfaceCallBackSync, InterfaceCallBackLogin, Interfa
         var intent = Intent(this, NavigationActivity::class.java)
         startActivity(intent)
     }
-
-    //Quand on récupère l'user associé aux comptes sociaux
-    override fun onWorkUserDone(result: List<User>) {
-        var user = result.get(0)
-        hsUserManager.loggedUser = user
-        continueSocialConnection()
-    }
-
-    //QUAND LA CONNEXION CLASSIQUE SE FAIT
-
-    override fun onWorkLoginDone(result: User) {
-        Log.d("Simple Connect With", result.toString())
-        hsUserManager.loggedUser = result
-        hsUserManager.deleteSocial()
-        Toast.makeText(baseContext, "Bienvenue, "+result.pseudo+" !", Toast.LENGTH_LONG).show()
-        var intent = Intent(this@ConnexionActivity, NavigationActivity::class.java)
-        Log.d("onWorkLoginDone", "NO SOCIAL ACCOUNT")
-        Log.d("onWorkLoginDone", "User Logged: "+hsUserManager.loggedUser.toString())
-
-        startActivity(intent)
-    }
-
-    override fun onWorkLoginError(error: String) {
-        Log.d("onWorkLoginError", error)
-        Toast.makeText(baseContext, error, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onWorkAddDone(result: JsonObject) {}
 }

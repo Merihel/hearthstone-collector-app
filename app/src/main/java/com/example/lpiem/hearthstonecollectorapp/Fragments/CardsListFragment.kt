@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.example.lpiem.hearthstonecollectorapp.Activities.CardDetailActivity
 import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.CardsListAdapter
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackCard
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Card
@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 private var rootView: View? = null
 private var hsUserManager = HsUserManager
 
-class CardsListFragment :  InterfaceCallBackCard, Fragment() {
+class CardsListFragment :  Fragment() {
     companion object {
         fun newInstance(): CardsListFragment {
             System.out.println("new instance cards list")
@@ -49,24 +49,19 @@ class CardsListFragment :  InterfaceCallBackCard, Fragment() {
         }
 
         val controller = APIManager()
-        controller.getCardsByUser(hsUserManager.loggedUser.id!!, this)
-    }
-
-    override fun onWorkCardDone(result: List<Card>) {   }
-    override fun onWorkCardsDone(result: List<Card>) {
-        System.out.println("My user cards" + result.toString())
-
-        val listener = object : CardsListAdapter.Listener {
-            override fun onItemClicked(item: Card) {
-                val intent = Intent(activity, CardDetailActivity::class.java)
-                intent.putExtra("cardId", item.id)
-                activity!!.startActivity(intent)
+        controller.getCardsByUser(hsUserManager.loggedUser.id!!).observe(this, Observer {
+            System.out.println("My user cards" + it.toString())
+            val listener = object : CardsListAdapter.Listener {
+                override fun onItemClicked(item: Card) {
+                    val intent = Intent(activity, CardDetailActivity::class.java)
+                    intent.putExtra("cardId", item.id)
+                    activity!!.startActivity(intent)
+                }
             }
-        }
-
-        rv_cards_list.adapter = CardsListAdapter(result, getActivity()!!.applicationContext, listener)
-        rv_cards_list.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
-        //Need to push the cards to the RecyclerView
+            rv_cards_list.adapter = CardsListAdapter(it, getActivity()!!.applicationContext, listener)
+            rv_cards_list.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 2)
+            //Need to push the cards to the RecyclerView
+        })
     }
 
 }

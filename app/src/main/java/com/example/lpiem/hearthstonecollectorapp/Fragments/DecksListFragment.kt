@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +19,10 @@ import com.example.lpiem.hearthstonecollectorapp.Activities.DeckDetailActivity
 import com.example.lpiem.hearthstonecollectorapp.Activities.NavigationActivity
 import com.example.lpiem.hearthstonecollectorapp.Adapter.DecksListAdapter
 import com.example.lpiem.hearthstonecollectorapp.Adapter.SwipeToDeleteCallback
-import com.example.lpiem.hearthstonecollectorapp.Interface.InterfaceCallBackDeck
 import com.example.lpiem.hearthstonecollectorapp.Manager.APIManager
 import com.example.lpiem.hearthstonecollectorapp.Manager.HsUserManager
 import com.example.lpiem.hearthstonecollectorapp.Models.Deck
 import com.example.lpiem.hearthstonecollectorapp.R
-import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.dialog_edit_deck.*
 import kotlinx.android.synthetic.main.fragment_decks_list.*
@@ -33,7 +32,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 @SuppressLint("StaticFieldLeak")
 private var rootView: View? = null
 
-class DecksListFragment : Fragment(), InterfaceCallBackDeck {
+class DecksListFragment : Fragment() {
     private var decks = emptyList<Deck>()
     private var decks2 = mutableListOf<Deck>()
     private lateinit var adapter : DecksListAdapter
@@ -52,10 +51,15 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck {
     }
 
     override fun onResume() {
-        println("on resume deck list")
         super.onResume()
         val controller = APIManager()
-        controller.getDecksByUser(HsUserManager.loggedUser.id!!, this)
+        controller.getDecksByUser(HsUserManager.loggedUser.id!!).observe(this, Observer {
+            System.out.println("My user decks" + it.toString())
+            decks = it
+            decks2.clear()
+            decks2.addAll(it)
+            adapter.setData(it as MutableList<Deck>)
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,7 +99,13 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck {
                 else {
                     println("création du deck ok")
                     val deck = Deck(null, newName.toString(), newDescription.toString(), null, HsUserManager.loggedUser)
-                    controller.createDeck(deck, this)
+                    controller.createDeck(deck).observe(this, Observer {
+                        println("on work deck added done : result id"+it.get("id").asInt)
+                        Toast.makeText(context, "Deck créée",Toast.LENGTH_SHORT).show()
+                        val intent = Intent(activity, DeckDetailActivity::class.java)
+                        intent.putExtra("deckId", it.get("id").asInt)
+                        activity!!.startActivity(intent)
+                    })
                     dialog.dismiss()
                 }
             }
@@ -122,38 +132,15 @@ class DecksListFragment : Fragment(), InterfaceCallBackDeck {
         // Gestion du swipe à gauche pour la suppression
         val swipeHandler = object : SwipeToDeleteCallback(this.context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id!!, this@DecksListFragment)
+                controller.deleteDeckById(adapter.items.get(viewHolder.adapterPosition).id!!).observe(this@DecksListFragment, Observer {
+                    Toast.makeText(context, it.get("message").asString,Toast.LENGTH_SHORT).show()
+                })
                 val adapter = recycler_view_decks.adapter as DecksListAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(recycler_view_decks)
-
-    }
-
-    override fun onWorkDecksDone(result: List<Deck>) {
-        System.out.println("My user decks" + result.toString())
-        decks = result
-
-        decks2.clear()
-        decks2.addAll(result)
-
-        adapter.setData(result as MutableList<Deck>)
-    }
-    override fun onWorkDeckDone(result: List<Deck>) {   }
-    override fun onWorkDeckUpdatedDone(result: JsonObject) {   }
-
-    override fun onWorkDeleteDeckDone(result: JsonObject) {
-        Toast.makeText(context, result.get("message").asString,Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onWorkDeckAddedDone(result: JsonObject) {
-        println("on work deck added done : result id"+result.get("id").asInt)
-        Toast.makeText(context, "Deck créée",Toast.LENGTH_SHORT).show()
-        val intent = Intent(activity, DeckDetailActivity::class.java)
-        intent.putExtra("deckId", result.get("id").asInt)
-        activity!!.startActivity(intent)
     }
 
 }
